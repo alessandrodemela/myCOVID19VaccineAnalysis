@@ -1,0 +1,597 @@
+,Fornitore,Numero Dosi,Data Consegna,Regione
+0,Pfizer/BioNTech,135,2020-12-27,Abruzzo
+1,Pfizer/BioNTech,7800,2020-12-30,Abruzzo
+2,Pfizer/BioNTech,3900,2021-01-05,Abruzzo
+3,Pfizer/BioNTech,3900,2021-01-07,Abruzzo
+4,Pfizer/BioNTech,3900,2021-01-11,Abruzzo
+5,Pfizer/BioNTech,4875,2021-01-12,Abruzzo
+6,Moderna,1300,2021-01-13,Abruzzo
+7,Pfizer/BioNTech,3510,2021-01-18,Abruzzo
+8,Pfizer/BioNTech,3510,2021-01-20,Abruzzo
+9,Pfizer/BioNTech,2340,2021-01-21,Abruzzo
+10,Pfizer/BioNTech,1170,2021-01-26,Abruzzo
+11,Pfizer/BioNTech,2340,2021-01-27,Abruzzo
+12,Moderna,1400,2021-02-01,Abruzzo
+13,Pfizer/BioNTech,7020,2021-02-02,Abruzzo
+14,AstraZeneca,5500,2021-02-09,Abruzzo
+15,Pfizer/BioNTech,8190,2021-02-09,Abruzzo
+16,Pfizer/BioNTech,2340,2021-02-10,Abruzzo
+17,AstraZeneca,6400,2021-02-13,Abruzzo
+18,Moderna,3100,2021-02-13,Abruzzo
+19,Pfizer/BioNTech,14040,2021-02-18,Abruzzo
+20,AstraZeneca,11100,2021-02-19,Abruzzo
+21,Pfizer/BioNTech,11700,2021-02-23,Abruzzo
+22,Pfizer/BioNTech,4680,2021-02-24,Abruzzo
+23,AstraZeneca,9400,2021-02-27,Abruzzo
+24,Moderna,6400,2021-03-01,Abruzzo
+25,Pfizer/BioNTech,16380,2021-03-02,Abruzzo
+26,Pfizer/BioNTech,1170,2021-03-04,Abruzzo
+27,Pfizer/BioNTech,17550,2021-03-09,Abruzzo
+28,AstraZeneca,14300,2021-03-10,Abruzzo
+29,AstraZeneca,5500,2021-03-13,Abruzzo
+30,Pfizer/BioNTech,17550,2021-03-15,Abruzzo
+31,Pfizer/BioNTech,105,2020-12-27,Basilicata
+32,Pfizer/BioNTech,4875,2020-12-30,Basilicata
+33,Pfizer/BioNTech,2925,2021-01-05,Basilicata
+34,Pfizer/BioNTech,3900,2021-01-11,Basilicata
+35,Pfizer/BioNTech,1950,2021-01-12,Basilicata
+36,Pfizer/BioNTech,2340,2021-01-18,Basilicata
+37,Pfizer/BioNTech,1170,2021-01-19,Basilicata
+38,Pfizer/BioNTech,1170,2021-01-25,Basilicata
+39,Pfizer/BioNTech,2340,2021-01-27,Basilicata
+40,Moderna,600,2021-02-01,Basilicata
+41,Pfizer/BioNTech,2340,2021-02-01,Basilicata
+42,Pfizer/BioNTech,3510,2021-02-02,Basilicata
+43,AstraZeneca,2300,2021-02-09,Basilicata
+44,Pfizer/BioNTech,4680,2021-02-09,Basilicata
+45,AstraZeneca,2700,2021-02-13,Basilicata
+46,Moderna,1300,2021-02-13,Basilicata
+47,Pfizer/BioNTech,5850,2021-02-15,Basilicata
+48,Pfizer/BioNTech,1170,2021-02-18,Basilicata
+49,AstraZeneca,4700,2021-02-19,Basilicata
+50,Pfizer/BioNTech,3510,2021-02-22,Basilicata
+51,Pfizer/BioNTech,2340,2021-02-23,Basilicata
+52,AstraZeneca,4000,2021-02-27,Basilicata
+53,Moderna,2500,2021-03-01,Basilicata
+54,Pfizer/BioNTech,5850,2021-03-01,Basilicata
+55,Pfizer/BioNTech,1170,2021-03-02,Basilicata
+56,Pfizer/BioNTech,5850,2021-03-08,Basilicata
+57,Pfizer/BioNTech,1170,2021-03-09,Basilicata
+58,AstraZeneca,6000,2021-03-10,Basilicata
+59,AstraZeneca,2300,2021-03-13,Basilicata
+60,Pfizer/BioNTech,7020,2021-03-15,Basilicata
+61,Pfizer/BioNTech,280,2020-12-27,Calabria
+62,Pfizer/BioNTech,12675,2020-12-31,Calabria
+63,Pfizer/BioNTech,10725,2021-01-04,Calabria
+64,Pfizer/BioNTech,1950,2021-01-11,Calabria
+65,Pfizer/BioNTech,13650,2021-01-12,Calabria
+66,Pfizer/BioNTech,8190,2021-01-19,Calabria
+67,Pfizer/BioNTech,1170,2021-01-20,Calabria
+68,Pfizer/BioNTech,1170,2021-01-26,Calabria
+69,Pfizer/BioNTech,12870,2021-01-27,Calabria
+70,Moderna,2100,2021-02-01,Calabria
+71,Pfizer/BioNTech,15210,2021-02-02,Calabria
+72,AstraZeneca,8000,2021-02-09,Calabria
+73,Pfizer/BioNTech,16380,2021-02-09,Calabria
+74,AstraZeneca,9300,2021-02-13,Calabria
+75,Moderna,3900,2021-02-13,Calabria
+76,Pfizer/BioNTech,18720,2021-02-18,Calabria
+77,AstraZeneca,16100,2021-02-20,Calabria
+78,Pfizer/BioNTech,19890,2021-02-23,Calabria
+79,AstraZeneca,13600,2021-02-27,Calabria
+80,Moderna,7700,2021-03-01,Calabria
+81,Pfizer/BioNTech,19890,2021-03-02,Calabria
+82,Pfizer/BioNTech,22230,2021-03-09,Calabria
+83,AstraZeneca,20800,2021-03-10,Calabria
+84,AstraZeneca,7900,2021-03-13,Calabria
+85,Pfizer/BioNTech,21060,2021-03-15,Calabria
+86,Pfizer/BioNTech,720,2020-12-27,Campania
+87,Pfizer/BioNTech,30225,2020-12-30,Campania
+88,Pfizer/BioNTech,2925,2020-12-31,Campania
+89,Pfizer/BioNTech,18525,2021-01-05,Campania
+90,Pfizer/BioNTech,975,2021-01-06,Campania
+91,Pfizer/BioNTech,9750,2021-01-07,Campania
+92,Pfizer/BioNTech,9750,2021-01-11,Campania
+93,Pfizer/BioNTech,27300,2021-01-12,Campania
+94,Moderna,8200,2021-01-13,Campania
+95,Pfizer/BioNTech,975,2021-01-13,Campania
+96,Pfizer/BioNTech,10530,2021-01-18,Campania
+97,Pfizer/BioNTech,14040,2021-01-20,Campania
+98,Pfizer/BioNTech,14040,2021-01-21,Campania
+99,Pfizer/BioNTech,3510,2021-01-25,Campania
+100,Pfizer/BioNTech,16380,2021-01-26,Campania
+101,Pfizer/BioNTech,5850,2021-01-27,Campania
+102,Pfizer/BioNTech,5850,2021-01-29,Campania
+103,Moderna,6300,2021-02-01,Campania
+104,Pfizer/BioNTech,3510,2021-02-01,Campania
+105,Pfizer/BioNTech,38610,2021-02-02,Campania
+106,AstraZeneca,24200,2021-02-09,Campania
+107,Pfizer/BioNTech,49140,2021-02-09,Campania
+108,AstraZeneca,28400,2021-02-13,Campania
+109,Moderna,9100,2021-02-13,Campania
+110,Pfizer/BioNTech,5850,2021-02-15,Campania
+111,Pfizer/BioNTech,1170,2021-02-16,Campania
+112,Pfizer/BioNTech,33930,2021-02-18,Campania
+113,AstraZeneca,49000,2021-02-19,Campania
+114,Pfizer/BioNTech,10530,2021-02-22,Campania
+115,Pfizer/BioNTech,33930,2021-02-23,Campania
+116,AstraZeneca,43900,2021-02-27,Campania
+117,Moderna,17400,2021-03-01,Campania
+118,Pfizer/BioNTech,11700,2021-03-01,Campania
+119,Pfizer/BioNTech,35100,2021-03-02,Campania
+120,Pfizer/BioNTech,12870,2021-03-08,Campania
+121,Pfizer/BioNTech,36270,2021-03-09,Campania
+122,AstraZeneca,66100,2021-03-10,Campania
+123,AstraZeneca,25600,2021-03-13,Campania
+124,Pfizer/BioNTech,49140,2021-03-15,Campania
+125,Pfizer/BioNTech,975,2020-12-27,Emilia-Romagna
+126,Pfizer/BioNTech,30225,2020-12-30,Emilia-Romagna
+127,Pfizer/BioNTech,12675,2020-12-31,Emilia-Romagna
+128,Pfizer/BioNTech,16575,2021-01-05,Emilia-Romagna
+129,Pfizer/BioNTech,28275,2021-01-07,Emilia-Romagna
+130,Pfizer/BioNTech,4875,2021-01-11,Emilia-Romagna
+131,Pfizer/BioNTech,39000,2021-01-12,Emilia-Romagna
+132,Moderna,7400,2021-01-13,Emilia-Romagna
+133,Pfizer/BioNTech,9360,2021-01-18,Emilia-Romagna
+134,Pfizer/BioNTech,3510,2021-01-20,Emilia-Romagna
+135,Pfizer/BioNTech,14040,2021-01-21,Emilia-Romagna
+136,Pfizer/BioNTech,31590,2021-01-26,Emilia-Romagna
+137,Pfizer/BioNTech,23400,2021-01-27,Emilia-Romagna
+138,Moderna,4900,2021-02-01,Emilia-Romagna
+139,Pfizer/BioNTech,50310,2021-02-02,Emilia-Romagna
+140,AstraZeneca,18300,2021-02-09,Emilia-Romagna
+141,Pfizer/BioNTech,3510,2021-02-09,Emilia-Romagna
+142,Pfizer/BioNTech,35100,2021-02-10,Emilia-Romagna
+143,AstraZeneca,21400,2021-02-13,Emilia-Romagna
+144,Moderna,11000,2021-02-13,Emilia-Romagna
+145,Pfizer/BioNTech,51480,2021-02-18,Emilia-Romagna
+146,AstraZeneca,9500,2021-02-19,Emilia-Romagna
+147,AstraZeneca,27600,2021-02-20,Emilia-Romagna
+148,Pfizer/BioNTech,52650,2021-02-23,Emilia-Romagna
+149,AstraZeneca,31200,2021-02-27,Emilia-Romagna
+150,Moderna,20500,2021-03-01,Emilia-Romagna
+151,Pfizer/BioNTech,1170,2021-03-01,Emilia-Romagna
+152,Pfizer/BioNTech,54990,2021-03-02,Emilia-Romagna
+153,Pfizer/BioNTech,58500,2021-03-09,Emilia-Romagna
+154,AstraZeneca,47800,2021-03-10,Emilia-Romagna
+155,AstraZeneca,18200,2021-03-13,Emilia-Romagna
+156,Pfizer/BioNTech,57330,2021-03-15,Emilia-Romagna
+157,Pfizer/BioNTech,265,2020-12-27,Friuli-Venezia Giulia
+158,Pfizer/BioNTech,5850,2020-12-30,Friuli-Venezia Giulia
+159,Pfizer/BioNTech,5850,2020-12-31,Friuli-Venezia Giulia
+160,Pfizer/BioNTech,6825,2021-01-05,Friuli-Venezia Giulia
+161,Pfizer/BioNTech,4875,2021-01-07,Friuli-Venezia Giulia
+162,Pfizer/BioNTech,975,2021-01-08,Friuli-Venezia Giulia
+163,Pfizer/BioNTech,1950,2021-01-11,Friuli-Venezia Giulia
+164,Pfizer/BioNTech,10725,2021-01-12,Friuli-Venezia Giulia
+165,Pfizer/BioNTech,2340,2021-01-18,Friuli-Venezia Giulia
+166,Pfizer/BioNTech,4680,2021-01-21,Friuli-Venezia Giulia
+167,Pfizer/BioNTech,9360,2021-01-26,Friuli-Venezia Giulia
+168,Pfizer/BioNTech,7020,2021-01-27,Friuli-Venezia Giulia
+169,Moderna,1300,2021-02-01,Friuli-Venezia Giulia
+170,Pfizer/BioNTech,14040,2021-02-02,Friuli-Venezia Giulia
+171,AstraZeneca,5000,2021-02-09,Friuli-Venezia Giulia
+172,Pfizer/BioNTech,10530,2021-02-10,Friuli-Venezia Giulia
+173,AstraZeneca,5900,2021-02-13,Friuli-Venezia Giulia
+174,Moderna,3100,2021-02-13,Friuli-Venezia Giulia
+175,Pfizer/BioNTech,16380,2021-02-18,Friuli-Venezia Giulia
+176,AstraZeneca,10100,2021-02-20,Friuli-Venezia Giulia
+177,Pfizer/BioNTech,14040,2021-02-23,Friuli-Venezia Giulia
+178,AstraZeneca,8500,2021-02-27,Friuli-Venezia Giulia
+179,Moderna,5600,2021-02-28,Friuli-Venezia Giulia
+180,Pfizer/BioNTech,15210,2021-03-02,Friuli-Venezia Giulia
+181,Pfizer/BioNTech,16380,2021-03-09,Friuli-Venezia Giulia
+182,AstraZeneca,13100,2021-03-10,Friuli-Venezia Giulia
+183,AstraZeneca,5000,2021-03-13,Friuli-Venezia Giulia
+184,Pfizer/BioNTech,16380,2021-03-15,Friuli-Venezia Giulia
+185,Pfizer/BioNTech,955,2020-12-27,Lazio
+186,Pfizer/BioNTech,38025,2020-12-30,Lazio
+187,Pfizer/BioNTech,6825,2020-12-31,Lazio
+188,Pfizer/BioNTech,12675,2021-01-05,Lazio
+189,Pfizer/BioNTech,21450,2021-01-07,Lazio
+190,Pfizer/BioNTech,14625,2021-01-11,Lazio
+191,Pfizer/BioNTech,38025,2021-01-12,Lazio
+192,Moderna,7400,2021-01-13,Lazio
+193,Pfizer/BioNTech,5850,2021-01-18,Lazio
+194,Pfizer/BioNTech,12870,2021-01-20,Lazio
+195,Pfizer/BioNTech,19890,2021-01-21,Lazio
+196,Pfizer/BioNTech,26910,2021-01-26,Lazio
+197,Pfizer/BioNTech,14040,2021-01-27,Lazio
+198,Moderna,6400,2021-02-01,Lazio
+199,Pfizer/BioNTech,45630,2021-02-02,Lazio
+200,Pfizer/BioNTech,2340,2021-02-03,Lazio
+201,Pfizer/BioNTech,1170,2021-02-05,Lazio
+202,AstraZeneca,24100,2021-02-09,Lazio
+203,Pfizer/BioNTech,38610,2021-02-09,Lazio
+204,Pfizer/BioNTech,10530,2021-02-10,Lazio
+205,AstraZeneca,28300,2021-02-13,Lazio
+206,Moderna,12000,2021-02-13,Lazio
+207,Pfizer/BioNTech,56160,2021-02-18,Lazio
+208,AstraZeneca,48900,2021-02-19,Lazio
+209,Pfizer/BioNTech,59670,2021-02-24,Lazio
+210,AstraZeneca,53900,2021-02-27,Lazio
+211,Moderna,23400,2021-03-01,Lazio
+212,Pfizer/BioNTech,62010,2021-03-02,Lazio
+213,Pfizer/BioNTech,67860,2021-03-09,Lazio
+214,AstraZeneca,74900,2021-03-10,Lazio
+215,AstraZeneca,45300,2021-03-13,Lazio
+216,Pfizer/BioNTech,66690,2021-03-15,Lazio
+217,Pfizer/BioNTech,320,2020-12-27,Liguria
+218,Pfizer/BioNTech,15600,2020-12-30,Liguria
+219,Pfizer/BioNTech,11700,2021-01-05,Liguria
+220,Pfizer/BioNTech,1950,2021-01-07,Liguria
+221,Pfizer/BioNTech,3900,2021-01-11,Liguria
+222,Pfizer/BioNTech,13650,2021-01-12,Liguria
+223,Pfizer/BioNTech,2340,2021-01-18,Liguria
+224,Pfizer/BioNTech,2340,2021-01-20,Liguria
+225,Pfizer/BioNTech,14040,2021-01-21,Liguria
+226,Pfizer/BioNTech,8190,2021-01-26,Liguria
+227,Pfizer/BioNTech,3510,2021-01-27,Liguria
+228,Moderna,1700,2021-02-01,Liguria
+229,Pfizer/BioNTech,16380,2021-02-02,Liguria
+230,AstraZeneca,6300,2021-02-09,Liguria
+231,Pfizer/BioNTech,12870,2021-02-09,Liguria
+232,AstraZeneca,7400,2021-02-13,Liguria
+233,Moderna,4700,2021-02-13,Liguria
+234,Pfizer/BioNTech,21060,2021-02-18,Liguria
+235,AstraZeneca,1900,2021-02-19,Liguria
+236,AstraZeneca,10900,2021-02-20,Liguria
+237,Pfizer/BioNTech,22230,2021-02-23,Liguria
+238,AstraZeneca,11200,2021-02-27,Liguria
+239,Moderna,8600,2021-03-01,Liguria
+240,Pfizer/BioNTech,23400,2021-03-02,Liguria
+241,Pfizer/BioNTech,24570,2021-03-09,Liguria
+242,AstraZeneca,18800,2021-03-10,Liguria
+243,AstraZeneca,6800,2021-03-13,Liguria
+244,Pfizer/BioNTech,24570,2021-03-15,Liguria
+245,Pfizer/BioNTech,1620,2020-12-27,Lombardia
+246,Pfizer/BioNTech,59475,2020-12-30,Lombardia
+247,Pfizer/BioNTech,19500,2020-12-31,Lombardia
+248,Pfizer/BioNTech,28275,2021-01-05,Lombardia
+249,Pfizer/BioNTech,39975,2021-01-07,Lombardia
+250,Pfizer/BioNTech,5850,2021-01-11,Lombardia
+251,Pfizer/BioNTech,78000,2021-01-12,Lombardia
+252,Pfizer/BioNTech,1950,2021-01-13,Lombardia
+253,Pfizer/BioNTech,975,2021-01-14,Lombardia
+254,Pfizer/BioNTech,14040,2021-01-18,Lombardia
+255,Pfizer/BioNTech,26910,2021-01-20,Lombardia
+256,Pfizer/BioNTech,29250,2021-01-21,Lombardia
+257,Pfizer/BioNTech,50310,2021-01-26,Lombardia
+258,Pfizer/BioNTech,23400,2021-01-27,Lombardia
+259,Moderna,11100,2021-02-01,Lombardia
+260,Pfizer/BioNTech,84240,2021-02-02,Lombardia
+261,AstraZeneca,41800,2021-02-09,Lombardia
+262,Pfizer/BioNTech,58500,2021-02-09,Lombardia
+263,Pfizer/BioNTech,26910,2021-02-10,Lombardia
+264,AstraZeneca,49100,2021-02-13,Lombardia
+265,Moderna,22000,2021-02-13,Lombardia
+266,Pfizer/BioNTech,100620,2021-02-18,Lombardia
+267,AstraZeneca,84900,2021-02-20,Lombardia
+268,Pfizer/BioNTech,104130,2021-02-23,Lombardia
+269,AstraZeneca,73900,2021-02-27,Lombardia
+270,Moderna,40900,2021-02-28,Lombardia
+271,Pfizer/BioNTech,106470,2021-03-02,Lombardia
+272,Pfizer/BioNTech,3510,2021-03-03,Lombardia
+273,Pfizer/BioNTech,115830,2021-03-09,Lombardia
+274,AstraZeneca,110600,2021-03-10,Lombardia
+275,AstraZeneca,42500,2021-03-13,Lombardia
+276,Pfizer/BioNTech,115830,2021-03-15,Lombardia
+277,Pfizer/BioNTech,200,2020-12-27,Marche
+278,Pfizer/BioNTech,8775,2020-12-30,Marche
+279,Pfizer/BioNTech,6825,2021-01-05,Marche
+280,Pfizer/BioNTech,1950,2021-01-07,Marche
+281,Pfizer/BioNTech,9750,2021-01-12,Marche
+282,Moderna,1500,2021-01-13,Marche
+283,Pfizer/BioNTech,2340,2021-01-20,Marche
+284,Pfizer/BioNTech,8190,2021-01-21,Marche
+285,Pfizer/BioNTech,1170,2021-01-26,Marche
+286,Pfizer/BioNTech,4680,2021-01-27,Marche
+287,Moderna,1700,2021-02-01,Marche
+288,Pfizer/BioNTech,10530,2021-02-02,Marche
+289,AstraZeneca,6300,2021-02-09,Marche
+290,Pfizer/BioNTech,12870,2021-02-09,Marche
+291,AstraZeneca,7500,2021-02-13,Marche
+292,Moderna,4000,2021-02-13,Marche
+293,Pfizer/BioNTech,18720,2021-02-18,Marche
+294,AstraZeneca,12900,2021-02-19,Marche
+295,Pfizer/BioNTech,18720,2021-02-24,Marche
+296,AstraZeneca,10900,2021-02-27,Marche
+297,Moderna,7400,2021-03-01,Marche
+298,Pfizer/BioNTech,19890,2021-03-02,Marche
+299,Pfizer/BioNTech,21060,2021-03-09,Marche
+300,AstraZeneca,16700,2021-03-10,Marche
+301,AstraZeneca,6400,2021-03-13,Marche
+302,Pfizer/BioNTech,21060,2021-03-15,Marche
+303,Pfizer/BioNTech,50,2020-12-27,Molise
+304,Pfizer/BioNTech,2925,2020-12-30,Molise
+305,Pfizer/BioNTech,1950,2021-01-05,Molise
+306,Pfizer/BioNTech,2925,2021-01-11,Molise
+307,Pfizer/BioNTech,975,2021-01-12,Molise
+308,Pfizer/BioNTech,2340,2021-01-18,Molise
+309,Pfizer/BioNTech,1170,2021-01-20,Molise
+310,Pfizer/BioNTech,1170,2021-01-27,Molise
+311,Moderna,300,2021-02-01,Molise
+312,Pfizer/BioNTech,2340,2021-02-02,Molise
+313,AstraZeneca,1300,2021-02-09,Molise
+314,Pfizer/BioNTech,2340,2021-02-09,Molise
+315,AstraZeneca,1500,2021-02-13,Molise
+316,Moderna,800,2021-02-13,Molise
+317,Pfizer/BioNTech,2340,2021-02-15,Molise
+318,Pfizer/BioNTech,1170,2021-02-18,Molise
+319,AstraZeneca,2600,2021-02-19,Molise
+320,Pfizer/BioNTech,2340,2021-02-22,Molise
+321,Pfizer/BioNTech,1170,2021-02-23,Molise
+322,AstraZeneca,2200,2021-02-27,Molise
+323,Moderna,1500,2021-03-01,Molise
+324,Pfizer/BioNTech,2340,2021-03-01,Molise
+325,Pfizer/BioNTech,1170,2021-03-02,Molise
+326,Pfizer/BioNTech,3510,2021-03-08,Molise
+327,AstraZeneca,3400,2021-03-10,Molise
+328,Pfizer/BioNTech,1170,2021-03-11,Molise
+329,AstraZeneca,1300,2021-03-13,Molise
+330,Pfizer/BioNTech,4680,2021-03-15,Molise
+331,Pfizer/BioNTech,145,2020-12-27,Provincia Autonoma Bolzano / Bozen
+332,Pfizer/BioNTech,5850,2020-12-31,Provincia Autonoma Bolzano / Bozen
+333,Pfizer/BioNTech,6825,2021-01-07,Provincia Autonoma Bolzano / Bozen
+334,Pfizer/BioNTech,6825,2021-01-11,Provincia Autonoma Bolzano / Bozen
+335,Pfizer/BioNTech,3510,2021-01-21,Provincia Autonoma Bolzano / Bozen
+336,Pfizer/BioNTech,9360,2021-01-26,Provincia Autonoma Bolzano / Bozen
+337,Moderna,600,2021-02-01,Provincia Autonoma Bolzano / Bozen
+338,Pfizer/BioNTech,8190,2021-02-02,Provincia Autonoma Bolzano / Bozen
+339,AstraZeneca,2100,2021-02-09,Provincia Autonoma Bolzano / Bozen
+340,Pfizer/BioNTech,4680,2021-02-10,Provincia Autonoma Bolzano / Bozen
+341,AstraZeneca,2400,2021-02-13,Provincia Autonoma Bolzano / Bozen
+342,Moderna,1000,2021-02-13,Provincia Autonoma Bolzano / Bozen
+343,Pfizer/BioNTech,4680,2021-02-18,Provincia Autonoma Bolzano / Bozen
+344,AstraZeneca,4200,2021-02-20,Provincia Autonoma Bolzano / Bozen
+345,Pfizer/BioNTech,5850,2021-02-23,Provincia Autonoma Bolzano / Bozen
+346,AstraZeneca,3600,2021-02-27,Provincia Autonoma Bolzano / Bozen
+347,Moderna,2100,2021-02-28,Provincia Autonoma Bolzano / Bozen
+348,Pfizer/BioNTech,5850,2021-03-02,Provincia Autonoma Bolzano / Bozen
+349,Pfizer/BioNTech,5850,2021-03-09,Provincia Autonoma Bolzano / Bozen
+350,AstraZeneca,5500,2021-03-10,Provincia Autonoma Bolzano / Bozen
+351,AstraZeneca,2100,2021-03-13,Provincia Autonoma Bolzano / Bozen
+352,Pfizer/BioNTech,5850,2021-03-15,Provincia Autonoma Bolzano / Bozen
+353,Pfizer/BioNTech,100,2020-12-27,Provincia Autonoma Trento
+354,Pfizer/BioNTech,4875,2020-12-30,Provincia Autonoma Trento
+355,Pfizer/BioNTech,1950,2021-01-05,Provincia Autonoma Trento
+356,Pfizer/BioNTech,2925,2021-01-07,Provincia Autonoma Trento
+357,Pfizer/BioNTech,5850,2021-01-12,Provincia Autonoma Trento
+358,Pfizer/BioNTech,2340,2021-01-20,Provincia Autonoma Trento
+359,Pfizer/BioNTech,7020,2021-01-27,Provincia Autonoma Trento
+360,Moderna,600,2021-02-01,Provincia Autonoma Trento
+361,Pfizer/BioNTech,4680,2021-02-02,Provincia Autonoma Trento
+362,AstraZeneca,2200,2021-02-09,Provincia Autonoma Trento
+363,Pfizer/BioNTech,4680,2021-02-10,Provincia Autonoma Trento
+364,AstraZeneca,2600,2021-02-13,Provincia Autonoma Trento
+365,Moderna,1100,2021-02-13,Provincia Autonoma Trento
+366,Pfizer/BioNTech,5850,2021-02-18,Provincia Autonoma Trento
+367,AstraZeneca,4600,2021-02-20,Provincia Autonoma Trento
+368,Pfizer/BioNTech,4680,2021-02-23,Provincia Autonoma Trento
+369,AstraZeneca,3800,2021-02-27,Provincia Autonoma Trento
+370,Moderna,2000,2021-02-28,Provincia Autonoma Trento
+371,Pfizer/BioNTech,5850,2021-03-02,Provincia Autonoma Trento
+372,Pfizer/BioNTech,5850,2021-03-09,Provincia Autonoma Trento
+373,AstraZeneca,5900,2021-03-10,Provincia Autonoma Trento
+374,AstraZeneca,2300,2021-03-13,Provincia Autonoma Trento
+375,Pfizer/BioNTech,5850,2021-03-15,Provincia Autonoma Trento
+376,Pfizer/BioNTech,910,2020-12-27,Piemonte
+377,Pfizer/BioNTech,39000,2020-12-30,Piemonte
+378,Pfizer/BioNTech,975,2020-12-31,Piemonte
+379,Pfizer/BioNTech,20475,2021-01-05,Piemonte
+380,Pfizer/BioNTech,21450,2021-01-07,Piemonte
+381,Pfizer/BioNTech,39000,2021-01-12,Piemonte
+382,Pfizer/BioNTech,1950,2021-01-13,Piemonte
+383,Pfizer/BioNTech,10530,2021-01-18,Piemonte
+384,Pfizer/BioNTech,1170,2021-01-19,Piemonte
+385,Pfizer/BioNTech,15210,2021-01-20,Piemonte
+386,Pfizer/BioNTech,17550,2021-01-21,Piemonte
+387,Pfizer/BioNTech,18720,2021-01-26,Piemonte
+388,Pfizer/BioNTech,14040,2021-01-27,Piemonte
+389,Moderna,4800,2021-02-01,Piemonte
+390,Pfizer/BioNTech,42120,2021-02-02,Piemonte
+391,Pfizer/BioNTech,4680,2021-02-03,Piemonte
+392,Pfizer/BioNTech,35100,2021-02-09,Piemonte
+393,AstraZeneca,17800,2021-02-10,Piemonte
+394,Pfizer/BioNTech,1170,2021-02-11,Piemonte
+395,AstraZeneca,20900,2021-02-13,Piemonte
+396,Moderna,11100,2021-02-13,Piemonte
+397,Pfizer/BioNTech,53820,2021-02-18,Piemonte
+398,AstraZeneca,36200,2021-02-20,Piemonte
+399,Pfizer/BioNTech,51480,2021-02-23,Piemonte
+400,AstraZeneca,32600,2021-02-27,Piemonte
+401,Moderna,20300,2021-03-01,Piemonte
+402,Pfizer/BioNTech,52650,2021-03-02,Piemonte
+403,Pfizer/BioNTech,1170,2021-03-03,Piemonte
+404,Pfizer/BioNTech,57330,2021-03-09,Piemonte
+405,AstraZeneca,47000,2021-03-10,Piemonte
+406,AstraZeneca,17800,2021-03-13,Piemonte
+407,Pfizer/BioNTech,57330,2021-03-15,Piemonte
+408,Pfizer/BioNTech,505,2020-12-27,Puglia
+409,Pfizer/BioNTech,20475,2020-12-30,Puglia
+410,Pfizer/BioNTech,4875,2020-12-31,Puglia
+411,Pfizer/BioNTech,5850,2021-01-05,Puglia
+412,Pfizer/BioNTech,16575,2021-01-07,Puglia
+413,Pfizer/BioNTech,23400,2021-01-11,Puglia
+414,Pfizer/BioNTech,2925,2021-01-12,Puglia
+415,Pfizer/BioNTech,16380,2021-01-18,Puglia
+416,Pfizer/BioNTech,2340,2021-01-19,Puglia
+417,Pfizer/BioNTech,11700,2021-01-25,Puglia
+418,Pfizer/BioNTech,7020,2021-01-26,Puglia
+419,Pfizer/BioNTech,8190,2021-01-27,Puglia
+420,Moderna,4300,2021-02-01,Puglia
+421,Pfizer/BioNTech,14040,2021-02-01,Puglia
+422,Pfizer/BioNTech,11700,2021-02-02,Puglia
+423,AstraZeneca,16800,2021-02-09,Puglia
+424,Pfizer/BioNTech,33930,2021-02-09,Puglia
+425,AstraZeneca,19800,2021-02-13,Puglia
+426,Moderna,8000,2021-02-13,Puglia
+427,Pfizer/BioNTech,30420,2021-02-15,Puglia
+428,Pfizer/BioNTech,8190,2021-02-16,Puglia
+429,AstraZeneca,5200,2021-02-19,Puglia
+430,AstraZeneca,28900,2021-02-20,Puglia
+431,Pfizer/BioNTech,33930,2021-02-22,Puglia
+432,Pfizer/BioNTech,4680,2021-02-25,Puglia
+433,AstraZeneca,33100,2021-02-27,Puglia
+434,Moderna,15000,2021-03-01,Puglia
+435,Pfizer/BioNTech,39780,2021-03-01,Puglia
+436,Pfizer/BioNTech,42120,2021-03-08,Puglia
+437,AstraZeneca,50200,2021-03-10,Puglia
+438,AstraZeneca,19100,2021-03-13,Puglia
+439,Pfizer/BioNTech,42120,2021-03-15,Puglia
+440,Pfizer/BioNTech,180,2020-12-27,Sardegna
+441,Pfizer/BioNTech,12675,2020-12-31,Sardegna
+442,Pfizer/BioNTech,6825,2021-01-05,Sardegna
+443,Pfizer/BioNTech,13650,2021-01-12,Sardegna
+444,Pfizer/BioNTech,7020,2021-01-19,Sardegna
+445,Pfizer/BioNTech,12870,2021-01-26,Sardegna
+446,Moderna,1800,2021-02-01,Sardegna
+447,Pfizer/BioNTech,9360,2021-02-02,Sardegna
+448,AstraZeneca,7100,2021-02-09,Sardegna
+449,Pfizer/BioNTech,14040,2021-02-10,Sardegna
+450,AstraZeneca,8300,2021-02-13,Sardegna
+451,Moderna,3500,2021-02-13,Sardegna
+452,Pfizer/BioNTech,16380,2021-02-18,Sardegna
+453,AstraZeneca,14300,2021-02-19,Sardegna
+454,Pfizer/BioNTech,16380,2021-02-23,Sardegna
+455,AstraZeneca,14400,2021-02-27,Sardegna
+456,Moderna,6600,2021-03-01,Sardegna
+457,Pfizer/BioNTech,17550,2021-03-02,Sardegna
+458,Pfizer/BioNTech,18720,2021-03-09,Sardegna
+459,AstraZeneca,19100,2021-03-10,Sardegna
+460,AstraZeneca,7400,2021-03-13,Sardegna
+461,Pfizer/BioNTech,18720,2021-03-15,Sardegna
+462,Pfizer/BioNTech,685,2020-12-27,Sicilia
+463,Pfizer/BioNTech,45825,2020-12-31,Sicilia
+464,Pfizer/BioNTech,32175,2021-01-05,Sicilia
+465,Pfizer/BioNTech,45825,2021-01-12,Sicilia
+466,Moderna,6600,2021-01-13,Sicilia
+467,Pfizer/BioNTech,975,2021-01-13,Sicilia
+468,Pfizer/BioNTech,35100,2021-01-19,Sicilia
+469,Pfizer/BioNTech,2340,2021-01-21,Sicilia
+470,Pfizer/BioNTech,11700,2021-01-26,Sicilia
+471,Pfizer/BioNTech,19890,2021-01-27,Sicilia
+472,Moderna,5400,2021-02-01,Sicilia
+473,Pfizer/BioNTech,23400,2021-02-02,Sicilia
+474,Pfizer/BioNTech,11700,2021-02-03,Sicilia
+475,Pfizer/BioNTech,23400,2021-02-08,Sicilia
+476,AstraZeneca,20500,2021-02-09,Sicilia
+477,Pfizer/BioNTech,3510,2021-02-09,Sicilia
+478,Pfizer/BioNTech,15210,2021-02-10,Sicilia
+479,AstraZeneca,24000,2021-02-13,Sicilia
+480,Moderna,9400,2021-02-13,Sicilia
+481,Pfizer/BioNTech,11700,2021-02-17,Sicilia
+482,Pfizer/BioNTech,31590,2021-02-18,Sicilia
+483,AstraZeneca,41600,2021-02-20,Sicilia
+484,Pfizer/BioNTech,46800,2021-02-23,Sicilia
+485,AstraZeneca,38600,2021-02-27,Sicilia
+486,Moderna,18300,2021-03-01,Sicilia
+487,Pfizer/BioNTech,49140,2021-03-02,Sicilia
+488,Pfizer/BioNTech,49140,2021-03-09,Sicilia
+489,AstraZeneca,54600,2021-03-10,Sicilia
+490,Pfizer/BioNTech,2340,2021-03-11,Sicilia
+491,AstraZeneca,21100,2021-03-13,Sicilia
+492,Pfizer/BioNTech,51480,2021-03-15,Sicilia
+493,Pfizer/BioNTech,620,2020-12-27,Toscana
+494,Pfizer/BioNTech,14625,2020-12-30,Toscana
+495,Pfizer/BioNTech,12675,2020-12-31,Toscana
+496,Pfizer/BioNTech,3900,2021-01-05,Toscana
+497,Pfizer/BioNTech,20475,2021-01-07,Toscana
+498,Pfizer/BioNTech,28275,2021-01-12,Toscana
+499,Moderna,5300,2021-01-13,Toscana
+500,Pfizer/BioNTech,4680,2021-01-18,Toscana
+501,Pfizer/BioNTech,7020,2021-01-20,Toscana
+502,Pfizer/BioNTech,7020,2021-01-21,Toscana
+503,Pfizer/BioNTech,23400,2021-01-26,Toscana
+504,Pfizer/BioNTech,5850,2021-01-27,Toscana
+505,Moderna,4100,2021-02-01,Toscana
+506,Pfizer/BioNTech,31590,2021-02-02,Toscana
+507,AstraZeneca,15400,2021-02-09,Toscana
+508,Pfizer/BioNTech,31590,2021-02-09,Toscana
+509,AstraZeneca,18100,2021-02-13,Toscana
+510,Moderna,9600,2021-02-13,Toscana
+511,Pfizer/BioNTech,8190,2021-02-16,Toscana
+512,Pfizer/BioNTech,36270,2021-02-18,Toscana
+513,AstraZeneca,31300,2021-02-19,Toscana
+514,Pfizer/BioNTech,44460,2021-02-23,Toscana
+515,AstraZeneca,29900,2021-02-27,Toscana
+516,Moderna,17700,2021-03-01,Toscana
+517,Pfizer/BioNTech,46800,2021-03-02,Toscana
+518,Pfizer/BioNTech,50310,2021-03-09,Toscana
+519,AstraZeneca,42300,2021-03-10,Toscana
+520,AstraZeneca,16300,2021-03-13,Toscana
+521,Pfizer/BioNTech,50310,2021-03-15,Toscana
+522,Pfizer/BioNTech,85,2020-12-27,Umbria
+523,Pfizer/BioNTech,4875,2020-12-30,Umbria
+524,Pfizer/BioNTech,4875,2021-01-05,Umbria
+525,Pfizer/BioNTech,5850,2021-01-12,Umbria
+526,Moderna,1000,2021-01-13,Umbria
+527,Pfizer/BioNTech,2340,2021-01-18,Umbria
+528,Pfizer/BioNTech,3510,2021-01-20,Umbria
+529,Pfizer/BioNTech,2340,2021-01-26,Umbria
+530,Moderna,1000,2021-02-01,Umbria
+531,Pfizer/BioNTech,4680,2021-02-02,Umbria
+532,AstraZeneca,3700,2021-02-09,Umbria
+533,Pfizer/BioNTech,7020,2021-02-10,Umbria
+534,AstraZeneca,4300,2021-02-13,Umbria
+535,Moderna,2300,2021-02-13,Umbria
+536,Pfizer/BioNTech,10530,2021-02-18,Umbria
+537,AstraZeneca,7500,2021-02-19,Umbria
+538,Pfizer/BioNTech,10530,2021-02-24,Umbria
+539,AstraZeneca,6300,2021-02-27,Umbria
+540,Moderna,4300,2021-03-01,Umbria
+541,Pfizer/BioNTech,11700,2021-03-02,Umbria
+542,Pfizer/BioNTech,11700,2021-03-09,Umbria
+543,AstraZeneca,9600,2021-03-10,Umbria
+544,AstraZeneca,3700,2021-03-13,Umbria
+545,Pfizer/BioNTech,11700,2021-03-15,Umbria
+546,Pfizer/BioNTech,20,2020-12-27,Valle d'Aosta / Vallée d'Aoste
+547,Pfizer/BioNTech,975,2020-12-30,Valle d'Aosta / Vallée d'Aoste
+548,Pfizer/BioNTech,975,2021-01-05,Valle d'Aosta / Vallée d'Aoste
+549,Pfizer/BioNTech,1950,2021-01-12,Valle d'Aosta / Vallée d'Aoste
+550,Moderna,200,2021-01-13,Valle d'Aosta / Vallée d'Aoste
+551,Pfizer/BioNTech,1170,2021-01-20,Valle d'Aosta / Vallée d'Aoste
+552,Pfizer/BioNTech,1170,2021-01-26,Valle d'Aosta / Vallée d'Aoste
+553,Moderna,100,2021-02-01,Valle d'Aosta / Vallée d'Aoste
+554,Pfizer/BioNTech,1170,2021-02-02,Valle d'Aosta / Vallée d'Aoste
+555,Pfizer/BioNTech,1170,2021-02-09,Valle d'Aosta / Vallée d'Aoste
+556,AstraZeneca,500,2021-02-10,Valle d'Aosta / Vallée d'Aoste
+557,AstraZeneca,600,2021-02-13,Valle d'Aosta / Vallée d'Aoste
+558,Moderna,300,2021-02-13,Valle d'Aosta / Vallée d'Aoste
+559,Pfizer/BioNTech,1170,2021-02-18,Valle d'Aosta / Vallée d'Aoste
+560,AstraZeneca,1100,2021-02-20,Valle d'Aosta / Vallée d'Aoste
+561,Pfizer/BioNTech,1170,2021-02-23,Valle d'Aosta / Vallée d'Aoste
+562,AstraZeneca,900,2021-02-27,Valle d'Aosta / Vallée d'Aoste
+563,Moderna,500,2021-02-28,Valle d'Aosta / Vallée d'Aoste
+564,Pfizer/BioNTech,1170,2021-03-02,Valle d'Aosta / Vallée d'Aoste
+565,Pfizer/BioNTech,1170,2021-03-09,Valle d'Aosta / Vallée d'Aoste
+566,AstraZeneca,1300,2021-03-10,Valle d'Aosta / Vallée d'Aoste
+567,AstraZeneca,500,2021-03-13,Valle d'Aosta / Vallée d'Aoste
+568,Pfizer/BioNTech,1170,2021-03-15,Valle d'Aosta / Vallée d'Aoste
+569,Pfizer/BioNTech,875,2020-12-27,Veneto
+570,Pfizer/BioNTech,25350,2020-12-30,Veneto
+571,Pfizer/BioNTech,12675,2020-12-31,Veneto
+572,Pfizer/BioNTech,4875,2021-01-05,Veneto
+573,Pfizer/BioNTech,34125,2021-01-07,Veneto
+574,Pfizer/BioNTech,39000,2021-01-12,Veneto
+575,Moderna,7800,2021-01-13,Veneto
+576,Pfizer/BioNTech,7020,2021-01-20,Veneto
+577,Pfizer/BioNTech,15210,2021-01-21,Veneto
+578,Pfizer/BioNTech,14040,2021-01-26,Veneto
+579,Pfizer/BioNTech,36270,2021-01-27,Veneto
+580,Moderna,5400,2021-02-01,Veneto
+581,Pfizer/BioNTech,45630,2021-02-02,Veneto
+582,AstraZeneca,20400,2021-02-09,Veneto
+583,Pfizer/BioNTech,42120,2021-02-10,Veneto
+584,AstraZeneca,23900,2021-02-13,Veneto
+585,Moderna,10700,2021-02-13,Veneto
+586,Pfizer/BioNTech,49140,2021-02-18,Veneto
+587,AstraZeneca,41300,2021-02-20,Veneto
+588,Pfizer/BioNTech,50310,2021-02-23,Veneto
+589,AstraZeneca,37300,2021-02-27,Veneto
+590,Moderna,19700,2021-02-28,Veneto
+591,Pfizer/BioNTech,52650,2021-03-02,Veneto
+592,Pfizer/BioNTech,56160,2021-03-09,Veneto
+593,AstraZeneca,56000,2021-03-10,Veneto
+594,AstraZeneca,20900,2021-03-13,Veneto
+595,Pfizer/BioNTech,56160,2021-03-15,Veneto
