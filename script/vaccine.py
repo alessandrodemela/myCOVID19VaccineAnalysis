@@ -1,25 +1,37 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
-import datetime
+sns.set()
 
-import os
+import ETL
+from Classes import Somministrazioni, Anagrafica
+
+import datetime, os
 
 DWpath = os.path.join('..','DW')
 
-st.title('Report vaccinazioni COVID-19')
 
+with open('lastupdate', 'r') as fin:
+    lastupdate = fin.read().strip().split('/')
+    lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
 
-somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
-consegne = pd.read_csv(os.path.join(DWpath,'consegneVacciniLatest.csv'))
+#ETL
+if(lastupdate >= datetime.date.today()):
+    somministrazioniAnagr, update = ETL.ETL_anagraficaVacciniSummaryLatest()
+    somministrazioni = ETL.ETL_somministrazioniVacciniSummaryLatest()
+    ETL.ETL_consegneVacciniLatest()
 
-somministrazioni.drop(columns='Unnamed: 0', inplace=True)
+with open('lastupdate', 'w') as fout:
+    fout.write(update)
 
 ###################TESTO INIZIALE##################
+
+st.title('Report vaccinazioni COVID-19')
+st.write('Ultimo Aggiornamento {}'.format(update))
+
 st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è cominciata il 27/12/2020 [\[1\]]'
             '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
             '\nNella tabella seguente si mostrano il numero di somministrazioni ordinato per data, nelle varie regioni'
@@ -27,81 +39,95 @@ st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è co
             )
 ###################################################
 
-dates  = pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date.unique()
 
-startDate, endDate = st.sidebar.slider("Seleziona un intervallo temporale",
-                                min_value=dates[0],
-                                max_value=dates[-1],
-                                value=[dates[0],dates[-1]],
+################REPORT SOMMINISTRAZIONI############
+st.header('Dosi Somministrate per giorno')
+st.write(
+    "Dosi somministrate quotidiananmente, la data odierna potrebbe contenere un dato parziale."
 )
-
-somministrazioniFilterData = somministrazioni[  (pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date >= startDate )
-                                                & (pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date <= endDate)   
-                                                #& (somministrazioni['Regione']==somministrazioni.any)
-                ]       
-
-st.write(somministrazioniFilterData)
-
-
-#####################BAR DOSI E TOTALE GIORNALIERO##################
-somministrazioniGiorno = somministrazioniFilterData.groupby('Data Somministrazione').sum()
-
-fig = make_subplots(specs=[[{"secondary_y": True}]])
-fig.add_trace(
-    go.Bar(
-        name='Prima Dose', 
-        x = somministrazioniGiorno.index, 
-        y = somministrazioniGiorno['Prima Dose'],
-    )
-)
-fig.add_trace(
-    go.Bar(
-        name='Seconda Dose',
-        x = somministrazioniGiorno.index,
-        y = somministrazioniGiorno['Seconda Dose']
-    )
-)
-fig.add_trace(
-    go.Scatter(
-        name = 'Totale',
-        x = somministrazioniGiorno.index,
-        y = somministrazioniGiorno['Totale'].cumsum(),
-    ),
-    secondary_y=True
-)
-fig.update_layout(barmode='stack')
-# Set y-axes titles
-fig.update_yaxes(title_text="Numero Dosi Somministrate", secondary_y=False)
-fig.update_yaxes(title_text="Totale Dosi Somministrate", range=[0, 1.3*somministrazioniGiorno['Totale'].cumsum().max()],secondary_y=True)
-fig.update_yaxes()
+fig = Somministrazioni()
 st.write(fig)
+###################################################
 
-####################ANALISI REGIONALE#################
-regione = st.multiselect('Seleziona una o più regioni per visualizzare il grafico.', options=somministrazioni.Regione.unique())
-
-regioniConfronto = make_subplots(specs=[[{"secondary_y": True}]])
-# regioniConfronto.add_trace(
-#     go.Scatter(
-#         name = 'Somministrazioni Totali Italia',
-#         x = somministrazioniGiorno.index,
-#         y = somministrazioniGiorno['Totale'].cumsum()
-#     )
-# )
-
-for i in regione:
-    regioneSelezionata = somministrazioniFilterData[somministrazioni.Regione==i]
-    regioniConfronto.add_trace(
-        go.Scatter(
-            name = 'Somministrazioni {}'.format(i),
-            x = regioneSelezionata['Data Somministrazione'],
-            y = regioneSelezionata['Totale'].cumsum()
-        )
+################ANAGRAFICA############
+st.header('Anagrafica Somministrazioni')
+st.write(
+    "Sguardo alla distribuzione dei vaccini per fascia di età."
+    "Si nota la percentuale di vaccinati per anagrafica."
     )
-regioniConfronto.update_layout(legend=dict(
-    yanchor="top",
-    y=0.99,
-    xanchor="left",
-    x=0.01
-))
-st.write(regioniConfronto, use_container_width=True)
-######################################################
+pltAnaDosi, pltAnaPerc, altriPlot = Anagrafica()
+st.write(pltAnaDosi)
+st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
+st.write(altriPlot)
+#st.write(pltAnaPerc)
+###################################################
+
+################ANALISI REGIONALE############
+st.header('Anagrafica Somministrazioni')
+st.write(
+    "Sguardo alla distribuzione dei vaccini per fascia di età."
+    "Si nota la percentuale di vaccinati per anagrafica."
+    )
+pltAnaDosi, pltAnaPerc, altriPlot = Anagrafica()
+st.write(pltAnaDosi)
+st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
+st.write(altriPlot)
+#st.write(pltAnaPerc)
+###################################################
+
+st.markdown('####################################################')
+
+consegne = pd.read_csv(os.path.join(DWpath,'consegneVacciniLatest.csv'))
+
+
+#dates  = pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date.unique()
+
+
+
+# somministrazioniFilterData = somministrazioni[  (pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date >= startDate )
+#                                                 & (pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date <= endDate)   
+#                                                 #& (somministrazioni['Regione']==somministrazioni.any)
+#                 ]       
+
+# st.write(somministrazioniFilterData)
+
+
+# #####################BAR DOSI E TOTALE GIORNALIERO##################
+# somministrazioniGiorno = somministrazioniFilterData.groupby('Data Somministrazione').sum()
+
+
+# ####################ANALISI REGIONALE#################
+# abitantiregioni = pd.read_csv('DCIS_POPRES1_25022021122609782.csv')
+# abitantiregioni = abitantiregioni.iloc[:,[1,5,6,9,12]].sort_values(['Territorio',
+#                                                     'Sesso']
+#                                                   ).where((abitantiregioni['Stato civile']=='totale') &
+#                                                           (abitantiregioni.Sesso=='totale') &
+#                                                           (abitantiregioni.ETA1=='TOTAL')
+#                                                          ).dropna().iloc[:,[0,-1]].set_index('Territorio')
+# # Rename field and indexfor better naming
+# abitantiregioni = abitantiregioni.rename(columns={'Value': 'Abitanti'}).rename_axis('Regione').astype(int)
+
+
+
+# regione = st.multiselect('Seleziona una o più regioni per visualizzare il grafico.', options=somministrazioni.Regione.unique())
+
+# regioniConfronto = make_subplots(specs=[[{"secondary_y": True}]])
+
+# for i in regione:
+#     regioneSelezionata = somministrazioniFilterData[somministrazioni.Regione==i]
+#     regioniConfronto.add_trace(
+#         go.Scatter(
+#             name = 'Somministrazioni {}'.format(i),
+#             x = regioneSelezionata['Data Somministrazione'],
+#             y = regioneSelezionata['Totale'].cumsum()
+#         )
+#     )
+# regioniConfronto.update_layout(legend=dict(
+#     yanchor="top",
+#     y=0.99,
+#     xanchor="left",
+#     x=0.01
+# ))
+# st.write(regioniConfronto, use_container_width=True)
+# ######################################################
+

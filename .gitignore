@@ -1,3 +1,5 @@
 .gitmodules
 .DS_Store
 .ipynb_checkpoints*
+script/Playground.ipynb
+script/__pycache__/
