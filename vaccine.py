@@ -13,30 +13,43 @@ import datetime, os
 
 DWpath = os.path.join('DW')
 
-
 with open('lastupdate', 'r') as fin:
     lastupdate = fin.read().strip().split('/')
     lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
 
 #ETL
-if(lastupdate < datetime.date.today()):
-    somministrazioniAnagr, lastupdate = ETL.ETL_anagraficaVacciniSummaryLatest()
-    somministrazioni = ETL.ETL_somministrazioniVacciniSummaryLatest()
-    ETL.ETL_consegneVacciniLatest()
+somministrazioniAnagr, newupdate = ETL.ETL_anagraficaVacciniSummaryLatest()
+somministrazioni = ETL.ETL_somministrazioniVacciniSummaryLatest()
+ETL.ETL_consegneVacciniLatest()
 
+if(lastupdate < datetime.date.today()):
     with open('lastupdate', 'w') as fout:
-        fout.write(lastupdate)
+        fout.write(newupdate)
 
 ###################TESTO INIZIALE##################
 
 st.title('Report vaccinazioni COVID-19')
-st.write('Ultimo Aggiornamento {}'.format(lastupdate))
+st.write('Ultimo Aggiornamento {}'.format(newupdate))
 
 st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è cominciata il 27/12/2020 [\[1\]]'
             '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
             '\nNella tabella seguente si mostrano il numero di somministrazioni ordinato per data, nelle varie regioni'
             ' e suddiviso per sesso e categoria sociale, oltre che per tipo di sommnistrazione.'
             )
+
+totSomministrate = somministrazioniAnagr.Totale.sum()
+totPrime = somministrazioniAnagr['Prima Dose'].sum()
+totSeconde = somministrazioniAnagr['Seconda Dose'].sum()
+platea = somministrazioniAnagr.Platea.sum()
+percPrime = round(totPrime/platea,4)
+percSeconde = round(totSeconde/platea,4)
+st.markdown(
+    f'Al {newupdate} sono state distribuite **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
+    f' e **{totSeconde:,}** seconde dosi. La percentuale di persone che ha ricevuto almeno una dose è '
+    f' del **{percPrime:.2%}**, mentre il **{percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
+
+
+)
 ###################################################
 
 
