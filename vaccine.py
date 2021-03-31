@@ -11,7 +11,7 @@ from Classes import Somministrazioni, Anagrafica
 
 import datetime, os
 
-DWpath = os.path.join('..','DW')
+DWpath = os.path.join('DW')
 
 
 with open('script/lastupdate', 'r') as fin:
