@@ -6,7 +6,7 @@ Description of the repository
 * `covid19-opendata-vaccini` is the official repository for italian vaccination campaign;
 * `ETL_Vaccini.ipynb` contains the script to read `.csv` files and transform them;
 * `ReportVaccinoCOVID_ITA.ipynb` is a notebook for the analysis carried out with Jupyter. It also contains python script to make charts and visualization;
-* `script` contains the python script to perform the report and view it with `streamlit`.  
+* And then we have scripts which are the python script to perform the report and view it with `streamlit`.  
   * We have an `ETL`script
   * The main file `vaccini.py`
   * Two helper files `grafici.py` for plotting and `Classes.py` to perform the analysis
