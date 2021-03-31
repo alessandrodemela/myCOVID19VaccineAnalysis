@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import streamlit as st
 import os
 
 if not os.path.isdir('DW'): os.mkdir('DW')
@@ -17,6 +18,7 @@ def createNameMappingDict(df):
 
 def ETL_anagraficaVacciniSummaryLatest():
     global anaVacSumLat 
+    st.write(csvPath+'anagrafica-vaccini-summary-latest.csv')
     anaVacSumLat = pd.read_csv(csvPath+'anagrafica-vaccini-summary-latest.csv')
     anaVacSumLat = anaVacSumLat.rename(columns=createNameMappingDict(anaVacSumLat))
     
