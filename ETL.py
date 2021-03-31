@@ -8,7 +8,7 @@ if not os.path.isdir('DW'): os.mkdir('DW')
 DWPath = 'DW/'
 csvPath = './covid19-opendata-vaccini/dati/'
 
-st.write(os.listdir())
+st.write(os.listdir('covid19-opendata-vaccini'))
 
 
 # mapping columns names
