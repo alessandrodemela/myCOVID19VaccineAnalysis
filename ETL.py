@@ -8,6 +8,8 @@ if not os.path.isdir('DW'): os.mkdir('DW')
 DWPath = 'DW/'
 csvPath = './covid19-opendata-vaccini/dati/'
 
+st.write(os.listdir())
+
 
 # mapping columns names
 def createNameMappingDict(df):
