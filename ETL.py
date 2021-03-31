@@ -33,6 +33,9 @@ def ETL_anagraficaVacciniSummaryLatest():
     anaVacSumLat = anaVacSumLat.rename(columns=createNameMappingDict(anaVacSumLat))
     
     vLastUpdate = datetime.strptime(anaVacSumLat.iloc[0,-1],"%Y-%m-%d").strftime("%d/%m/%Y")
+
+    with open('lastupdate','w') as fLastUpdate:
+        fLastUpdate.write(vLastUpdate)
     
     anaVacSumLat = anaVacSumLat.iloc[:,:-1]
     
