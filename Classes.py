@@ -44,7 +44,6 @@ def Header():
         f'Sono state consegnate **{totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{percConsegne:.2%}**.'
     )
 
-
 class Somministrazioni:
 
     __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
