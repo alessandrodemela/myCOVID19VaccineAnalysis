@@ -13,11 +13,11 @@ from Classes import AnalisiRegionale, Somministrazioni
 DWpath = os.path.join('DW')
 
 # Introduzione
-#Header()
+Header()
 
 # Somministrazioni
-# somm = Somministrazioni()
-# somm.Analisi()
+somm = Somministrazioni()
+somm.Analisi()
 
 # ################ANAGRAFICA############
 # st.header('Anagrafica Somministrazioni')
