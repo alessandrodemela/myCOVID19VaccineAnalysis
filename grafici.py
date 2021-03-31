@@ -89,11 +89,11 @@ def RadarAnagrafica(anaVacSumLat):
 
     ax[1].annotate(
         "% Vaccinati\nPer Anagrafica",
-        xy=(.05,-.1),
-        xytext=(.2, -.35),
+        xy=(.12,-.2),
+        xytext=(.35, -.12),
         arrowprops=dict(
             arrowstyle="->",
-            connectionstyle = "angle,angleA=180,angleB=100,rad=70",
+            connectionstyle = "angle,angleA=180,angleB=80,rad=70",
             lw=1,
             color='tab:gray'
         ),
@@ -137,7 +137,7 @@ def ScatterAnagrafica(anaVacSumLat):
     axs.axis('off')
 
     for n,i in enumerate(anaVacSumLat['Fascia Anagrafica']): 
-        axs.text(x=i,y=0.975,s=i, fontsize=50, ha='center', va='top', fontfamily='Gill Sans', c='#156e45')
+        axs.text(x=i,y=0.975,s=i, fontsize=55, ha='center', va='top', fontfamily='Gill Sans', c='#156e45')
 
     #for n,i in enumerate(anaVacSumLat['% Seconda Dose Sul Totale']):   
     #    axs[1].text(x=n, y=1, s=str(round(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='navy')
@@ -156,7 +156,7 @@ def ScatterAnagrafica(anaVacSumLat):
                                 color='k'
                             ),
                 font='Gill Sans',
-                fontsize=45,
+                fontsize=60,
             )
     #axs[1].annotate("% Seconde Dosi\nSulla Platea",
     #            xy=(-.3, 1.016),
@@ -168,21 +168,23 @@ def ScatterAnagrafica(anaVacSumLat):
     #            font='Gill Sans',
     #            fontsize=45,
     #            )
-    axs.annotate("Platea",
-                xy=(0, 0.997),
-                xytext=(-1, 0.99),
-                arrowprops=dict(arrowstyle="->",
-                                connectionstyle = "angle,angleA=0,angleB=80,rad=110",
-                                lw=3,
-                                color='k'
-                            ),
-                font='Gill Sans',
-                fontsize=45,
-            )
+    axs.annotate(
+        "Platea",
+        xy=(0, 0.997),
+        xytext=(-1, 0.99),
+        arrowprops=dict(
+            arrowstyle="->",
+            connectionstyle = "angle,angleA=0,angleB=80,rad=110",
+            lw=3,
+            color='k'
+            ),
+        font='Gill Sans',
+        fontsize=60,
+    )
     axs.annotate(
         "Seconda\nDose",
         xy=(5, 1),
-        xytext=(5.3, 1.015),
+        xytext=(5.3, 1.01),
         arrowprops=dict(
             arrowstyle="->",
             connectionstyle = "angle,angleA=180,angleB=-100,rad=120",
@@ -191,7 +193,7 @@ def ScatterAnagrafica(anaVacSumLat):
         ),
         ha='left',
         font='Gill Sans',
-        fontsize=45,
+        fontsize=60,
     )
     #axs[1].annotate("% Dose Somministrate\nSul Totale Delle Dosi",
     #            xy=(8.3, 1.0285),
@@ -215,8 +217,10 @@ def ScatterAnagrafica(anaVacSumLat):
     #            fontsize=45,
     #            ha='center'
     #            )
-    axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font='Gill Sans', fontsize=70, ha='center')
+    axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font='Gill Sans', fontsize=80, ha='center')
     plt.tight_layout()
+    plt.subplots_adjust(left=1,right=2.1)
+
     return fig
 
 def AnagraficaPlot(anaVacSumLat):

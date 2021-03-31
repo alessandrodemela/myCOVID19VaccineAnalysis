@@ -3,88 +3,56 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
 sns.set()
 
-from Classes import Somministrazioni, Anagrafica
+import datetime, os, sys
+from Classes import Header, Anagrafica
 
-import datetime, os
+from Classes import AnalisiRegionale, Somministrazioni
 
 DWpath = os.path.join('DW')
 
-#ETL
-somministrazioniAnagr = pd.read_csv(os.path.join(DWpath,'anagraficaVacciniSummaryLatest.csv'))
-somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
-consegne = pd.read_csv(os.path.join(DWpath,'consegneVacciniLatest.csv'))
+# Introduzione
+#Header()
 
-with open('lastupdate', 'r') as fin:
-    lastupdate = fin.read().strip().split('/')
-    lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
-    reformatLastUpdate = lastupdate.strftime('%d/%m/%Y')
+# Somministrazioni
+# somm = Somministrazioni()
+# somm.Analisi()
 
-###################TESTO INIZIALE##################
+# ################ANAGRAFICA############
+# st.header('Anagrafica Somministrazioni')
+# st.write(
+#     "Sguardo alla distribuzione dei vaccini per fascia di età."
+#     )
+# pltAnaDosi, pltAnaPerc, altriPlot = Anagrafica()
 
-st.title('Report vaccinazioni COVID-19')
-st.write('Ultimo Aggiornamento {}'.format(reformatLastUpdate))
+# # Bubble plot
+# st.pyplot(pltAnaDosi)
 
-st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è cominciata il 27/12/2020 [\[1\]]'
-            '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
-            '\nNella tabella seguente si mostrano il numero di somministrazioni ordinato per data, nelle varie regioni'
-            ' e suddiviso per sesso e categoria sociale, oltre che per tipo di sommnistrazione.'
-            )
+# st.markdown('***')
+# # Add a checkbox to show/hide radar plot
+# if st.checkbox('Seleziona per vedere una visualizzazione alternativa.'): 
+#     st.write(pltAnaPerc)
+#     st.write(
+#         'Questo grafico mostra la percentuale di vaccinati (seconda dose somministrata) in funzione della fascia anagrafica'
+#         ' di appartenenza, oltre alla media italiana. Il grafico di destra è la versione ingrandita di quello a sinistra per maggior visibilità.'
+#     )
 
-totSomministrate = somministrazioniAnagr.Totale.sum()
-totPrime = somministrazioniAnagr['Prima Dose'].sum()
-totSeconde = somministrazioniAnagr['Seconda Dose'].sum()
-platea = somministrazioniAnagr.Platea.sum()
-percPrime = round(totPrime/platea,4)
-percSeconde = round(totSeconde/platea,4)
-totConsegne = consegne['Numero Dosi'].sum()
-percConsegne = totSomministrate/totConsegne
-st.markdown(
-    f'Al {reformatLastUpdate} sono state distribuite **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
-    f' e **{totSeconde:,}** seconde dosi. La percentuale di persone che ha ricevuto almeno una dose è '
-    f' del **{percPrime:.2%}**, mentre il **{percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
-)
+# st.markdown('***')
 
-st.markdown(
-    f'Sono state consegnate **{totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{percConsegne:.2%}**.'
-)
+# st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
+# # Sex and social category
+# st.write(altriPlot)
+
 ###################################################
 
+# Analisi Regionale
+anaReg =AnalisiRegionale()
+anaReg.Analisi()
 
-################REPORT SOMMINISTRAZIONI############
-st.header('Dosi Somministrate per giorno')
-st.write(
-    "Dosi somministrate quotidiananmente, la data odierna potrebbe contenere un dato parziale."
-)
-fig = Somministrazioni()
-st.write(fig)
-###################################################
-
-################ANAGRAFICA############
-st.header('Anagrafica Somministrazioni')
-st.write(
-    "Sguardo alla distribuzione dei vaccini per fascia di età."
-    "Si nota la percentuale di vaccinati per anagrafica."
-    )
-pltAnaDosi, pltAnaPerc, altriPlot = Anagrafica()
-st.write(pltAnaDosi)
-st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
-st.write(altriPlot)
-#st.write(pltAnaPerc)
-###################################################
-
-################ANALISI REGIONALE############
-st.header('Analisi Regionale')
-st.write(
-    "*To be written*"
-    )
 ###################################################
 
 st.markdown('####################################################')
-
-consegne = pd.read_csv(os.path.join(DWpath,'consegneVacciniLatest.csv'))
 
 
 #dates  = pd.to_datetime(somministrazioni['Data Somministrazione']).dt.date.unique()
