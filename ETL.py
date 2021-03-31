@@ -3,12 +3,20 @@ import numpy as np
 from datetime import datetime
 import streamlit as st
 import os
+from shutil import copyfile
 
-if not os.path.isdir('DW'): os.mkdir('DW')
 DWPath = 'DW/'
 csvPath = './covid19-opendata-vaccini/dati/'
+if not os.path.isdir(DWPath): os.mkdir(DWPath)
 
-st.write(os.listdir('covid19-opendata-vaccini'))
+rawDatapath = 'originalData/'
+if not os.path.isdir(rawDatapath): os.mkdir(rawDatapath)
+
+for file in ['anagrafica-vaccini-summary-latest.csv','consegne-vaccini-latest.csv','somministrazioni-vaccini-summary-latest.csv']:
+    copyfile(csvPath+file,rawDatapath+file)
+csvPath = rawDatapath
+
+st.write(os.listdir(csvPath))
 
 
 # mapping columns names
