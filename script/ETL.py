@@ -3,7 +3,10 @@ import numpy as np
 from datetime import datetime
 import os
 
-if not os.path.isdir('../DW'): os.mkdir('../DW')
+if not os.path.isdir('DW'): os.mkdir('DW')
+DWPath = 'DW'
+csvPath = 'covid19-opendata-vaccini/dati/'
+
 
 # mapping columns names
 def createNameMappingDict(df):
@@ -14,7 +17,7 @@ def createNameMappingDict(df):
 
 def ETL_anagraficaVacciniSummaryLatest():
     global anaVacSumLat 
-    anaVacSumLat = pd.read_csv('../covid19-opendata-vaccini/dati/anagrafica-vaccini-summary-latest.csv')
+    anaVacSumLat = pd.read_csv(csvPath+'anagrafica-vaccini-summary-latest.csv')
     anaVacSumLat = anaVacSumLat.rename(columns=createNameMappingDict(anaVacSumLat))
     
     vLastUpdate = datetime.strptime(anaVacSumLat.iloc[0,-1],"%Y-%m-%d").strftime("%d/%m/%Y")
@@ -28,24 +31,24 @@ def ETL_anagraficaVacciniSummaryLatest():
     anaVacSumLat['% Totale Assoluto'] = round(anaVacSumLat['Totale']/anaVacSumLat['Platea'] * 100,2)
     # ---------------------
     
-    anaVacSumLat.to_csv('../DW/anagraficaVacciniSummaryLatest.csv')
+    anaVacSumLat.to_csv(DWPath+'anagraficaVacciniSummaryLatest.csv')
 
     return anaVacSumLat,vLastUpdate
     
 
 def ETL_consegneVacciniLatest():
     global consVacciniLat 
-    consVacciniLat = pd.read_csv('../covid19-opendata-vaccini/dati/consegne-vaccini-latest.csv')
+    consVacciniLat = pd.read_csv(csvPath+'consegne-vaccini-latest.csv')
     consVacciniLat = consVacciniLat.rename(columns=createNameMappingDict(consVacciniLat)
                                           ).rename(columns={'Nome Area': 'Regione'} )   
     consVacciniLat = consVacciniLat.iloc[:,[1,2,3,7]]
     consVacciniLat['Data Consegna'] = pd.to_datetime(consVacciniLat['Data Consegna'])
     
-    consVacciniLat.to_csv('../DW/consegneVacciniLatest.csv')
+    consVacciniLat.to_csv(DWPath+'consegneVacciniLatest.csv')
 
 def ETL_somministrazioniVacciniSummaryLatest():
     global somVacciniSumLat
-    somVacciniSumLat = pd.read_csv('../covid19-opendata-vaccini/dati/somministrazioni-vaccini-summary-latest.csv')
+    somVacciniSumLat = pd.read_csv(csvPath+'somministrazioni-vaccini-summary-latest.csv')
     somVacciniSumLat = somVacciniSumLat.rename(columns=createNameMappingDict(somVacciniSumLat)
                                               ).rename(columns={'Nome Area': 'Regione'} )
 
@@ -59,6 +62,6 @@ def ETL_somministrazioniVacciniSummaryLatest():
     
     somVacciniSumLat = somVacciniSumLat.sort_values(['Data Somministrazione','Regione']).reset_index()
     somVacciniSumLat = somVacciniSumLat.drop(columns='index')
-    somVacciniSumLat.to_csv('../DW/somministrazioniVacciniSummaryLatest.csv')
+    somVacciniSumLat.to_csv(DWPath+'somministrazioniVacciniSummaryLatest.csv')
 
     return somVacciniSumLat

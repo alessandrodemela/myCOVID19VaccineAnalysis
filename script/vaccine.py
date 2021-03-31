@@ -14,23 +14,23 @@ import datetime, os
 DWpath = os.path.join('..','DW')
 
 
-with open('lastupdate', 'r') as fin:
+with open('script/lastupdate', 'r') as fin:
     lastupdate = fin.read().strip().split('/')
     lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
 
 #ETL
-if(lastupdate >= datetime.date.today()):
-    somministrazioniAnagr, update = ETL.ETL_anagraficaVacciniSummaryLatest()
+if(lastupdate < datetime.date.today()):
+    somministrazioniAnagr, lastupdate = ETL.ETL_anagraficaVacciniSummaryLatest()
     somministrazioni = ETL.ETL_somministrazioniVacciniSummaryLatest()
     ETL.ETL_consegneVacciniLatest()
 
-with open('lastupdate', 'w') as fout:
-    fout.write(update)
+    with open('script/lastupdate', 'w') as fout:
+        fout.write(update)
 
 ###################TESTO INIZIALE##################
 
 st.title('Report vaccinazioni COVID-19')
-st.write('Ultimo Aggiornamento {}'.format(update))
+st.write('Ultimo Aggiornamento {}'.format(lastupdate))
 
 st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è cominciata il 27/12/2020 [\[1\]]'
             '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
@@ -63,16 +63,10 @@ st.write(altriPlot)
 ###################################################
 
 ################ANALISI REGIONALE############
-st.header('Anagrafica Somministrazioni')
+st.header('Analisi Regionale')
 st.write(
-    "Sguardo alla distribuzione dei vaccini per fascia di età."
-    "Si nota la percentuale di vaccinati per anagrafica."
+    "*To be written*"
     )
-pltAnaDosi, pltAnaPerc, altriPlot = Anagrafica()
-st.write(pltAnaDosi)
-st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
-st.write(altriPlot)
-#st.write(pltAnaPerc)
 ###################################################
 
 st.markdown('####################################################')

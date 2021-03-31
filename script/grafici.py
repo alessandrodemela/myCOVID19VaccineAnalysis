@@ -148,7 +148,7 @@ def ScatterAnagrafica(anaVacSumLat):
         
     axs.annotate("Totale\nSomministrazioni",
                 xy=(7, 0.9955),
-                xytext=(8, 0.985),
+                xytext=(7.2, 0.985),
                 arrowprops=dict(arrowstyle="->",
                                 connectionstyle = "angle,angleA=180,angleB=90,rad=120",
                                 lw=3,
@@ -181,7 +181,7 @@ def ScatterAnagrafica(anaVacSumLat):
     axs.annotate(
         "Seconda\nDose",
         xy=(5, 1),
-        xytext=(6, 1.015),
+        xytext=(5.3, 1.015),
         arrowprops=dict(
             arrowstyle="->",
             connectionstyle = "angle,angleA=180,angleB=-100,rad=120",
@@ -221,24 +221,25 @@ def ScatterAnagrafica(anaVacSumLat):
 def AnagraficaPlot(anaVacSumLat):
     fig, axs = plt.subplots(nrows=2,ncols=1, figsize=(20,18))
 
-    for ax,t,rg in zip(axs,['Sesso','Categoria Sociale'],[range(2,4),range(5,11)]):
+    colorList = ['salmon','cornflowerblue','mediumseagreen','peru','forestgreen','navy','orange']
+    for ax,t,rg in zip(axs,['Sesso','Categoria Sociale'],[range(2,4),range(4,11)]):
         bottom = np.zeros(len(anaVacSumLat['Fascia Anagrafica']))  
 
-        for i in rg:
+        for i,c in zip(rg,colorList):
             ax.bar(
                 x=anaVacSumLat['Fascia Anagrafica'], 
                 height=anaVacSumLat.iloc[:,i], 
                 label=anaVacSumLat.columns[i],
                 bottom=bottom,
                 width=.9,
-               # color=c
+                color=c
             )
             bottom=bottom+anaVacSumLat.iloc[:,i]
         ax.tick_params(labelsize=18)
-        ax.set_xlabel('Fascia anagrafica', fontfamily='Gill Sans', fontsize=20)
-        ax.set_ylabel('Somministrazioni', fontfamily='Gill Sans', fontsize=20)
-        ax.set_title('Distribuzione vaccini per %s' %t, fontfamily='Gill Sans', fontsize=24)
-        ax.legend(fontsize=15)
+        ax.set_xlabel('Fascia anagrafica', fontfamily='Gill Sans', fontsize=25)
+        ax.set_ylabel('Somministrazioni', fontfamily='Gill Sans', fontsize=25)
+        ax.set_title('Distribuzione vaccini per %s' %t, fontfamily='Gill Sans', fontsize=28)
+        ax.legend(fontsize=18)
         ax.grid(lw=.2)
 
     return fig

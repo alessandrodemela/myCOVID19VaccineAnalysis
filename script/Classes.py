@@ -5,7 +5,7 @@ import numpy as np
 import os
 from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot
 
-DWpath = os.path.join('..','DW')
+DWpath = 'DW'
 
 def Somministrazioni():
     somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
