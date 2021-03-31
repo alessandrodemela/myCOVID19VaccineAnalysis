@@ -215,7 +215,7 @@ def ScatterAnagrafica(anaVacSumLat):
     #            ha='center'
     #            )
     axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font='Gill Sans', fontsize=70, ha='center')
-
+    plt.tight_layout()
     return fig
 
 def AnagraficaPlot(anaVacSumLat):
