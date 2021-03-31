@@ -25,7 +25,7 @@ if(lastupdate < datetime.date.today()):
     ETL.ETL_consegneVacciniLatest()
 
     with open('script/lastupdate', 'w') as fout:
-        fout.write(update)
+        fout.write(lastupdate)
 
 ###################TESTO INIZIALE##################
 

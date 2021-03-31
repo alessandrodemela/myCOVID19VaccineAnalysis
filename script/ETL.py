@@ -4,8 +4,8 @@ from datetime import datetime
 import os
 
 if not os.path.isdir('DW'): os.mkdir('DW')
-DWPath = 'DW'
-csvPath = 'covid19-opendata-vaccini/dati/'
+DWPath = 'DW/'
+csvPath = '../covid19-opendata-vaccini/dati/'
 
 
 # mapping columns names
