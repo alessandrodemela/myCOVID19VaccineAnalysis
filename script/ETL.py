@@ -5,7 +5,7 @@ import os
 
 if not os.path.isdir('DW'): os.mkdir('DW')
 DWPath = 'DW/'
-csvPath = 'covid19-opendata-vaccini/dati/'
+csvPath = '~/covid19-opendata-vaccini/dati/'
 
 
 # mapping columns names
