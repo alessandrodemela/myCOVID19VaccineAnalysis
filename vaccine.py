@@ -18,13 +18,14 @@ somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSumma
 consegne = pd.read_csv(os.path.join(DWpath,'consegneVacciniLatest.csv'))
 
 with open('lastupdate', 'r') as fin:
-    lastupdate = fin.read()#.strip().split('/')
-    #lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
+    lastupdate = fin.read().strip().split('/')
+    lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
+    reformatLastUpdate = lastupdate.strftime('%d/%m/%Y')
 
 ###################TESTO INIZIALE##################
 
 st.title('Report vaccinazioni COVID-19')
-st.write('Ultimo Aggiornamento {}'.format(lastupdate))
+st.write('Ultimo Aggiornamento {}'.format(reformatLastUpdate))
 
 st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è cominciata il 27/12/2020 [\[1\]]'
             '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
@@ -38,12 +39,16 @@ totSeconde = somministrazioniAnagr['Seconda Dose'].sum()
 platea = somministrazioniAnagr.Platea.sum()
 percPrime = round(totPrime/platea,4)
 percSeconde = round(totSeconde/platea,4)
+totConsegne = consegne['Numero Dosi'].sum()
+percConsegne = totSomministrate/totConsegne
 st.markdown(
-    f'Al {lastupdate} sono state distribuite **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
+    f'Al {reformatLastUpdate} sono state distribuite **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
     f' e **{totSeconde:,}** seconde dosi. La percentuale di persone che ha ricevuto almeno una dose è '
     f' del **{percPrime:.2%}**, mentre il **{percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
+)
 
-
+st.markdown(
+    f'Sono state consegnate **{totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{percConsegne:.2%}**.'
 )
 ###################################################
 

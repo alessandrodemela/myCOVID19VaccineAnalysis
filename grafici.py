@@ -18,7 +18,8 @@ def SomministrazioniGiornoDose(somministrazioniFilterData):
         rot=0,
         ax=ax,
     )
-    ax.plot((somministrazioniFilterData['Totale']).rolling(window=7).mean(),
+    dataPlot = (somministrazioniFilterData['Totale']).rolling(window=7).mean().fillna(somministrazioniFilterData['Totale'][:7].mean())
+    ax.plot(dataPlot,
             lw=3,
             color='forestgreen',
             label='Totale Somministrazioni Giornaliere (Media Mobile 7gg)'

@@ -22,8 +22,11 @@ def Somministrazioni():
         value=[dateRange[0],dateRange[-1]],
         options=list(dateRange)
     )
-    somministrazioniFilterData = somministrazioni[  (pd.to_datetime(somministrazioni.index).date >= startDate )
-                                                    & (pd.to_datetime(somministrazioni.index).date <= endDate)   ]
+    
+    somministrazioniFilterData = somministrazioni[  
+        (pd.to_datetime(somministrazioni.index).date >= startDate )
+        & (pd.to_datetime(somministrazioni.index).date <= endDate)   
+        ]
 
     fig = SomministrazioniGiornoDose(somministrazioniFilterData)
     return fig
