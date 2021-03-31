@@ -14,7 +14,7 @@ import datetime, os
 DWpath = os.path.join('DW')
 
 
-with open('script/lastupdate', 'r') as fin:
+with open('lastupdate', 'r') as fin:
     lastupdate = fin.read().strip().split('/')
     lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
 
@@ -24,7 +24,7 @@ if(lastupdate < datetime.date.today()):
     somministrazioni = ETL.ETL_somministrazioniVacciniSummaryLatest()
     ETL.ETL_consegneVacciniLatest()
 
-    with open('script/lastupdate', 'w') as fout:
+    with open('lastupdate', 'w') as fout:
         fout.write(lastupdate)
 
 ###################TESTO INIZIALE##################
