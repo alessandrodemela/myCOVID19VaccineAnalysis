@@ -1,5 +1,5 @@
 # COVID-19 Vaccine Analysis Report
-Repository for COVID-19 vaccine analysis in Italy
+Repository for my personal analysis of COVID-19 vaccination campaign in Italy
 
 Description of the repository
 * `DW` directory contains `.csv` file extracted and transform from [Covid-19 Opendata Vaccini](https://github.com/italia/covid19-opendata-vaccini) github repository;
