@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
-import streamlit as st
 import os
 from shutil import copyfile
 
@@ -16,8 +15,6 @@ for file in ['anagrafica-vaccini-summary-latest.csv','consegne-vaccini-latest.cs
     copyfile(csvPath+file,rawDatapath+file)
 csvPath = rawDatapath
 
-st.write(os.listdir(csvPath))
-
 
 # mapping columns names
 def createNameMappingDict(df):
@@ -28,12 +25,11 @@ def createNameMappingDict(df):
 
 def ETL_anagraficaVacciniSummaryLatest():
     global anaVacSumLat 
-    st.write(csvPath+'anagrafica-vaccini-summary-latest.csv')
     anaVacSumLat = pd.read_csv(csvPath+'anagrafica-vaccini-summary-latest.csv')
     anaVacSumLat = anaVacSumLat.rename(columns=createNameMappingDict(anaVacSumLat))
     
     vLastUpdate = datetime.strptime(anaVacSumLat.iloc[0,-1],"%Y-%m-%d").strftime("%d/%m/%Y")
-
+    print(vLastUpdate)
     with open('lastupdate','w') as fLastUpdate:
         fLastUpdate.write(vLastUpdate)
     
@@ -80,3 +76,7 @@ def ETL_somministrazioniVacciniSummaryLatest():
     somVacciniSumLat.to_csv(DWPath+'somministrazioniVacciniSummaryLatest.csv')
 
     return somVacciniSumLat
+
+ETL_anagraficaVacciniSummaryLatest()
+ETL_consegneVacciniLatest()
+ETL_somministrazioniVacciniSummaryLatest()

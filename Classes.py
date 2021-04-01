@@ -3,7 +3,14 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import os, datetime
-from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot
+from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot, BarPercSomministrazioni
+
+
+
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+
 
 DWpath = 'DW'
 
@@ -41,6 +48,7 @@ def Header():
     percSeconde = round(totSeconde/platea,4)
     totConsegne = consegne['Numero Dosi'].sum()
     percConsegne = totSomministrate/totConsegne
+    #lastSomministrate = 
     st.markdown(
         f'Al {reformatLastUpdate} sono state distribuite **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
         f' e **{totSeconde:,}** seconde dosi. La percentuale di persone che ha ricevuto almeno una dose è '
@@ -49,6 +57,9 @@ def Header():
 
     st.markdown(
         f'Sono state consegnate **{totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{percConsegne:.2%}**.'
+    )
+
+    st.write(somministrazioni[somministrazioni['Data Somministrazione']==somministrazioni.iloc[-2,1]]['Totale'].sum() 
     )
 
 class Somministrazioni:
@@ -147,4 +158,7 @@ class AnalisiRegionale:
 
         st.write(somministrazioniRegione)
 
-        somministrazioniRegione.plot.bar()
+       # regione = st.multiselect('Seleziona una o più regioni per visualizzare il grafico.', options=somministrazioniRegione.index)
+
+        st.write(BarPercSomministrazioni(somministrazioniRegione))
+

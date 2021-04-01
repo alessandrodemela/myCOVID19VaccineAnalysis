@@ -106,7 +106,7 @@ def RadarAnagrafica(anaVacSumLat):
     return fig
 
 def ScatterAnagrafica(anaVacSumLat):
-    fig, axs = plt.subplots(ncols=1,nrows=1,figsize=(40,14))
+    fig, axs = plt.subplots(ncols=1,nrows=1,figsize=(20,14))
 
     resize = 120
 
@@ -132,7 +132,7 @@ def ScatterAnagrafica(anaVacSumLat):
                 alpha=.2
             )
 
-    axs.set_ylim([0.98,1.04])
+    axs.set_ylim([0.98,1.02])
     axs.set_xlim([-1,10])
     axs.axis('off')
 
@@ -148,7 +148,7 @@ def ScatterAnagrafica(anaVacSumLat):
 
         
     axs.annotate("Totale\nSomministrazioni",
-                xy=(7, 0.9955),
+                xy=(7, 0.997),
                 xytext=(7.2, 0.985),
                 arrowprops=dict(arrowstyle="->",
                                 connectionstyle = "angle,angleA=180,angleB=90,rad=120",
@@ -217,34 +217,69 @@ def ScatterAnagrafica(anaVacSumLat):
     #            fontsize=45,
     #            ha='center'
     #            )
-    axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font='Gill Sans', fontsize=80, ha='center')
+    #axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font='Gill Sans', fontsize=80, ha='center')
     plt.tight_layout()
-    plt.subplots_adjust(left=1,right=2.1)
+    plt.subplots_adjust(left=.5,right=2.1)
 
     return fig
 
 def AnagraficaPlot(anaVacSumLat):
     fig, axs = plt.subplots(nrows=2,ncols=1, figsize=(20,18))
 
-    colorList = ['salmon','cornflowerblue','mediumseagreen','peru','forestgreen','navy','orange']
+    #colorList = ['salmon','cornflowerblue','mediumseagreen','peru','forestgreen','navy','orange']
     for ax,t,rg in zip(axs,['Sesso','Categoria Sociale'],[range(2,4),range(4,11)]):
         bottom = np.zeros(len(anaVacSumLat['Fascia Anagrafica']))  
 
-        for i,c in zip(rg,colorList):
+        for i in rg:
             ax.bar(
                 x=anaVacSumLat['Fascia Anagrafica'], 
                 height=anaVacSumLat.iloc[:,i], 
                 label=anaVacSumLat.columns[i],
                 bottom=bottom,
                 width=.9,
-                color=c
+                #color=c
             )
             bottom=bottom+anaVacSumLat.iloc[:,i]
         ax.tick_params(labelsize=18)
         ax.set_xlabel('Fascia anagrafica', fontfamily='Gill Sans', fontsize=25)
         ax.set_ylabel('Somministrazioni', fontfamily='Gill Sans', fontsize=25)
-        ax.set_title('Distribuzione vaccini per %s' %t, fontfamily='Gill Sans', fontsize=28)
+        ax.set_title('Distribuzione vaccini divisa per %s' %t, fontfamily='Gill Sans', fontsize=28)
         ax.legend(fontsize=18)
         ax.grid(lw=.2)
 
     return fig
+
+def BarPercSomministrazioni(sommRegio):
+    fig, ax = plt.subplots(figsize=(15,8))
+
+    x = np.arange(len(sommRegio.index)) 
+    width = 0.45
+    ax.bar(x - width/2, sommRegio['% Prima Dose'], width, color='cornflowerblue', label='% Prima Dose')
+    ax.bar(x + width/2, sommRegio['% Seconda Dose'], width, color='salmon', label='% Seconda Dose')
+
+    ax.legend()
+    ax.set_xticks(x)
+    ax.tick_params(labelsize=18)
+    ax.legend(fontsize=18)
+    ax.set_xticklabels(sommRegio.index, rotation=90, fontsize=18)
+    ax.set_xlim([-1.5*width,len(sommRegio.index)-.5*width])
+    ax.set_ylabel('% Somministrazioni/Abitanti', fontsize=18)
+
+    ax.hlines(
+        xmin=-1.5*width,
+        xmax=len(sommRegio.index)-.5*width,
+        y=sommRegio['Prima Dose'].sum()/sommRegio.Abitanti.sum() * 100,
+        ls='--',lw=2,color='navy', label='% Prime Dosi Italia'
+    )
+    ax.hlines(
+        xmin=-1.5*width,
+        xmax=len(sommRegio.index)-.5*width,
+        y=sommRegio['Seconda Dose'].sum()/sommRegio.Abitanti.sum() * 100,
+        ls='--',lw=2,color='maroon', label='% Seconde Dosi Italia'
+    )
+
+    return fig
+
+
+
+
