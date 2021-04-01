@@ -18,12 +18,19 @@ with open('lastupdate', 'r') as fin:
 
 def Header():
     st.title('Report vaccinazioni COVID-19')
-    st.write('Ultimo Aggiornamento {}'.format(reformatLastUpdate))
 
-    st.markdown('La somministrazione dei vaccini contro la patologia COVID-19, è cominciata il 27/12/2020 [\[1\]]'
+    st.markdown('***')
+    st.markdown(
+        f'Ultimo Aggiornamento {reformatLastUpdate}.  '
+        '\nIl codice di analisi è disponibile [qui](https://github.com/alessandrodemela/myCOVID19VaccineAnalysis).  '
+        '\nMentre i dati sono reperibili nel [repository ufficiale](https://github.com/italia/covid19-opendata-vaccini).'
+        )
+    st.markdown('***')
+
+    st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27/12/2020 [\[1\]]'
                 '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
-                '\nNella tabella seguente si mostrano il numero di somministrazioni ordinato per data, nelle varie regioni'
-                ' e suddiviso per sesso e categoria sociale, oltre che per tipo di sommnistrazione.'
+                #'\nNella tabella seguente si mostrano il numero di somministrazioni ordinato per data, nelle varie regioni'
+                #' e suddiviso per sesso e categoria sociale, oltre che per tipo di sommnistrazione.'
                 )
 
     totSomministrate = somministrazioniAnagr.Totale.sum()
@@ -99,7 +106,6 @@ def Anagrafica():
     fig3 = AnagraficaPlot(anagrafica)
 
     return pltAnaDosi, fig2, fig3
-
 
 class AnalisiRegionale:
 
