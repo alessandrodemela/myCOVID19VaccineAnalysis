@@ -7,8 +7,8 @@ from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafi
 
 
 
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+# from plotly.subplots import make_subplots
+# import plotly.graph_objects as go
 
 
 
