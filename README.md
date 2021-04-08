@@ -2,6 +2,7 @@
 Repository for my personal analysis of COVID-19 vaccination campaign in Italy
 
 Description of the repository
+* `Staging` directory contains raw `.csv` datasets;
 * `DW` directory contains `.csv` file extracted and transform from [Covid-19 Opendata Vaccini](https://github.com/italia/covid19-opendata-vaccini) github repository;
 * `covid19-opendata-vaccini` is the official repository for italian vaccination campaign;
 * `ReportVaccinoCOVID_ITA.ipynb` is a notebook for the analysis carried out with Jupyter. It also contains python script to make charts and visualization;
