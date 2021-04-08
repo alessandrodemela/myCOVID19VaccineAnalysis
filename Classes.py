@@ -48,7 +48,7 @@ def Header():
     percConsegne = totSomministrate/totConsegne
     #lastSomministrate = 
     st.markdown(
-        f'Al {reformatLastUpdate} sono state distribuite **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
+        f'Al {reformatLastUpdate} sono state somministrate **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
         f' e **{totSeconde:,}** seconde dosi. La percentuale di persone che ha ricevuto almeno una dose è '
         f' del **{percPrime:.2%}**, mentre il **{percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
     )
