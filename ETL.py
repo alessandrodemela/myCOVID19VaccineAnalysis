@@ -31,7 +31,6 @@ class ETL:
         
         return nameMappingDict
 
-    # def writeDf(df,dir,name):
 
     def lastupdate(self,date):
         with open('lastupdate','w') as fLastUpdate:
