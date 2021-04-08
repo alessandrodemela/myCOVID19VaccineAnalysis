@@ -5,7 +5,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 sns.set()
 
-import datetime, os, sys
+import os, sys
+from datetime import datetime
+from ETL import ETL
 from Classes import Header, Anagrafica
 
 from Classes import AnalisiRegionale, Somministrazioni
@@ -14,6 +16,15 @@ DWpath = os.path.join('DW')
 
 # Introduzione
 Header()
+
+# ETL
+etl = ETL()
+with open('lastupdate', 'r') as f:
+    lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
+
+if(datetime.today().date()>lastUpdate):
+    etl.getData()
+    etl.transformData()
 
 # Somministrazioni
 somm = Somministrazioni()
@@ -47,7 +58,7 @@ st.write(altriPlot)
 ###################################################
 
 # Analisi Regionale
-anaReg =AnalisiRegionale()
+anaReg = AnalisiRegionale()
 anaReg.Analisi()
 
 ###################################################

@@ -3,3 +3,5 @@
 .ipynb_checkpoints*
 script/Playground.ipynb
 script/__pycache__/
+Playground.ipynb
+__pycache__/*

@@ -10,13 +10,11 @@ from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafi
 # from plotly.subplots import make_subplots
 # import plotly.graph_objects as go
 
-
-
 DWpath = 'DW'
 
-somministrazioniAnagr = pd.read_csv(os.path.join(DWpath,'anagraficaVacciniSummaryLatest.csv'))
-somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
-consegne = pd.read_csv(os.path.join(DWpath,'consegneVacciniLatest.csv'))
+somministrazioniAnagr = pd.read_csv(os.path.join(DWpath,'anagrafica.csv'))
+somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv'))
+consegne = pd.read_csv(os.path.join(DWpath,'consegne.csv'))
 
 with open('lastupdate', 'r') as fin:
     lastupdate = fin.read().strip().split('/')
@@ -59,12 +57,10 @@ def Header():
         f'Sono state consegnate **{totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{percConsegne:.2%}**.'
     )
 
-    st.write(somministrazioni[somministrazioni['Data Somministrazione']==somministrazioni.iloc[-2,1]]['Totale'].sum() 
-    )
 
 class Somministrazioni:
 
-    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
+    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv'))
 
     def __header(self):
         st.header('Dosi Somministrate per giorno')
@@ -106,7 +102,7 @@ class Somministrazioni:
 
 def Anagrafica():
 
-    anagrafica = pd.read_csv(os.path.join(DWpath,'anagraficaVacciniSummaryLatest.csv'))
+    anagrafica = pd.read_csv(os.path.join(DWpath,'anagrafica.csv'))
 
     anagrafica = anagrafica.drop(columns='Unnamed: 0')
 
@@ -120,7 +116,7 @@ def Anagrafica():
 
 class AnalisiRegionale:
 
-    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniVacciniSummaryLatest.csv'))
+    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv'))
 
     def __header(self,):
         st.header('Analisi Regionale')
