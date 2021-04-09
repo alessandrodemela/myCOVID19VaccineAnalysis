@@ -22,44 +22,45 @@ etl = ETL()
 with open('lastupdate', 'r') as f:
     lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
 
-if(datetime.today().date()>lastUpdate):
-    etl.getData()
-    etl.transformData()
+etl.getData()
+etl.transformData()
+etl.auxiliaryTables()
 
 # Somministrazioni
 somm = Somministrazioni()
 somm.Analisi()
 
-# ################ANAGRAFICA############
+# # ################ANAGRAFICA############
 st.header('Anagrafica Somministrazioni')
 st.write(
     "Sguardo alla distribuzione dei vaccini per fascia di età."
     )
-pltAnaDosi, pltAnaPerc, altriPlot = Anagrafica()
+#pltAnaDosi, pltAnaPerc, altriPlot = 
+Anagrafica()
 
-# Bubble plot
-st.pyplot(pltAnaDosi)
+# # Bubble plot
+# st.pyplot(pltAnaDosi)
 
-st.markdown('***')
-# Add a checkbox to show/hide radar plot
-expander = st.beta_expander('Seleziona per vedere una visualizzazione alternativa.')
-expander.write(pltAnaPerc)
-expander.write(
-    'Questo grafico mostra la percentuale di vaccinati (seconda dose somministrata) in funzione della fascia anagrafica'
-    ' di appartenenza, oltre alla media italiana. Il grafico di destra è la versione ingrandita di quello a sinistra per maggior visibilità.'
-)
+# st.markdown('***')
+# # Add a checkbox to show/hide radar plot
+# expander = st.beta_expander('Seleziona per vedere una visualizzazione alternativa.')
+# expander.write(pltAnaPerc)
+# expander.write(
+#     'Questo grafico mostra la percentuale di vaccinati (seconda dose somministrata) in funzione della fascia anagrafica'
+#     ' di appartenenza, oltre alla media italiana. Il grafico di destra è la versione ingrandita di quello a sinistra per maggior visibilità.'
+# )
 
-st.markdown('***')
+# st.markdown('***')
 
-st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
-# Sex and social category
-st.write(altriPlot)
+# st.write('Guardiamo inoltre come sono ripartiti in base al sesso e alla categoria sociale di appartenenza.')
+# # Sex and social category
+# st.write(altriPlot)
 
 ###################################################
 
-# Analisi Regionale
-anaReg = AnalisiRegionale()
-anaReg.Analisi()
+# # Analisi Regionale
+# anaReg = AnalisiRegionale()
+# anaReg.Analisi()
 
 ###################################################
 

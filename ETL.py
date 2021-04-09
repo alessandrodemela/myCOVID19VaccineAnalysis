@@ -16,11 +16,13 @@ class ETL:
     def getData(self):
         logging.info('Retrieving Data...')
         anagrafica = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/anagrafica-vaccini-summary-latest.csv')
-        anagrafica.to_csv(StagingPath+'anagrafica.csv')
+        anagrafica.to_csv(StagingPath+'anagrafica.csv',index=False)
 
-        pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv').to_csv(StagingPath+'consegne.csv')
-        pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-summary-latest.csv').to_csv(StagingPath+'somministrazioni_summary.csv')
-        pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv').to_csv(StagingPath+'somministrazioni.csv')
+        consegne = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv')
+        consegne.to_csv(StagingPath+'consegne.csv',index=False)
+
+        pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-summary-latest.csv').to_csv(StagingPath+'somministrazioni_summary.csv',index=False)
+        pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/somministrazioni-vaccini-latest.csv').to_csv(StagingPath+'somministrazioni.csv',index=False)
 
         self.lastupdate(datetime.strptime(anagrafica.iloc[0,-1],"%Y-%m-%d").strftime("%d/%m/%Y"))
 
@@ -33,14 +35,47 @@ class ETL:
 
 
     def lastupdate(self,date):
+        print(date)
         with open('lastupdate','w') as fLastUpdate:
             fLastUpdate.write(date)
         
+    def auxiliaryTables(self):
+        # Abitanti Regioni
+        abitantiRegioni = pd.read_csv('DCIS_POPRES1_25022021122609782.csv')
+        abitantiRegioni = abitantiRegioni.iloc[:,[1,5,6,9,12]].sort_values(
+            ['Territorio','Sesso']
+            ).where((abitantiRegioni['Stato civile']=='totale') &
+            (abitantiRegioni.Sesso=='totale') & (abitantiRegioni.ETA1=='TOTAL')
+            ).dropna().iloc[:,[0,-1]].set_index('Territorio')
+        # Rename field and indexfor better naming
+        abitantiRegioni = abitantiRegioni.rename(columns={'Value': 'Abitanti'}).rename_axis('Regione').astype(int)
+
+        # Coordinate Regioni
+        coordinateRegioni = pd.read_csv('Staging/popolazione-istat-regione-range.csv',index_col=0)
+        coordinateRegioni = pd.concat(
+            [pd.DataFrame(coordinateRegioni['denominazione_regione'].unique(), columns=['Regione']),
+            pd.DataFrame(coordinateRegioni['latitudine_regione'].unique(), columns=['lat']),
+            pd.DataFrame(coordinateRegioni['longitudine_regione'].unique(), columns=['lon'])],
+            axis=1,
+        )
+        mapRegioni={i : j for i,j in zip(coordinateRegioni['Regione'],abitantiRegioni.index)}
+        coordinateRegioni['Regione'] = coordinateRegioni['Regione'].map(mapRegioni)
+        coordinateRegioni = coordinateRegioni.set_index('Regione')
+
+        regioniInfo = coordinateRegioni.join(abitantiRegioni)
+
+        regioniInfo.to_csv(DWPath+'regioniInfo.csv')
+
     def transformData(self):
         logging.info('Transforming Data. Anagrafica...')
 
         anaVacSumLat = pd.read_csv(StagingPath+'anagrafica.csv')
         anaVacSumLat = anaVacSumLat.rename(columns=self.createNameMappingDict(anaVacSumLat))
+
+        totaleRange = pd.read_csv('Staging/popolazione-istat-regione-range.csv')
+        totaleRange = totaleRange.rename(columns=self.createNameMappingDict(totaleRange))
+        totaleRange = totaleRange.rename(columns={'Range Eta': 'Fascia Anagrafica'})
+        totaleRange = totaleRange.groupby('Fascia Anagrafica').sum()['Totale Generale'][1:]
 
         anaVacSumLat = anaVacSumLat.iloc[:,:-1]
         
@@ -51,6 +86,7 @@ class ETL:
         anaVacSumLat['% Totale Assoluto'] = round(anaVacSumLat['Totale']/anaVacSumLat['Platea'] * 100,2)
         # ---------------------
         
+        #anaVacSumLat = anaVacSumLat.join(totaleRange)
         anaVacSumLat.to_csv(DWPath+'anagrafica.csv')
     
 
@@ -81,7 +117,7 @@ class ETL:
         # ---------------------
         
         somVacciniSumLat = somVacciniSumLat.sort_values(['Data Somministrazione','Regione']).reset_index()
-        somVacciniSumLat = somVacciniSumLat.drop(columns='index')
+        somVacciniSumLat = somVacciniSumLat.drop(columns=['index'])
         somVacciniSumLat.to_csv(DWPath+'somministrazioniSummary.csv')
 
 

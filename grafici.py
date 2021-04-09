@@ -227,7 +227,7 @@ def AnagraficaPlot(anaVacSumLat):
     fig, axs = plt.subplots(nrows=2,ncols=1, figsize=(20,18))
 
     #colorList = ['salmon','cornflowerblue','mediumseagreen','peru','forestgreen','navy','orange']
-    for ax,t,rg in zip(axs,['Sesso','Categoria Sociale'],[range(2,4),range(5,11)]):
+    for ax,t,rg in zip(axs,['Sesso','Categoria Sociale'],[range(2,4),range(5,12)]):
         bottom = np.zeros(len(anaVacSumLat['Fascia Anagrafica']))  
 
         for i in rg:

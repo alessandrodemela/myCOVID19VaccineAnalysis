@@ -96,27 +96,120 @@ class Somministrazioni:
             & (pd.to_datetime(somministrazioniCol.index).date <= endDate)   
             ]
 
-        fig = SomministrazioniGiornoDose(somministrazioniFilterData)
+        #######
+        fig, ax = plt.subplots(1,1,figsize=(15,8))
+        somministrazioniFilterData.plot.bar(
+            stacked=True,
+            y=['Prima Dose', 'Seconda Dose'],
+            title='Dose Somministrata',
+            ylabel='Dosi giornaliere somministrate',
+            color=['cornflowerblue','darksalmon'],
+            width=.9,
+            rot=0,
+            ax=ax,
+            fontsize=15
+        )
+        ax.plot( somministrazioniFilterData['Totale'].rolling(7).mean().fillna(somministrazioniFilterData['Totale'][:7].mean()),
+            lw=3,
+            color='forestgreen',
+            label='Totale Somministrazioni Giornaliere (Media Mobile 7gg)'
+        )
 
+        ax.set_xticks(np.arange(0,(plt.xlim()[1]),12))
+        ax.grid(lw=.2)
+        ax.legend(fontsize=20)
         st.write(fig)
+
+        ####
 
 def Anagrafica():
 
     anagrafica = pd.read_csv(os.path.join(DWpath,'anagrafica.csv'))
 
-    anagrafica = anagrafica.drop(columns='Unnamed: 0')
+    totaleRange=pd.read_csv('Staging/popolazione-istat-regione-range.csv')
+    totaleRange = totaleRange.groupby('range_eta').sum().reset_index().loc[1:,['range_eta','totale_generale']]
 
-    pltAnaDosi = ScatterAnagrafica(anagrafica)
+    anagrafica.drop(columns='Unnamed: 0', inplace=True)
+    #######
+    fig, axs = plt.subplots(nrows=2,ncols=2, figsize=(15,10))
+    axs = axs.ravel()
 
-    fig2 = RadarAnagrafica(anagrafica)
+    anagrafica.plot.bar(
+        x='Fascia Anagrafica', 
+        y='Totale',  
+        title='Distribuzione vaccini per fascia anagrafica',
+        legend=False,
+        color='royalblue',
+        ax=axs[0],
+        width=.9
+    )
 
-    fig3 = AnagraficaPlot(anagrafica)
+    anagrafica.plot.bar(
+        x='Fascia Anagrafica', 
+        y=['Sesso Maschile', 'Sesso Femminile'],
+        stacked=True,
+        title='Distribuzione vaccini per fascia anagrafica e sesso',
+        ax=axs[1],
+        color=['steelblue','coral'],
+        width=.9,
+    )
 
-    return pltAnaDosi, fig2, fig3
+    anagrafica.plot.bar(
+        x='Fascia Anagrafica', 
+        y= anagrafica.columns[4:11],
+        stacked=True,
+        title='Distribuzione vaccini per fascia anagrafica e categoria sociale',
+        ax=axs[2],
+        cmap='Dark2_r',
+        width=.9
+    )
+
+    axs[3].bar( 
+        x=totaleRange['range_eta'],
+        height=anagrafica['Platea'],
+        alpha=.3,
+        label='Platea'
+    )
+    anagrafica.plot.bar(
+        x='Fascia Anagrafica', 
+        y=['Prima Dose', 'Seconda Dose'],
+        stacked=False,
+        title='Distribuzione vaccini per fascia anagrafica e dose ricevuta',
+        ax=axs[3],
+        color=['cornflowerblue','salmon'],
+        width=.9
+    )
+
+    for i in axs: 
+        i.grid(lw=.2)
+        i.set_ylabel('Totale Somministrazioni')
+        i.legend(loc='upper left')
+    plt.tight_layout()
+    st.write(fig)
+    st.write(anagrafica)
+    st.markdown(
+        'Il grafico in basso a sinistra, in particolare, mostra il numero di dosi somministrate, diviso per fascia anagrafica e categoria sociale'
+        'di appartenenza. La categoria "Over80" è però solo una parte delle fasce anagrafiche "80-89" e "90+", questo è corretto dal momento che'
+        'il grafico viene interpretato come *la ragione per la quale un appartenente ad una fascia anagrafica viene chiamato a vaccinarsi*.'
+    )
+    st.markdown(
+        'Il grafico in basso a destra mostra anche la platea di riferimento (popolazione in una determinata fascia di età) oltre alla dose di vaccino somministrata'
+    )
+    #####
+
+    #pltAnaDosi = ScatterAnagrafica(anagrafica)
+
+    #fig2 = RadarAnagrafica(anagrafica)
+
+    #fig3 = AnagraficaPlot(anagrafica)
+
+    #return pltAnaDosi, fig2, fig3
 
 class AnalisiRegionale:
 
-    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv'))
+    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv')).drop(columns='Unnamed: 0')
+    __regioniInfo = pd.read_csv(os.path.join(DWpath,'regioniInfo.csv'))
+
 
     def __header(self,):
         st.header('Analisi Regionale')
@@ -124,37 +217,29 @@ class AnalisiRegionale:
             "Vediamo ora la situazione vaccinale nelle regioni italiane. Il primo grafico mostra la percentuale di dosi somministrate da ciascuna regione."
         )
 
-    def __getAbitanti(self,):
-        abitantiRegioni = pd.read_csv('DCIS_POPRES1_25022021122609782.csv')
-        abitantiRegioni = abitantiRegioni.iloc[:,[1,5,6,9,12]].sort_values(['Territorio','Sesso']
-                                                            ).where((abitantiRegioni['Stato civile']=='totale') &
-                                                            (abitantiRegioni.Sesso=='totale') &
-                                                            (abitantiRegioni.ETA1=='TOTAL')
-                                                            ).dropna().iloc[:,[0,-1]].set_index('Territorio')
-        # Rename field and indexfor better naming
-        abitantiRegioni = abitantiRegioni.rename(columns={'Value': 'Abitanti'}).rename_axis('Regione').astype(int)
-
-        return abitantiRegioni
-
     def Analisi(self,):
         self.__header()
 
-        abitantiRegioni = self.__getAbitanti()
-
         # Get Relevant Columns
-        somministrazioniGiornoRegione = somministrazioni.loc[:,['Data Somministrazione','Prima Dose','Seconda Dose','Regione']].groupby(['Regione','Data Somministrazione']).sum()
+        somministrazioniGiornoRegione = self.__somministrazioni.loc[:,['Data Somministrazione','Prima Dose','Seconda Dose','Regione']].groupby(['Regione','Data Somministrazione']).sum()
         
         somministrazioniRegione = somministrazioniGiornoRegione.groupby('Regione').sum()
         somministrazioniRegione['Totale'] = somministrazioniRegione.sum(axis=1)
-        somministrazioniRegione=somministrazioniRegione.join(abitantiRegioni)
+        somministrazioniRegione=somministrazioniRegione.reset_index()
+
+        somministrazioniRegione=somministrazioniRegione.merge(self.__regioniInfo).set_index('Regione')
 
         somministrazioniRegione['% Somministrazioni'] =  round(100 * somministrazioniRegione['Totale']/somministrazioniRegione['Abitanti'],2)
         somministrazioniRegione['% Prima Dose'] =  round(100 * somministrazioniRegione['Prima Dose']/somministrazioniRegione['Abitanti'],2)
         somministrazioniRegione['% Seconda Dose'] =  round(100 * somministrazioniRegione['Seconda Dose']/somministrazioniRegione['Abitanti'],2)
 
-        st.write(somministrazioniRegione)
+        st.write(somministrazioniRegione[['Totale','% Prima Dose','% Seconda Dose']])
 
        # regione = st.multiselect('Seleziona una o più regioni per visualizzare il grafico.', options=somministrazioniRegione.index)
 
         st.write(BarPercSomministrazioni(somministrazioniRegione))
+
+        # mapData = pd.DataFrame(somministrazioniRegione[['lat','lon','% Prima Dose','% Seconda Dose']])
+        # st.map(mapData)
+
 
