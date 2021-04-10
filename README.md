@@ -2,7 +2,8 @@
 Repository for my personal analysis of COVID-19 vaccination campaign in Italy
 
 The application can be run via `streamlit run vaccine.py`. Make sure you have `streamlit` [installed](https://streamlit.io/#install).
-Otherwise, the application can be seen at this [link](https://share.streamlit.io/alessandrodemela/mycovid19vaccineanalysis/main/vaccine.py)
+
+Otherwise, the application can be seen at this [link](https://share.streamlit.io/alessandrodemela/mycovid19vaccineanalysis/main/vaccine.py).
 
 Description of the repository
 * `Staging` directory contains raw `.csv` datasets;
