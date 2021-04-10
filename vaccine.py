@@ -24,9 +24,9 @@ st.write(os.listdir('Staging'))
 with open('lastupdate', 'r') as f:
     lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
 
-etl.getData()
-etl.transformData()
-etl.auxiliaryTables()
+#etl.getData()
+# etl.transformData()
+# etl.auxiliaryTables()
 
 # Somministrazioni
 somm = Somministrazioni()
