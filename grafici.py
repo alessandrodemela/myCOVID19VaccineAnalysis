@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 
-plt.rcParams["font.family"] = "Gill Sans"
+
 
 def SomministrazioniGiornoDose(somministrazioniFilterData):
     fig, ax = plt.subplots(1,1,figsize=(20,8))

@@ -5,7 +5,8 @@ import numpy as np
 import os, datetime
 from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot, BarPercSomministrazioni
 
-
+plt.rcParams["font.family"] = "Gill Sans"
+plt.rcParams.update({'font.size': 25})
 
 # from plotly.subplots import make_subplots
 # import plotly.graph_objects as go
@@ -41,7 +42,7 @@ def Header():
     totSomministrate = somministrazioniAnagr.Totale.sum()
     totPrime = somministrazioniAnagr['Prima Dose'].sum()
     totSeconde = somministrazioniAnagr['Seconda Dose'].sum()
-    platea = somministrazioniAnagr.Platea.sum()
+    platea = somministrazioniAnagr['Totale Generale'].sum()
     percPrime = round(totPrime/platea,4)
     percSeconde = round(totSeconde/platea,4)
     totConsegne = consegne['Numero Dosi'].sum()
@@ -60,7 +61,7 @@ def Header():
 
 class Somministrazioni:
 
-    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv'))
+    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv')).drop(columns='Unnamed: 0')
 
     def __header(self):
         st.header('Dosi Somministrate per giorno')
@@ -97,7 +98,7 @@ class Somministrazioni:
             ]
 
         #######
-        fig, ax = plt.subplots(1,1,figsize=(15,8))
+        fig, ax = plt.subplots(1,1)
         somministrazioniFilterData.plot.bar(
             stacked=True,
             y=['Prima Dose', 'Seconda Dose'],
@@ -107,7 +108,8 @@ class Somministrazioni:
             width=.9,
             rot=0,
             ax=ax,
-            fontsize=15
+            fontsize=15,
+            figsize=(15,8)
         )
         ax.plot( somministrazioniFilterData['Totale'].rolling(7).mean().fillna(somministrazioniFilterData['Totale'][:7].mean()),
             lw=3,
@@ -117,10 +119,57 @@ class Somministrazioni:
 
         ax.set_xticks(np.arange(0,(plt.xlim()[1]),12))
         ax.grid(lw=.2)
-        ax.legend(fontsize=20)
+        ax.legend(fontsize=14)
         st.write(fig)
 
         ####
+
+        st.markdown('Oltre alla divisione per dose, guardiamo anche la divisione per fornitore di vaccino.')
+
+        somministrazioni_fornitore = self.__somministrazioni.loc[:,['Data Somministrazione','Fornitore','Prima Dose','Seconda Dose']].groupby(['Data Somministrazione', 'Fornitore']).sum().unstack(level=1).fillna(0).astype(int)
+
+        fig, ax = plt.subplots()
+        somministrazioni_fornitore.plot.bar(
+            stacked=True,
+            figsize=(15,8),
+            ax = ax,
+            color=['goldenrod','firebrick','royalblue','gold','tomato','skyblue'],
+            width=.9,
+            title = 'Distribuzione temporale somministrazioni',
+            ylabel='Somministrazioni',
+            rot=0
+        )
+        ax.legend([i + ' ' + j for i,j in somministrazioni_fornitore.keys()],loc='upper left',ncol=2)
+        ax.grid(lw=.2)
+
+        ax.set_xticks(np.arange(0,(ax.get_xlim()[1]),10))
+
+        st.write(fig)
+
+        ####
+        st.write(self.__somministrazioni)
+        somministrazioniVaccini_Categoria = self.__somministrazioni.iloc[:,[1,6,7,8,9,10,11,12]].groupby('Fornitore').sum()
+        fig, axs = plt.subplots(3,3,figsize=(15,15))
+        axs = axs.ravel()
+
+        for i in range(somministrazioniVaccini_Categoria.keys().size):
+            somministrazioniVaccini_Categoria.plot.bar(
+                y=somministrazioniVaccini_Categoria.keys()[i],
+                ax=axs[i],
+                legend=False,
+                ylabel='Somministrazioni',
+                title=somministrazioniVaccini_Categoria.keys()[i],
+                width=.9,
+                color=['gold','tomato','cornflowerblue'],
+                logy=True,
+                rot=0
+            )
+        for i in axs: 
+            i.grid(lw=.5)
+        plt.tight_layout()                                                  
+
+        fig.delaxes(axs[7])
+        fig.delaxes(axs[8])
 
 def Anagrafica():
 
@@ -131,7 +180,7 @@ def Anagrafica():
 
     anagrafica.drop(columns='Unnamed: 0', inplace=True)
     #######
-    fig, axs = plt.subplots(nrows=2,ncols=2, figsize=(15,10))
+    fig, axs = plt.subplots(nrows=2,ncols=2, figsize=(15,15))
     axs = axs.ravel()
 
     anagrafica.plot.bar(
@@ -141,56 +190,61 @@ def Anagrafica():
         legend=False,
         color='royalblue',
         ax=axs[0],
-        width=.9
+        width=.9,
+        fontsize=15
     )
 
     anagrafica.plot.bar(
         x='Fascia Anagrafica', 
         y=['Sesso Maschile', 'Sesso Femminile'],
         stacked=True,
-        title='Distribuzione vaccini per fascia anagrafica e sesso',
+        title='Distribuzione vaccini per fascia anagrafica\n e sesso',
         ax=axs[1],
         color=['steelblue','coral'],
         width=.9,
+        fontsize=15
     )
 
     anagrafica.plot.bar(
         x='Fascia Anagrafica', 
         y= anagrafica.columns[4:11],
         stacked=True,
-        title='Distribuzione vaccini per fascia anagrafica e categoria sociale',
+        title='Distribuzione vaccini per fascia anagrafica\n e categoria sociale',
         ax=axs[2],
         cmap='Dark2_r',
-        width=.9
+        width=.9,
+        fontsize=15
     )
 
     axs[3].bar( 
         x=totaleRange['range_eta'],
-        height=anagrafica['Platea'],
+        height=anagrafica['Totale Generale'],
         alpha=.3,
-        label='Platea'
+        label='Totale Generale'
     )
     anagrafica.plot.bar(
         x='Fascia Anagrafica', 
         y=['Prima Dose', 'Seconda Dose'],
         stacked=False,
-        title='Distribuzione vaccini per fascia anagrafica e dose ricevuta',
+        title='Distribuzione vaccini per fascia anagrafica\n e dose ricevuta',
         ax=axs[3],
         color=['cornflowerblue','salmon'],
-        width=.9
+        width=.9,
+        fontsize=15
     )
 
     for i in axs: 
         i.grid(lw=.2)
+        i.title.set_size(20)
         i.set_ylabel('Totale Somministrazioni')
-        i.legend(loc='upper left')
+        i.legend(loc='upper left', fontsize=15)
     plt.tight_layout()
     st.write(fig)
     st.write(anagrafica)
     st.markdown(
         'Il grafico in basso a sinistra, in particolare, mostra il numero di dosi somministrate, diviso per fascia anagrafica e categoria sociale'
-        'di appartenenza. La categoria "Over80" è però solo una parte delle fasce anagrafiche "80-89" e "90+", questo è corretto dal momento che'
-        'il grafico viene interpretato come *la ragione per la quale un appartenente ad una fascia anagrafica viene chiamato a vaccinarsi*.'
+        ' di appartenenza. La categoria "Over80" è però solo una parte delle fasce anagrafiche "80-89" e "90+", questo è corretto dal momento che'
+        ' il grafico viene interpretato come *la ragione per la quale un appartenente ad una fascia anagrafica viene chiamato a vaccinarsi*.'
     )
     st.markdown(
         'Il grafico in basso a destra mostra anche la platea di riferimento (popolazione in una determinata fascia di età) oltre alla dose di vaccino somministrata'

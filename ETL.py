@@ -75,18 +75,18 @@ class ETL:
         totaleRange = pd.read_csv('Staging/popolazione-istat-regione-range.csv')
         totaleRange = totaleRange.rename(columns=self.createNameMappingDict(totaleRange))
         totaleRange = totaleRange.rename(columns={'Range Eta': 'Fascia Anagrafica'})
-        totaleRange = totaleRange.groupby('Fascia Anagrafica').sum()['Totale Generale'][1:]
+        totaleRange = totaleRange.groupby('Fascia Anagrafica').sum().reset_index(drop=True)['Totale Generale'][1:].reset_index(drop=True)
 
         anaVacSumLat = anaVacSumLat.iloc[:,:-1]
+
+        anaVacSumLat = anaVacSumLat.join(totaleRange)
         
         # -----NEW COLUMNS-----
         anaVacSumLat['% Seconda Dose Sul Totale'] = round(100 * anaVacSumLat['Seconda Dose']/anaVacSumLat['Totale'], 2)
-        anaVacSumLat['Platea'] = [2298846,6084382,6854632,8937229,9414195,7364364,5968373,3628160,613523]
-        anaVacSumLat['% Seconda Dose Assoluta'] = round(anaVacSumLat['Seconda Dose']/anaVacSumLat['Platea'] * 100,2)
-        anaVacSumLat['% Totale Assoluto'] = round(anaVacSumLat['Totale']/anaVacSumLat['Platea'] * 100,2)
+        anaVacSumLat['% Seconda Dose Assoluta'] = round(anaVacSumLat['Seconda Dose']/anaVacSumLat['Totale Generale'] * 100,2)
+        anaVacSumLat['% Totale Assoluto'] = round(anaVacSumLat['Totale']/anaVacSumLat['Totale Generale'] * 100,2)
         # ---------------------
         
-        #anaVacSumLat = anaVacSumLat.join(totaleRange)
         anaVacSumLat.to_csv(DWPath+'anagrafica.csv')
     
 
@@ -103,7 +103,7 @@ class ETL:
 
         logging.info('Transforming Data. Somminstrazioni (summary)...')
 
-        somVacciniSumLat = pd.read_csv(StagingPath+'somministrazioni_summary.csv')
+        somVacciniSumLat = pd.read_csv(StagingPath+'somministrazioni.csv')
         somVacciniSumLat = somVacciniSumLat.rename(
             columns=self.createNameMappingDict(somVacciniSumLat)
         ).rename(columns={'Nome Area': 'Regione'} )
