@@ -1,6 +1,8 @@
 # COVID-19 Vaccine Analysis Report
 Repository for my personal analysis of COVID-19 vaccination campaign in Italy
 
+The application can be run via `streamlit run vaccine.py`. Make sure you have `streamlit` install.
+
 Description of the repository
 * `Staging` directory contains raw `.csv` datasets;
 * `DW` directory contains `.csv` file extracted and transform from [Covid-19 Opendata Vaccini](https://github.com/italia/covid19-opendata-vaccini) github repository;
