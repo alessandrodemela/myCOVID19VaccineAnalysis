@@ -19,7 +19,7 @@ Header()
 
 # ETL
 # st.write('')
-# etl = ETL()
+etl = ETL()
 # with open('lastupdate', 'r') as f:
 #     lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
 
