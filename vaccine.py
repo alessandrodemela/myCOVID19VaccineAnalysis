@@ -5,6 +5,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 sns.set()
 
+########################################################
+import argparse
+parser = argparse.ArgumentParser(description='COVID-19 analysis application', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--rewrite', type=int, help='Rewrite csv files', default=0)
+args = parser.parse_args()
+########################################################
+
 import os, sys
 from datetime import datetime
 from ETL import ETL
@@ -18,15 +25,16 @@ DWpath = os.path.join('DW')
 Header()
 
 # ETL
-st.write('')
-etl = ETL()
-st.write(os.listdir('Staging'))
-with open('lastupdate', 'r') as f:
-    lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
+if(args.rewrite):
+    etl = ETL()
+    st.write(os.listdir('Staging'))
 
-#etl.getData()
-# etl.transformData()
-# etl.auxiliaryTables()
+    with open('lastupdate', 'r') as f:
+        lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
+
+    etl.getData()
+    etl.transformData()
+    etl.auxiliaryTables()
 
 # Somministrazioni
 somm = Somministrazioni()
