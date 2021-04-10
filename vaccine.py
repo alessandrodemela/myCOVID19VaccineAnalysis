@@ -18,8 +18,10 @@ DWpath = os.path.join('DW')
 Header()
 
 # ETL
+st.write('')
 etl = ETL()
 with open('lastupdate', 'r') as f:
+    st.write(f.read())
     lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
 
 etl.getData()
