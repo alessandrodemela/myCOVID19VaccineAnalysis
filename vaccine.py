@@ -7,7 +7,7 @@ sns.set()
 
 ########################################################
 import optparse
-parser = optparse.ArgumentParser(description='COVID-19 analysis application', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser = optparse.OptionParser(description='COVID-19 analysis application', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--etl', type=int, help='Rewrite csv files', default=0)
 args = parser.parse_args()
 ########################################################
