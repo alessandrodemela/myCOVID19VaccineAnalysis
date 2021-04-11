@@ -62,6 +62,13 @@ def Header():
 class Somministrazioni:
 
     __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv')).drop(columns='Unnamed: 0')
+    __somministrazioni['Fornitore'] = __somministrazioni['Fornitore'].map(
+            {
+                'Pfizer/BioNTech': 'Pfizer/BioNTech',
+                'Moderna': 'Moderna',
+                'Vaxzevria (AstraZeneca)' : 'Vaxzevria' 
+                }
+        )
 
     def __header(self):
         st.header('Dosi Somministrate per giorno')
@@ -133,7 +140,7 @@ class Somministrazioni:
             stacked=True,
             figsize=(15,8),
             ax = ax,
-            color=['goldenrod','firebrick','royalblue','gold','tomato','skyblue'],
+            color=['firebrick','royalblue','goldenrod','tomato','skyblue','gold'],
             width=.9,
             title = 'Distribuzione temporale somministrazioni',
             ylabel='Somministrazioni',
@@ -147,10 +154,13 @@ class Somministrazioni:
         st.write(fig)
 
         ####
-        st.write(self.__somministrazioni)
-        somministrazioniVaccini_Categoria = self.__somministrazioni.iloc[:,[1,6,7,8,9,10,11,12]].groupby('Fornitore').sum()
-        fig, axs = plt.subplots(3,3,figsize=(15,15))
+        st.write(self.__somministrazioni.groupby('Data Somministrazione').sum())
+        somministrazioniVaccini_Categoria = self.__somministrazioni.iloc[:,[1,5,6,7,8,9,10,11]].groupby('Fornitore').sum()
+        fig, axs = plt.subplots(4,2,figsize=(15,20))
         axs = axs.ravel()
+
+        ###
+        st.write('Questa analisi mostra in funzione dell\'azienda fornitrice quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini.')
 
         for i in range(somministrazioniVaccini_Categoria.keys().size):
             somministrazioniVaccini_Categoria.plot.bar(
@@ -160,16 +170,19 @@ class Somministrazioni:
                 ylabel='Somministrazioni',
                 title=somministrazioniVaccini_Categoria.keys()[i],
                 width=.9,
-                color=['gold','tomato','cornflowerblue'],
+                color=['tomato','cornflowerblue','gold'],
                 logy=True,
-                rot=0
+                rot=0,
+                fontsize=15
             )
         for i in axs: 
             i.grid(lw=.5)
         plt.tight_layout()                                                  
 
         fig.delaxes(axs[7])
-        fig.delaxes(axs[8])
+        #fig.delaxes(axs[8])
+
+        st.write(fig)
 
 def Anagrafica():
 
