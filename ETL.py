@@ -103,7 +103,7 @@ class ETL:
 
         logging.info('Transforming Data. Somminstrazioni (summary)...')
 
-        somVacciniSumLat = pd.read_csv(StagingPath+'somministrazioni.csv')
+        somVacciniSumLat = pd.read_csv(StagingPath+'somministrazioni_summary.csv')
         somVacciniSumLat = somVacciniSumLat.rename(
             columns=self.createNameMappingDict(somVacciniSumLat)
         ).rename(columns={'Nome Area': 'Regione'} )
@@ -120,5 +120,16 @@ class ETL:
         somVacciniSumLat = somVacciniSumLat.drop(columns=['index'])
         somVacciniSumLat.to_csv(DWPath+'somministrazioniSummary.csv')
 
+
+        logging.info('Transforming Data. Somminstrazioni ...')
+
+        sommVaccini = pd.read_csv(StagingPath+'somministrazioni.csv')
+        sommVaccini = pd.read_csv('Staging/somministrazioni.csv')
+        sommVaccini = sommVaccini.rename(columns=self.createNameMappingDict(sommVaccini))
+        sommVaccini = sommVaccini.drop(columns=['Codice Nuts1', 'Codice Nuts2', 'Codice Regione Istat', 'Area'])
+        sommVaccini = sommVaccini.rename(columns={'Nome Area': 'Regione'})
+        sommVaccini['Totale'] = sommVaccini[['Prima Dose', 'Seconda Dose']].sum(axis=1)
+
+        sommVaccini.to_csv(DWPath+'somministrazioni.csv')
 
         logging.info('Transforming Data. Done.')

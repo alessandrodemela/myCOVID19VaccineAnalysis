@@ -61,7 +61,7 @@ def Header():
 
 class Somministrazioni:
 
-    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioniSummary.csv')).drop(columns='Unnamed: 0')
+    __somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioni.csv')).drop(columns='Unnamed: 0')
     __somministrazioni['Fornitore'] = __somministrazioni['Fornitore'].map(
             {
                 'Pfizer/BioNTech': 'Pfizer/BioNTech',
@@ -144,7 +144,8 @@ class Somministrazioni:
             width=.9,
             title = 'Distribuzione temporale somministrazioni',
             ylabel='Somministrazioni',
-            rot=0
+            rot=0,
+            fontsize=15,
         )
         ax.legend([i + ' ' + j for i,j in somministrazioni_fornitore.keys()],loc='upper left',ncol=2)
         ax.grid(lw=.2)
@@ -180,13 +181,47 @@ class Somministrazioni:
         plt.tight_layout()                                                  
 
         fig.delaxes(axs[7])
-        #fig.delaxes(axs[8])
 
         st.write(fig)
+
+        ########
+
+        # fig, ax = plt.subplots(1,1,figsize=(15,15))
+        # ax=somministrazioniVaccini_Categoria.T.plot.barh(subplots=True,
+        #                                          figsize=(15,10),
+        #                                          width=.9,
+        #                                          legend=False,
+        #                                          logx=True,
+        #                                          color=['gold','tomato','cornflowerblue'],
+        #                                         )
+        # ax[-1].set_xlabel('Somministrazioni')
+        # for i in ax: 
+        #     i.grid(lw=.5)
+        # plt.tight_layout()
+
+        # st.write(fig)
+
+        
+
+class Anagrafica:
+    somministrazioni = pd.read_csv(os.path.join(DWpath,'anagrafica.csv'))
+
+    # creating view on somministrazioni table
+    anagrafica = somministrazioni.groupby('Fascia Anagrafica').sum().reset_index()
 
 def Anagrafica():
 
     anagrafica = pd.read_csv(os.path.join(DWpath,'anagrafica.csv'))
+    somministrazioni = pd.read_csv(os.path.join(DWpath,'somministrazioni.csv'))
+
+    somministrazioni = somministrazioni.loc[:,['Fornitore','Fascia Anagrafica', 'Totale']]
+
+    somministrazioni['Fornitore'] = somministrazioni['Fornitore'].map({
+                'Pfizer/BioNTech': 'Pfizer/BioNTech',
+                'Moderna': 'Moderna',
+                'Vaxzevria (AstraZeneca)' : 'Vaxzevria' 
+                }
+        )
 
     totaleRange=pd.read_csv('Staging/popolazione-istat-regione-range.csv')
     totaleRange = totaleRange.groupby('range_eta').sum().reset_index().loc[1:,['range_eta','totale_generale']]
@@ -204,7 +239,8 @@ def Anagrafica():
         color='royalblue',
         ax=axs[0],
         width=.9,
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
 
     anagrafica.plot.bar(
@@ -215,19 +251,22 @@ def Anagrafica():
         ax=axs[1],
         color=['steelblue','coral'],
         width=.9,
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
 
-    anagrafica.plot.bar(
-        x='Fascia Anagrafica', 
-        y= anagrafica.columns[4:11],
-        stacked=True,
-        title='Distribuzione vaccini per fascia anagrafica\n e categoria sociale',
+    somministrazioni = somministrazioni.groupby(['Fascia Anagrafica','Fornitore']).sum()
+    somministrazioni = somministrazioni.unstack(level=1)
+    somministrazioni['Totale'].plot.bar(
+        stacked=True, 
         ax=axs[2],
-        cmap='Dark2_r',
+        title='Distribuzione vaccini per fascia anagrafica\n e categoria sociale',
+        color=['tomato','cornflowerblue','gold'],
         width=.9,
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
+    axs[2].legend([i + ' ' + j for i,j in somministrazioni.keys()],loc='upper left')
 
     axs[3].bar( 
         x=totaleRange['range_eta'],
@@ -243,7 +282,8 @@ def Anagrafica():
         ax=axs[3],
         color=['cornflowerblue','salmon'],
         width=.9,
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
 
     for i in axs: 
@@ -254,11 +294,6 @@ def Anagrafica():
     plt.tight_layout()
     st.write(fig)
     st.write(anagrafica)
-    st.markdown(
-        'Il grafico in basso a sinistra, in particolare, mostra il numero di dosi somministrate, diviso per fascia anagrafica e categoria sociale'
-        ' di appartenenza. La categoria "Over80" è però solo una parte delle fasce anagrafiche "80-89" e "90+", questo è corretto dal momento che'
-        ' il grafico viene interpretato come *la ragione per la quale un appartenente ad una fascia anagrafica viene chiamato a vaccinarsi*.'
-    )
     st.markdown(
         'Il grafico in basso a destra mostra anche la platea di riferimento (popolazione in una determinata fascia di età) oltre alla dose di vaccino somministrata'
     )

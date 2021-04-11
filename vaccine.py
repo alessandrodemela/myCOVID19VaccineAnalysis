@@ -8,7 +8,7 @@ sns.set()
 ########################################################
 import argparse
 parser = argparse.ArgumentParser(description='COVID-19 analysis application', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--rewrite', type=int, help='Rewrite csv files', default=0)
+parser.add_argument('etl', type=int, help='Rewrite csv files', default=0)
 args = parser.parse_args()
 ########################################################
 
@@ -25,16 +25,15 @@ DWpath = os.path.join('DW')
 Header()
 
 # ETL
-if(args.rewrite):
-    etl = ETL()
-    st.write(os.listdir('Staging'))
+# if(args.etl):
+#     etl = ETL()
 
-    with open('lastupdate', 'r') as f:
-        lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
+#     with open('lastupdate', 'r') as f:
+#         lastUpdate = datetime.strptime(f.read(), '%d/%m/%Y').date()
 
-    etl.getData()
-    etl.transformData()
-    etl.auxiliaryTables()
+#     etl.getData()
+#     etl.transformData()
+#     etl.auxiliaryTables()
 
 # Somministrazioni
 somm = Somministrazioni()
