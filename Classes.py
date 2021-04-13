@@ -47,7 +47,7 @@ def Header():
 
     ultimeSomministrazioni = dm.tblSomministrazioni.groupby('Data Somministrazione').sum().reset_index().iloc[-7:,[0,-1]]
     dataUltimeSomministrazioni = ultimeSomministrazioni['Data Somministrazione'].iloc[-1].strftime('%d/%m/%Y')
-    qtaUltimeSomministrazioni = ultimeSomministrazioni.iloc[0,1]
+    qtaUltimeSomministrazioni = ultimeSomministrazioni.iloc[-1,1]
     qtaUltimeSomministrazioniWeek = int(ultimeSomministrazioni['Totale'].mean())
 
     st.markdown(
