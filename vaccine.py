@@ -17,8 +17,8 @@ dm = DataModel()
 Header()
 
 # Somministrazioni
-# somm = Somministrazioni()
-# somm.Analisi()
+somm = Somministrazioni()
+somm.Analisi()
 
 # Anagrafica
 ana = Anagrafica()
