@@ -17,5 +17,7 @@ Description of the repository
 
 
 ## To do
-* In header, *Dosi Somministrate per fornitore* table
-* Analsys of delivered doses
+* KPI in place of header;
+* In header, *Dosi Somministrate per fornitore* table;
+* Reformat date in plots;
+* Analsys of delivered doses.
