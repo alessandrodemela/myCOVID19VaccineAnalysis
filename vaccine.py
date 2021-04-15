@@ -8,7 +8,7 @@ sns.set()
 import os, sys
 from datetime import datetime
 from ETL import ETL
-from Classes import DataModel, Header, Somministrazioni, Anagrafica#, Regionale
+from Classes import DataModel, Header, Somministrazioni, Anagrafica, Regionale
 
 # create Data Model
 dm = DataModel()

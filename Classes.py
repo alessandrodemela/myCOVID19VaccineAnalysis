@@ -256,7 +256,7 @@ class Regionale(DataModel):
 
         # 4 Plot sulle somministrazioni
         plt_Gartner = makePlot_MockGartner(self.tblAree)
-        st.write(plt_Gartner)
+        #st.write(plt_Gartner)
 
 
 
