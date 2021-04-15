@@ -14,3 +14,8 @@ Description of the repository
 * And then we have scripts which are the python script to perform the report and view it with `streamlit`
   * The main file `vaccini.py`
   * Two helper files `grafici.py` for plotting and `Classes.py` to perform the analysis
+
+
+## To do
+* In header, *Dosi Somministrate per fornitore* table
+* Analsys of delivered doses
