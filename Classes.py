@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
+import geopandas as gpd
 import os
 from datetime import datetime as dt
 #from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot, BarPercSomministrazioni
@@ -12,6 +13,32 @@ plt.rcParams.update({'font.size': 25})
 
 # from plotly.subplots import make_subplots
 # import plotly.graph_objects as go
+
+mapRegioni = {
+    'Abruzzo'                   : 'Abruzzo',
+    'Basilicata'                : 'Basilicata',
+    'Bolzano'                   : 'Provincia Autonoma Bolzano / Bozen',
+    'Provincia autonoma Bolzano': 'Provincia Autonoma Bolzano / Bozen',
+    'Calabria'                  : 'Calabria',
+    'Campania'                  : 'Campania',
+    'Emilia-Romagna'            : 'Emilia-Romagna',
+    'Friuli Venezia Giulia'     : 'Friuli-Venezia Giulia',
+    'Lazio'                     : 'Lazio',
+    'Liguria'                   : 'Liguria',
+    'Lombardia'                 : 'Lombardia',
+    'Marche'                    : 'Marche',
+    'Molise'                    : 'Molise',
+    'Piemonte'                  : 'Piemonte',
+    'Puglia'                    : 'Puglia',
+    'Sardegna'                  : 'Sardegna',
+    'Sicilia'                   : 'Sicilia',
+    'Toscana'                   : 'Toscana',
+    'Trento'                    : 'Provincia Autonoma Trento',
+    'Provincia autonoma Trento' : 'Provincia Autonoma Trento',
+    'Umbria'                    : 'Umbria',
+    "Valle d'Aosta"             : "Valle d'Aosta / Vallée d'Aoste",
+    'Veneto'                    : 'Veneto'
+}
 
 
 def Header():
@@ -83,7 +110,8 @@ class DataModel:
         self.tblConsegne = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/consegne-vaccini-latest.csv')
         # anagrafica
         self.tblInfoAnagrafica = pd.read_csv('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-statistici-riferimento/popolazione-istat-regione-range.csv')
-
+        # aree
+        self.tblAree = gpd.read_file('aree/shp/dpc-covid-19-ita-aree-nuove-g.shp')
 
         # ultimo aggiornamento
         self.lastUpdateDataset = pd.read_json('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/last-update-dataset.json', typ='series')[0].to_pydatetime()
@@ -100,7 +128,7 @@ class DataModel:
 
     def createNameMappingDict(self,df):
         '''This function returns a dictionary which helps mapping columns names in a DataFrame'''
-        nameMappingDict = {oldName : oldName.replace('_',' ').title().replace('Categoria', '').replace('Nome Area', 'Regione/P.A.') for oldName in df.columns}
+        nameMappingDict = {oldName : oldName.replace('_',' ').title().replace('Categoria', '').replace('Nome Area', 'Regione/P.A.').replace('Denominazione Regione', 'Regione/P.A.') for oldName in df.columns}
         return nameMappingDict
     
     def ETL(self):
@@ -125,6 +153,24 @@ class DataModel:
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.rename(columns=self.createNameMappingDict(self.tblInfoAnagrafica))
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.iloc[:,[4,6,7,8,9,10,11]]
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.where(self.tblInfoAnagrafica['Range Eta']!='0-15').dropna()
+        self.tblInfoAnagrafica['Regione/P.A.'] = self.tblInfoAnagrafica['Regione/P.A.'].map(mapRegioni)
+        
+
+        # TABELLA AREE
+        self.tblAree['nomeTesto'] = self.tblAree['nomeTesto'].map(mapRegioni)
+        self.tblAree = self.tblAree[['nomeTesto','geometry']].set_index('nomeTesto')
+        self.tblAree = self.tblAree[:21]
+
+        # TABELLA COMPLESSIVA REGIONI
+        self.tblFullRegioni = self.tblInfoAnagrafica.groupby('Regione/P.A.').sum().iloc[:,2:].join(self.tblSomministrazioni.groupby('Regione/P.A.').sum())
+        self.tblFullRegioni = self.tblFullRegioni.join(self.tblConsegne.groupby('Regione/P.A.').sum()).rename(columns={'Numero Dosi': 'Numero Dosi Consegnate'})
+        self.tblFullRegioni['% Dosi Somministrate/Dosi Consegnate'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Numero Dosi Consegnate'] *100,2)
+        self.tblFullRegioni['% Prima Dose'] = round(self.tblFullRegioni['Prima Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
+        self.tblFullRegioni['% Seconda Dose'] = round(self.tblFullRegioni['Seconda Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
+        self.tblFullRegioni['% Totale'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Totale Generale'] *100,2)
+        self.tblFullRegioni['% Dosi Consegnate/Abitanti'] = self.tblFullRegioni['Numero Dosi Consegnate']/self.tblFullRegioni['Totale Generale']*100
+
+        self.tblAree = self.tblAree.join(self.tblFullRegioni)
 
 
 class Somministrazioni(DataModel):
@@ -140,7 +186,8 @@ class Somministrazioni(DataModel):
         print(self.tblSomministrazioni)
 
     def Analisi(self):
-        st.header('Dosi Somministrate per giorno')
+        st.header('Analisi Dosi Somministrate')
+        st.subheader('Analisi Temporale')
         st.write(
             "Questa sezione contiene l'analisi delle dosi somministrate quotidianamente, la data odierna potrebbe contenere un dato parziale. "
             "Inoltre, si riporta anche la distribuzione temporale delle somministrazioni divisa per fornitore di vaccino."
@@ -154,6 +201,7 @@ class Somministrazioni(DataModel):
         plt_somministrazioniGiornoFornitore = makePlot_SomministrazioniGiornoFornitore(self.VwSomministrazioniGiornoFornitore)
         st.write(plt_somministrazioniGiornoFornitore)
 
+        st.subheader('Analisi sul tipo di vaccino somministrato')
         st.markdown(
             "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
             " La categoria `Over 80` non contiene tutta la popolazione di età superiore a 80 anni, ma rappresenta la popolazione chiamata al vaccino"
@@ -179,7 +227,7 @@ class Anagrafica(DataModel):
     def Analisi(self):
         st.header('Analisi Anagrafica della somministrazione')
         st.markdown(
-            'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.' 
+            'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.\n' 
             '1. Il primo mostra le somministrazioni totali per età   '
             '1. Il secondo è diviso per sesso   '
             '1. Il terzo è suddiviso per vaccino somministrato   '
@@ -191,6 +239,24 @@ class Anagrafica(DataModel):
         st.write(plt_Anagrafica)
 
 
+class Regionale(DataModel):
+    def __init__(self):
+        '''Creating Views'''
+        super(Regionale, self).__init__()
+
+
+    def Analisi(self):
+        st.markdown('***')
+        st.header('Analisi Regionale delle somministrazioni')
+        st.markdown('Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione')
+
+        # 4 Plot sulle somministrazioni
+        plt_Regioni = makePlot_Regioni(self.tblAree)
+        st.write(plt_Regioni)
+
+        # 4 Plot sulle somministrazioni
+        plt_Gartner = makePlot_MockGartner(self.tblAree)
+        st.write(plt_Gartner)
 
 
 

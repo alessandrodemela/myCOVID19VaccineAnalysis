@@ -3,6 +3,9 @@ import numpy as np
 from datetime import datetime
 import matplotlib.pyplot as plt
 import streamlit as st
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.colors import Normalize
+from matplotlib.cm import ScalarMappable 
 
 import seaborn as sns
 sns.set()
@@ -86,12 +89,12 @@ def makePlot_SomministrazioniCategoria(df):
     return fig
 
 def makePlot_SomministrazioniFornitori(df):
-    fig, axs = plt.subplots(nrows=3,ncols=1,figsize=(15,15))
+    fig, axs = plt.subplots(nrows=4,ncols=1,figsize=(15,20))
     axs = axs.ravel()
     
     maxScale = df.max().max()
 
-    for i,c in zip(range(df.keys().size),['tomato','cornflowerblue','gold']):
+    for i,c in zip(range(df.keys().size),['firebrick','royalblue','goldenrod']):
         df.plot.barh(
             y=df.keys()[i],
             ax=axs[i],
@@ -106,11 +109,18 @@ def makePlot_SomministrazioniFornitori(df):
         axs[i].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=15)
         axs[i].grid(lw=.5)
         axs[i].set_xlim([0,maxScale*1.02])
+
+    df.plot.barh(
+        stacked=True,
+        ax = axs[3],
+        color=['firebrick','royalblue','goldenrod'],
+        width=.9
+    )
     axs[-1].set_xlabel(xlabel='Somministrazioni', font='Gill Sans', fontsize=15)
+    axs[-1].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=15)
     plt.tight_layout()                                                  
 
     return fig
-
 
 def makePlot_AnalisiAnagraficaTotale(df, df_f):
     fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(15,12))
@@ -137,7 +147,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         stacked=True,
         title='Distribuzione vaccini per fascia anagrafica divisi per fornitore',
         legend=False,
-        color=['tomato','cornflowerblue','gold'],
+        color=['firebrick','royalblue','goldenrod'],
         width = .9,
         ax = axs[2],
         fontsize=15
@@ -149,7 +159,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
      )
     df[['Prima Dose', 'Seconda Dose']].plot.bar(
         stacked=False,
-        title='Distribuzione vaccini per fascia anagrafica divisi per dose somministrata',
+        title='Distribuzione vaccini per fascia anagrafica divisi\n per dose somministrata',
         legend=False,
         color=['cornflowerblue','salmon'],
         width = .9,
@@ -160,12 +170,116 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
     for i in axs: 
         i.grid(lw=.2)
         i.set_ylabel('Totale Somministrazioni',fontsize=15)
+        i.set_ylabel('Fascia Anagrafica',fontsize=15)
         i.legend(loc='upper left',fontsize=15)
     plt.tight_layout()
     axs[2].legend([i + ' ' + j for i,j in df_f.keys()],loc='upper left',fontsize=15)
 
     return fig
  
+def makePlot_Regioni(df):
+    fig, axs = plt.subplots(nrows=2,ncols=2, figsize=(15,20))
+    axs = axs.ravel()
+
+    iters = [
+        ['% Prima Dose','Blues'],
+        ['% Seconda Dose','Reds'],
+        ['% Dosi Consegnate/Abitanti','Greens'],
+        ['% Dosi Somministrate/Dosi Consegnate','Oranges']
+    ]
+    for i,ax in zip(iters,axs):
+        df.plot(
+            column=i[0],
+            cmap=i[1],
+            ax=ax
+        )
+        norm = Normalize(vmin=df[i[0]].min(),vmax=df[i[0]].max())
+        cbar = fig.colorbar(
+            ScalarMappable(
+                norm=norm,
+                cmap=i[1],
+            ),
+            ax=ax, 
+            shrink=0.75,
+            label=i[0],
+        )
+        cbar.set_label(i[0],fontsize=20)
+
+        ax.axis('off')
+        df.boundary.plot(ax=ax, color='k', lw=1)
+                    
+    plt.tight_layout()
+
+    return fig
+
+def makePlot_MockGartner(df):
+    fig,ax=plt.subplots(nrows=2,ncols=1,figsize=(20,20),constrained_layout=True)
+    ax=ax.ravel()
+
+    df.plot.scatter(
+        ax=ax[0],
+        x='% Seconda Dose', 
+        y='% Prima Dose',  
+        c='% Dosi Somministrate/Dosi Consegnate',
+        cmap='autumn',
+        edgecolor='k',
+        s=400,
+        lw=1,
+        ylim=(df['% Prima Dose'].min()/1.05,df['% Prima Dose'].max()*1.05),
+        xlim=(df['% Seconda Dose'].min()/1.05,df['% Seconda Dose'].max()*1.05),
+    )   
+    ax[0].set_ylabel('% Prima Dose', fontsize=18)
+    ax[0].set_xlabel('% Seconda Dose', fontsize=18)
+
+    for i in df.index:
+        ax[0].text(
+            x=df.loc[i,'% Seconda Dose'],
+            y=df.loc[i,'% Prima Dose']-.3,
+            s=i.replace(
+                "Valle d'Aosta / Vallée d'Aoste","Valle d'Aosta"
+            ).replace(
+                "Provincia Autonoma Bolzano / Bozen", 'P.A. Bolzano'
+            ).replace(
+                "Provincia Autonoma Trento", 'P.A. Trento'
+            ),
+            ha='left',
+            va='center',
+            fontsize = 15,
+        )
+
+    ax[0].axhline(
+        y=sum(ax[0].get_ylim())/2,
+        ls='--',
+        c='tab:gray'
+    )
+    ax[0].axvline(
+        x=sum(ax[0].get_xlim())/2,
+        ls='--',
+        c='tab:gray'
+    )
+
+    labels = [['Niche Players', 'Challengers'], ['Visionaries', 'Leaders']]
+    #labels = [['Niche Players', 'Doses Giver'], ['Protectors', 'Leaders']]
+    for yi in [0,1]:
+        for xi in [0,1]:  
+            ax[0].text(
+                y=ax[0].get_ylim()[yi]+(0.3)*(-1)**yi,
+                x=sum([ax[0].get_xlim()[xi],sum(ax[0].get_xlim())/2])/2,
+                s=labels[xi][yi],
+                size=20,
+                c='tab:gray',
+                va='center',
+                ha='center'
+            )
+
+    plt.tight_layout()
+    return fig
+
+
+
+
+
+
 
 def RadarAnagrafica(anaVacSumLat):
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16,8))
@@ -358,31 +472,6 @@ def ScatterAnagrafica(anaVacSumLat):
 
     return fig
 
-def AnagraficaPlot(anaVacSumLat):
-    fig, axs = plt.subplots(nrows=2,ncols=1, figsize=(20,18))
-
-    #colorList = ['salmon','cornflowerblue','mediumseagreen','peru','forestgreen','navy','orange']
-    for ax,t,rg in zip(axs,['Sesso','Categoria Sociale'],[range(2,4),range(5,12)]):
-        bottom = np.zeros(len(anaVacSumLat['Fascia Anagrafica']))  
-
-        for i in rg:
-            ax.bar(
-                x=anaVacSumLat['Fascia Anagrafica'], 
-                height=anaVacSumLat.iloc[:,i], 
-                label=anaVacSumLat.columns[i],
-                bottom=bottom,
-                width=.9,
-                #color=c
-            )
-            bottom=bottom+anaVacSumLat.iloc[:,i]
-        ax.tick_params(labelsize=18)
-        ax.set_xlabel('Fascia anagrafica', fontfamily='Gill Sans', fontsize=25)
-        ax.set_ylabel('Somministrazioni', fontfamily='Gill Sans', fontsize=25)
-        ax.set_title('Distribuzione vaccini divisa per %s' %t, fontfamily='Gill Sans', fontsize=28)
-        ax.legend(fontsize=18)
-        ax.grid(lw=.2)
-
-    return fig
 
 def BarPercSomministrazioni(sommRegio):
     fig, ax = plt.subplots(figsize=(15,8))
