@@ -41,14 +41,13 @@ mapRegioni = {
 }
 
 
-def Header():
-    dm = DataModel()
+def Header(self):
 
     st.title('Report vaccinazioni COVID-19')
 
     st.markdown('***')
     st.markdown(
-        f'Ultimo Aggiornamento {dm.readableDate}.  '
+        f'Ultimo Aggiornamento {self.readableDate}.  '
         '\nIl codice di analisi è disponibile [qui](https://github.com/alessandrodemela/myCOVID19VaccineAnalysis).  '
         '\nMentre i dati sono reperibili nel [repository ufficiale](https://github.com/italia/covid19-opendata-vaccini).'
         )
@@ -58,27 +57,27 @@ def Header():
                 '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
                 )
 
-    totSomministrate = dm.tblSomministrazioni.Totale.sum()
-    totPrime = dm.tblSomministrazioni['Prima Dose'].sum()
-    totSeconde = dm.tblSomministrazioni['Seconda Dose'].sum()
-    platea = dm.tblInfoAnagrafica['Totale Generale'].sum()
+    totSomministrate = self.tblSomministrazioni.Totale.sum()
+    totPrime = self.tblSomministrazioni['Prima Dose'].sum()
+    totSeconde = self.tblSomministrazioni['Seconda Dose'].sum()
+    platea = self.tblInfoAnagrafica['Totale Generale'].sum()
     percPrime = round(totPrime/platea,4)
     percSeconde = round(totSeconde/platea,4)
 
-    totConsegne = dm.tblConsegne['Numero Dosi'].sum()
+    totConsegne = self.tblConsegne['Numero Dosi'].sum()
     percConsegne = totSomministrate/totConsegne
 
-    ultimeConsegne = dm.tblConsegne.groupby('Data Consegna').sum()[-1:].reset_index()
+    ultimeConsegne = self.tblConsegne.groupby('Data Consegna').sum()[-1:].reset_index()
     dataUltimaConsegna = ultimeConsegne.iloc[0,0].strftime('%d/%m/%Y')
     qtaUltimaConsegna = ultimeConsegne.iloc[0,1]
 
-    ultimeSomministrazioni = dm.tblSomministrazioni.groupby('Data Somministrazione').sum().reset_index().iloc[-7:,[0,-1]]
+    ultimeSomministrazioni = self.tblSomministrazioni.groupby('Data Somministrazione').sum().reset_index().iloc[-7:,[0,-1]]
     dataUltimeSomministrazioni = ultimeSomministrazioni['Data Somministrazione'].iloc[-1].strftime('%d/%m/%Y')
     qtaUltimeSomministrazioni = ultimeSomministrazioni.iloc[-1,1]
     qtaUltimeSomministrazioniWeek = int(ultimeSomministrazioni['Totale'].mean())
 
     st.markdown(
-        f'Al {dm.readableDate} sono state somministrate **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
+        f'Al {self.readableDate} sono state somministrate **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
         f' e **{totSeconde:,}** seconde dosi (ciclo completo). La percentuale di persone che ha ricevuto almeno una dose è '
         f' del **{percPrime:.2%}**, mentre il **{percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
     )
@@ -93,12 +92,37 @@ def Header():
     )
     st.markdown(f"L'ultima consegna è avvenuta il **{dataUltimaConsegna}** con **{qtaUltimaConsegna:,}** dosi.")
 
+    st.subheader('Indicatori')
+    fig, axs = plt.subplots(3,2, figsize=(15,7))
+    KPI = {
+            'Dosi Somministrate Totali' : totSomministrate,
+            'Ultime Somministrazioni'   : qtaUltimeSomministrazioni,
+            'Dosi Consegnate Totali'    : totConsegne,
+            'Ultime Consegne'           : qtaUltimaConsegna,
+            'Prime Dosi'                : totPrime,
+            'Seconde Dosi'              : totSeconde,
+    }
+    for ax,i in zip(axs.ravel(),KPI.items()):
+        ax.set_facecolor('xkcd:white')
+        ax.tick_params(axis='x', colors='w')
+        ax.tick_params(axis='y', colors='w')
+        ax.text(0.5,0.9,i[0],font='Gill Sans',size=20,ha='center',va='center')
+        ax.text(0.5,0.5,'{:,}'.format(i[1]),font='Gill Sans',size=50,ha='center',va='center')
+
+    plt.tight_layout()
+
+    st.write(fig)
+
     
-    st.subheader('Dosi consegnate per fornitore.')
-    st.write(dm.tblConsegne.groupby('Fornitore').sum().T.style.format('{:,}'))
+    st.subheader('Dosi consegnate e somministrate per fornitore.')
+    cDF = pd.DataFrame(self.tblConsegne.groupby('Fornitore').sum()).rename(columns={'Numero Dosi': 'Dosi Consegnate'})
+    sDF = pd.DataFrame(self.tblSomministrazioni.groupby('Fornitore').sum()['Totale']).rename(columns={'Totale': 'Dosi Somministrate'})
+    df = pd.concat([cDF,sDF],axis=1)
+    df['% Somministrate/Consegnate'] = round(100 * df['Dosi Somministrate']/df['Dosi Consegnate'],2)
+    st.write(df.T.style.format('{:,}'))
 
     st.subheader('Dosi somministrate da ciascuna regione.')
-    st.write(dm.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
+    st.write(self.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
     
 
 class DataModel:
@@ -149,6 +173,16 @@ class DataModel:
         self.tblConsegne['Data Consegna'] = pd.to_datetime(self.tblConsegne['Data Consegna']).dt.date
         self.tblConsegne['Fornitore'] = self.tblConsegne['Fornitore'].map(self.mapFornitore)
 
+        # TABELLA JOIN CONSEGNE SOMMINISTRAZIONI
+        self.tblSomministrazioniConsegne = pd.DataFrame(
+            self.tblSomministrazioni.groupby('Data Somministrazione').sum()['Totale']
+            ).rename(
+                columns={'Totale': 'Dosi Somministrate'}
+                ).join(
+                    self.tblConsegne.groupby('Data Consegna').sum().rename(columns={'Numero Dosi': 'Dosi Consegnate'})
+                    ).cumsum().fillna(method='ffill')
+        self.tblSomministrazioniConsegne['% Somministrazioni/Consegne'] = (self.tblSomministrazioniConsegne['Dosi Somministrate'] / self.tblSomministrazioniConsegne['Dosi Consegnate'] * 100).rolling(7).mean().fillna(method='bfill')
+
         # TABELLA ANAGRAFICA
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.rename(columns=self.createNameMappingDict(self.tblInfoAnagrafica))
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.iloc[:,[4,6,7,8,9,10,11]]
@@ -168,7 +202,7 @@ class DataModel:
         self.tblFullRegioni['% Prima Dose'] = round(self.tblFullRegioni['Prima Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
         self.tblFullRegioni['% Seconda Dose'] = round(self.tblFullRegioni['Seconda Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
         self.tblFullRegioni['% Totale'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Totale Generale'] *100,2)
-        self.tblFullRegioni['% Dosi Consegnate/Abitanti'] = self.tblFullRegioni['Numero Dosi Consegnate']/self.tblFullRegioni['Totale Generale']*100
+        self.tblFullRegioni['% Dosi Consegnate/Abitanti'] = round(self.tblFullRegioni['Numero Dosi Consegnate']/self.tblFullRegioni['Totale Generale']*100,2)
 
         self.tblAree = self.tblAree.join(self.tblFullRegioni)
 
@@ -200,6 +234,10 @@ class Somministrazioni(DataModel):
         # Plot andamento giornaliero per fornitore
         plt_somministrazioniGiornoFornitore = makePlot_SomministrazioniGiornoFornitore(self.VwSomministrazioniGiornoFornitore)
         st.write(plt_somministrazioniGiornoFornitore)
+
+        # Plot consegne e somministrazioni
+        plt_ConsegneSomministrazioni = makePlot_ConsegneSomministrazioni(self.tblSomministrazioniConsegne)
+        st.write(plt_ConsegneSomministrazioni)
 
         st.subheader('Analisi sul tipo di vaccino somministrato')
         st.markdown(
@@ -238,6 +276,8 @@ class Anagrafica(DataModel):
         plt_Anagrafica = makePlot_AnalisiAnagraficaTotale(self.VwTotaleFascia, self.VwFornitoreFascia)
         st.write(plt_Anagrafica)
 
+        
+
 
 class Regionale(DataModel):
     def __init__(self):
@@ -248,7 +288,13 @@ class Regionale(DataModel):
     def Analisi(self):
         st.markdown('***')
         st.header('Analisi Regionale delle somministrazioni')
-        st.markdown('Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione')
+        st.markdown(
+            'Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.<br>  '
+            'Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.<br>  '
+            'Il terzo mostra la percentuale di dose consegnate a ciascuna regione in base alla loro popolazione. <br>'
+            'Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.',
+            unsafe_allow_html=True
+        )
 
         # 4 Plot sulle somministrazioni
         plt_Regioni = makePlot_Regioni(self.tblAree)
@@ -256,15 +302,16 @@ class Regionale(DataModel):
 
         # 4 Plot sulle somministrazioni
         plt_Gartner = makePlot_MockGartner(self.tblAree)
-        #st.write(plt_Gartner)
+        st.write(plt_Gartner)
 
+        st.write(self.tblFullRegioni.iloc[:,-4:].T)
 
 
 
 # with open('lastupdate', 'r') as fin:
 #     lastupdate = fin.read().strip().split('/')
 #     lastupdate = datetime.date(day=int(lastupdate[0]), month=int(lastupdate[1]), year=int(lastupdate[2]))
-#     dm.readableDate = lastupdate.strftime('%d/%m/%Y')
+#     self.readableDate = lastupdate.strftime('%d/%m/%Y')
 
 
 

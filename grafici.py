@@ -13,7 +13,7 @@ sns.set()
 
 
 def makePlot_SomministrazioniGiorno(df):
-    fig, ax = plt.subplots(1,1,figsize=(20,8))
+    fig, ax = plt.subplots(1,1,figsize=(15,8))
     df.plot.bar(
         #x='Data Somministrazione',
         y=['Prima Dose', 'Seconda Dose'],
@@ -43,7 +43,7 @@ def makePlot_SomministrazioniGiornoFornitore(df):
     fig, ax = plt.subplots()
     df.plot.bar(
         stacked=True,
-        figsize=(20,8),
+        figsize=(15,8),
         ax = ax,
         color=['firebrick','royalblue','goldenrod','tomato','skyblue','gold'],
         width=.9,
@@ -89,7 +89,7 @@ def makePlot_SomministrazioniCategoria(df):
     return fig
 
 def makePlot_SomministrazioniFornitori(df):
-    fig, axs = plt.subplots(nrows=4,ncols=1,figsize=(15,20))
+    fig, axs = plt.subplots(nrows=4,ncols=1,figsize=(15,20),constrained_layout=True)
     axs = axs.ravel()
     
     maxScale = df.max().max()
@@ -114,11 +114,49 @@ def makePlot_SomministrazioniFornitori(df):
         stacked=True,
         ax = axs[3],
         color=['firebrick','royalblue','goldenrod'],
-        width=.9
+        width=.9,
+        fontsize=15
     )
     axs[-1].set_xlabel(xlabel='Somministrazioni', font='Gill Sans', fontsize=15)
     axs[-1].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=15)
     plt.tight_layout()                                                  
+
+    return fig
+
+def makePlot_ConsegneSomministrazioni(df):
+    fig,ax=plt.subplots(1,1,figsize=(15,8),constrained_layout=True)
+    df.plot(
+        y=['Dosi Somministrate','Dosi Consegnate'],
+        color=['salmon','cornflowerblue'],
+        lw=2,
+        fontsize=15,
+        xlabel='Data',
+        ax=ax,
+        legend=False
+    )
+    ax.set_ylabel('Numero Dosi',fontsize=15)
+    ax.set_xlabel('Data',fontsize=15)
+    ax1=ax.twinx()
+    df.plot(
+        y=['% Somministrazioni/Consegne'],
+        color=['forestgreen'],
+        lw=2,
+        fontsize=15,
+        xlabel='Data',
+        ylabel='% Somministrazioni/Consegne',
+        ax=ax1,
+        ylim=[0,100]
+    )
+    ax1.set_ylabel('% Somministrazioni/Consegne',fontsize=15)
+    ax1.grid(False)
+
+    handles,labels = [],[]
+    for ax in fig.axes:
+        for h,l in zip(*ax.get_legend_handles_labels()):
+            handles.append(h)
+            labels.append(l)
+
+    plt.legend(handles,labels, loc='best',fontsize=15)
 
     return fig
 
@@ -200,7 +238,7 @@ def makePlot_Regioni(df):
                 cmap=i[1],
             ),
             ax=ax, 
-            shrink=0.75,
+            shrink=0.5,
             label=i[0],
         )
         cbar.set_label(i[0],fontsize=20)
@@ -213,7 +251,7 @@ def makePlot_Regioni(df):
     return fig
 
 def makePlot_MockGartner(df):
-    fig,ax=plt.subplots(nrows=2,ncols=1,figsize=(20,20),constrained_layout=True)
+    fig,ax=plt.subplots(nrows=2,ncols=1,figsize=(20,20))
     ax=ax.ravel()
 
     df.plot.scatter(
