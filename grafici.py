@@ -11,15 +11,48 @@ import seaborn as sns
 sns.set()
 
 
+def makePlot_Indicatori(KPI, aux):
+    fig, axs = plt.subplots(3,2, figsize=(15,7))
+
+    cols = 2
+    rows = int(np.ceil(len(KPI.items())/cols))
+
+    fig, axs = plt.subplots(nrows = rows, ncols = cols, figsize=(15,7))
+    axs = axs.ravel()
+
+    colors = [
+        'k',
+        'k',
+        'k',
+        'k',
+        sns.color_palette()[0],         # prime dosi
+        sns.color_palette()[1]          # seconde dosi
+    ]
+    for ax,i,c in zip(axs,KPI.items(),colors):
+        ax.set_facecolor('xkcd:white')
+        ax.tick_params(axis='x', colors='w')
+        ax.tick_params(axis='y', colors='w')
+        ax.text(0.5, 0.9, i[0], font='Gill Sans', size=20, ha='center', va='center')
+        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font='Gill Sans', size=60, ha='center', va='center', color=c)
+
+    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font='Gill Sans', size=20, ha='center', va='center')
+    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font='Gill Sans', size=20, ha='center', va='center')
+    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font='Gill Sans', size=20, ha='center', va='center')
+    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font='Gill Sans', size=20, ha='center', va='center')
+    
+
+    plt.tight_layout()
+
+    return fig
+
 
 def makePlot_SomministrazioniGiorno(df):
     fig, ax = plt.subplots(1,1,figsize=(15,8))
     df.plot.bar(
-        #x='Data Somministrazione',
         y=['Prima Dose', 'Seconda Dose'],
         stacked=True,
         fontsize=15,
-        color=['cornflowerblue','darksalmon'],
+        #color=['cornflowerblue','darksalmon'],
         width=.9,
         rot=0,
         ax=ax,
@@ -31,13 +64,16 @@ def makePlot_SomministrazioniGiorno(df):
         color='forestgreen',
         label='Totale Somministrazioni Giornaliere (Media Mobile 7gg)'
     )
-    ax.set_xticks(np.arange(0,(plt.xlim()[1]),10))
+    labels = [i.strftime('%d/%m/%Y') for i in np.array(df.index)[-1:0:-10][::-1]]
+    ticks = [list(df.index).index(i) for i in np.array(df.index)[-1:0:-10][::-1]]
+    ax.set_xticks(ticks)
     ax.grid(lw=.2)
     ax.set_xlabel(xlabel='Data', font='Gill Sans', fontsize=15)
     ax.set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=15)
     ax.legend(fontsize=15)
 
     return fig
+
 
 def makePlot_SomministrazioniGiornoFornitore(df):
     fig, ax = plt.subplots()
@@ -57,74 +93,15 @@ def makePlot_SomministrazioniGiornoFornitore(df):
     ax.legend([i + ' ' + j for i,j in df.keys()],loc='upper left', ncol=2, fontsize=15)
     ax.grid(lw=.2)
 
-    ax.set_xticks(np.arange(0,(ax.get_xlim()[1]),10))
+    labels = [i.strftime('%d/%m/%Y') for i in np.array(df.index)[-1:0:-10][::-1]]
+    ticks = [list(df.index).index(i) for i in np.array(df.index)[-1:0:-10][::-1]]
+    ax.set_xticks(ticks)
 
     return fig
 
-def makePlot_SomministrazioniCategoria(df):
-    fig, axs = plt.subplots(nrows=4,ncols=2,figsize=(15,20))
-    axs = axs.ravel()
-
-    for i in range(df.keys().size):
-        df.plot.bar(
-            y=df.keys()[i],
-            ax=axs[i],
-            legend=False,
-            ylabel='Somministrazioni',
-            title=df.keys()[i],
-            width=.9,
-            color=['tomato','cornflowerblue','gold'],
-            #logy=True,
-            rot=0,
-            fontsize=15
-        )
-        axs[i].set_xlabel(xlabel='Data', font='Gill Sans', fontsize=15)
-        axs[i].set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=15)
-        axs[i].grid(lw=.5)
-
-    plt.tight_layout()                                                  
-
-    fig.delaxes(axs[7])
-
-    return fig
-
-def makePlot_SomministrazioniFornitori(df):
-    fig, axs = plt.subplots(nrows=4,ncols=1,figsize=(15,20),constrained_layout=True)
-    axs = axs.ravel()
-    
-    maxScale = df.max().max()
-
-    for i,c in zip(range(df.keys().size),['firebrick','royalblue','goldenrod']):
-        df.plot.barh(
-            y=df.keys()[i],
-            ax=axs[i],
-            legend=False,
-            ylabel='Somministrazioni',
-            title=df.keys()[i],
-            width=.9,
-            color=c,
-            rot=0,
-            fontsize=15
-        )
-        axs[i].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=15)
-        axs[i].grid(lw=.5)
-        axs[i].set_xlim([0,maxScale*1.02])
-
-    df.plot.barh(
-        stacked=True,
-        ax = axs[3],
-        color=['firebrick','royalblue','goldenrod'],
-        width=.9,
-        fontsize=15
-    )
-    axs[-1].set_xlabel(xlabel='Somministrazioni', font='Gill Sans', fontsize=15)
-    axs[-1].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=15)
-    plt.tight_layout()                                                  
-
-    return fig
 
 def makePlot_ConsegneSomministrazioni(df):
-    fig,ax=plt.subplots(1,1,figsize=(15,8),constrained_layout=True)
+    fig,ax=plt.subplots(1,1,figsize=(15,5))
     df.plot(
         y=['Dosi Somministrate','Dosi Consegnate'],
         color=['salmon','cornflowerblue'],
@@ -143,7 +120,7 @@ def makePlot_ConsegneSomministrazioni(df):
         lw=2,
         fontsize=15,
         xlabel='Data',
-        ylabel='% Somministrazioni/Consegne',
+        ylabel='% Somministrazioni/Consegne (media mobiel 7gg)',
         ax=ax1,
         ylim=[0,100]
     )
@@ -159,6 +136,73 @@ def makePlot_ConsegneSomministrazioni(df):
     plt.legend(handles,labels, loc='best',fontsize=15)
 
     return fig
+
+
+def makePlot_SomministrazioniCategoria(df):
+    fig, axs = plt.subplots(nrows=4,ncols=2,figsize=(15,20))
+    axs = axs.ravel()
+
+    for i in range(df.keys().size):
+        df.plot.bar(
+            y=df.keys()[i],
+            ax=axs[i],
+            legend=False,
+            ylabel='Somministrazioni',
+            title=df.keys()[i],
+            width=.9,
+            color=['firebrick','royalblue','goldenrod'],
+            #logy=True,
+            rot=0,
+            fontsize=15
+        )
+        axs[i].set_xlabel(xlabel='Data', font='Gill Sans', fontsize=15)
+        axs[i].set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=15)
+        axs[i].grid(lw=.5)
+
+    plt.tight_layout()                                                  
+
+    fig.delaxes(axs[7])
+
+    return fig
+
+
+def makePlot_SomministrazioniFornitori(df):
+    fig, axs = plt.subplots(nrows=4,ncols=1,figsize=(15,20),constrained_layout=True)
+    axs = axs.ravel()
+    
+    maxScale = df.max().max()
+
+    for i,c in zip(range(df.keys().size),['firebrick','royalblue','goldenrod']):
+        df.plot.barh(
+            y=df.keys()[i],
+            ax=axs[i],
+            legend=False,
+            ylabel='Somministrazioni',
+            width=.9,
+            color=c,
+            rot=0,
+            fontsize=18
+        )
+        axs[i].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=18)
+        axs[i].grid(lw=.5)
+        axs[i].set_xlim([0,maxScale*1.02])
+        axs[i].set_title(label=df.keys()[i], fontsize=20)
+
+    df.plot.barh(
+        stacked=True,
+        ax = axs[3],
+        color=['firebrick','royalblue','goldenrod'],
+        width=.9,
+        fontsize=18
+    )
+    axs[-1].set_xlabel(xlabel='Somministrazioni', font='Gill Sans', fontsize=18)
+    axs[-1].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=18)
+    axs[-1].set_title(label='Tutti i fornitori', fontsize=20)
+    axs[-1].legend(fontsize=18)
+    plt.tight_layout()                                                  
+
+    return fig
+
 
 def makePlot_AnalisiAnagraficaTotale(df, df_f):
     fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(15,12))
@@ -215,6 +259,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
 
     return fig
  
+
 def makePlot_Regioni(df):
     fig, axs = plt.subplots(nrows=2,ncols=2, figsize=(15,20))
     axs = axs.ravel()
@@ -249,6 +294,7 @@ def makePlot_Regioni(df):
     plt.tight_layout()
 
     return fig
+
 
 def makePlot_MockGartner(df):
     fig,ax=plt.subplots(nrows=2,ncols=1,figsize=(20,20))
@@ -285,30 +331,31 @@ def makePlot_MockGartner(df):
             fontsize = 15,
         )
 
-    ax[0].axhline(
-        y=sum(ax[0].get_ylim())/2,
-        ls='--',
-        c='tab:gray'
-    )
-    ax[0].axvline(
-        x=sum(ax[0].get_xlim())/2,
-        ls='--',
-        c='tab:gray'
-    )
+    if (0):
+        ax[0].axhline(
+            y=sum(ax[0].get_ylim())/2,
+            ls='--',
+            c='tab:gray'
+        )
+        ax[0].axvline(
+            x=sum(ax[0].get_xlim())/2,
+            ls='--',
+            c='tab:gray'
+        )
 
-    labels = [['Niche Players', 'Challengers'], ['Visionaries', 'Leaders']]
-    #labels = [['Niche Players', 'Doses Giver'], ['Protectors', 'Leaders']]
-    for yi in [0,1]:
-        for xi in [0,1]:  
-            ax[0].text(
-                y=ax[0].get_ylim()[yi]+(0.3)*(-1)**yi,
-                x=sum([ax[0].get_xlim()[xi],sum(ax[0].get_xlim())/2])/2,
-                s=labels[xi][yi],
-                size=20,
-                c='tab:gray',
-                va='center',
-                ha='center'
-            )
+        labels = [['Niche Players', 'Challengers'], ['Visionaries', 'Leaders']]
+        #labels = [['Niche Players', 'Doses Giver'], ['Protectors', 'Leaders']]
+        for yi in [0,1]:
+            for xi in [0,1]:  
+                ax[0].text(
+                    y=ax[0].get_ylim()[yi]+(0.3)*(-1)**yi,
+                    x=sum([ax[0].get_xlim()[xi],sum(ax[0].get_xlim())/2])/2,
+                    s=labels[xi][yi],
+                    size=20,
+                    c='tab:gray',
+                    va='center',
+                    ha='center'
+                )
 
     plt.tight_layout()
     return fig
@@ -316,7 +363,7 @@ def makePlot_MockGartner(df):
 
 
 
-
+## EXPERIMENTAL PLOTS
 
 
 def RadarAnagrafica(anaVacSumLat):
@@ -427,11 +474,11 @@ def ScatterAnagrafica(anaVacSumLat):
         axs.text(x=i,y=0.975,s=i, fontsize=55, ha='center', va='top', fontfamily='Gill Sans', c='#156e45')
 
     #for n,i in enumerate(anaVacSumLat['% Seconda Dose Sul Totale']):   
-    #    axs[1].text(x=n, y=1, s=str(round(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='navy')
+    #    axs[1].text(x=n, y=1, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='navy')
     #for n,i in enumerate(anaVacSumLat['% Seconda Dose Assoluta']):   
-    #    axs[1].text(x=n, y=1.013, s=str(round(i,2))+'%', ha='center', va='bottom', fontsize=60, fontfamily='Gill Sans', c='#d20060')
+    #    axs[1].text(x=n, y=1.013, s=str(i,2))+'%', ha='center', va='bottom', fontsize=60, fontfamily='Gill Sans', c='#d20060')
     #for n,i in enumerate(anaVacSumLat['% Totale Assoluto']):   
-    #    axs[1].text(x=n, y=1.026, s=str(round(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='#e39f1f')
+    #    axs[1].text(x=n, y=1.026, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='#e39f1f')
 
         
     axs.annotate("Totale\nSomministrazioni",
