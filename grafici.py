@@ -67,6 +67,7 @@ def makePlot_SomministrazioniGiorno(df):
     labels = [i.strftime('%d/%m/%Y') for i in np.array(df.index)[-1:0:-10][::-1]]
     ticks = [list(df.index).index(i) for i in np.array(df.index)[-1:0:-10][::-1]]
     ax.set_xticks(ticks)
+    ax.set_xticklabels(labels)
     ax.grid(lw=.2)
     ax.set_xlabel(xlabel='Data', font='Gill Sans', fontsize=15)
     ax.set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=15)
@@ -96,6 +97,7 @@ def makePlot_SomministrazioniGiornoFornitore(df):
     labels = [i.strftime('%d/%m/%Y') for i in np.array(df.index)[-1:0:-10][::-1]]
     ticks = [list(df.index).index(i) for i in np.array(df.index)[-1:0:-10][::-1]]
     ax.set_xticks(ticks)
+    ax.set_xticklabels(labels)
 
     return fig
 
@@ -120,7 +122,7 @@ def makePlot_ConsegneSomministrazioni(df):
         lw=2,
         fontsize=15,
         xlabel='Data',
-        ylabel='% Somministrazioni/Consegne (media mobiel 7gg)',
+        ylabel='% Somministrazioni/Consegne (media mobile 7gg)',
         ax=ax1,
         ylim=[0,100]
     )
@@ -134,6 +136,32 @@ def makePlot_ConsegneSomministrazioni(df):
             labels.append(l)
 
     plt.legend(handles,labels, loc='best',fontsize=15)
+
+    return fig
+
+def makePlot_ConsegneSomministrazioniFornitore(df):
+    fig, axs = plt.subplots(1,3,figsize=(15,8))
+    lista=[['Somministrazioni Moderna', 'Consegne Moderna'], ['Somministrazioni Pfizer/BioNTech', 'Consegne Pfizer/BioNTech'],['Somministrazioni Vaxzevria', 'Consegne Vaxzevria']]
+    color=[['firebrick','tomato'],['royalblue','skyblue'],['goldenrod','gold']]
+    for ax,i,c in zip(axs,lista,color):
+        df.plot(
+            y=i,
+            figsize=(15,8),
+            color=c,
+            lw=2,
+            ls='solid',
+            ax=ax,
+            rot=45,
+            label=i,
+            fontsize=15,
+        )
+        ax.grid(lw=.2)
+        ax.legend(fontsize=13)
+        ax.set_xlabel('Data', fontsize=18)
+        ax.set_ylabel('Numero Dosi', fontsize=18)
+        ax.grid(lw=.2)
+    #plt.text(x=10,y=1,s='40 %', ha='center', size=20)
+    plt.tight_layout()
 
     return fig
 
@@ -214,7 +242,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         color='royalblue',
         width = .9,
         ax = axs[0],
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
     df[['Sesso Maschile', 'Sesso Femminile']].plot.bar(
         stacked=True,
@@ -223,7 +252,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         color=['steelblue','coral'],
         width = .9,
         ax = axs[1],
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
     df_f.plot.bar(
         stacked=True,
@@ -232,7 +262,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         color=['firebrick','royalblue','goldenrod'],
         width = .9,
         ax = axs[2],
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
     df['Totale Generale'].plot.bar( 
         alpha=.3,
@@ -246,7 +277,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         color=['cornflowerblue','salmon'],
         width = .9,
         ax = axs[3],
-        fontsize=15
+        fontsize=15,
+        rot=0
     )
     
     for i in axs: 
@@ -297,11 +329,10 @@ def makePlot_Regioni(df):
 
 
 def makePlot_MockGartner(df):
-    fig,ax=plt.subplots(nrows=2,ncols=1,figsize=(20,20))
-    ax=ax.ravel()
+    fig,ax=plt.subplots(nrows=1,ncols=1,figsize=(20,20))
 
     df.plot.scatter(
-        ax=ax[0],
+        ax=ax,
         x='% Seconda Dose', 
         y='% Prima Dose',  
         c='% Dosi Somministrate/Dosi Consegnate',
@@ -312,11 +343,11 @@ def makePlot_MockGartner(df):
         ylim=(df['% Prima Dose'].min()/1.05,df['% Prima Dose'].max()*1.05),
         xlim=(df['% Seconda Dose'].min()/1.05,df['% Seconda Dose'].max()*1.05),
     )   
-    ax[0].set_ylabel('% Prima Dose', fontsize=18)
-    ax[0].set_xlabel('% Seconda Dose', fontsize=18)
+    ax.set_ylabel('% Prima Dose', fontsize=18)
+    ax.set_xlabel('% Seconda Dose', fontsize=18)
 
     for i in df.index:
-        ax[0].text(
+        ax.text(
             x=df.loc[i,'% Seconda Dose'],
             y=df.loc[i,'% Prima Dose']-.3,
             s=i.replace(
@@ -332,7 +363,7 @@ def makePlot_MockGartner(df):
         )
 
     if (0):
-        ax[0].axhline(
+        ax.axhline(
             y=sum(ax[0].get_ylim())/2,
             ls='--',
             c='tab:gray'
@@ -347,7 +378,7 @@ def makePlot_MockGartner(df):
         #labels = [['Niche Players', 'Doses Giver'], ['Protectors', 'Leaders']]
         for yi in [0,1]:
             for xi in [0,1]:  
-                ax[0].text(
+                ax.text(
                     y=ax[0].get_ylim()[yi]+(0.3)*(-1)**yi,
                     x=sum([ax[0].get_xlim()[xi],sum(ax[0].get_xlim())/2])/2,
                     s=labels[xi][yi],

@@ -101,6 +101,15 @@ class Analysis:
                     ).cumsum().fillna(method='ffill')
         self.tblSomministrazioniConsegne['% Somministrazioni/Consegne'] = (self.tblSomministrazioniConsegne['Dosi Somministrate'] / self.tblSomministrazioniConsegne['Dosi Consegnate'] * 100).rolling(7).mean().fillna(method='bfill')
 
+        # TABELLA JOIN CONSEGNE SOMMINISTRAZIONI CON FORNITORE
+        self.tblSomministrazioniTMP = self.tblSomministrazioni.groupby(['Fornitore','Data Somministrazione']).sum().unstack(level=0)['Totale']
+        self.tblSomministrazioniTMP = self.tblSomministrazioniTMP.rename(columns = {i: 'Somministrazioni ' + i for i in self.tblSomministrazioniTMP.keys()} )
+
+        self.tblConsegneTMP = self.tblConsegne.groupby(['Fornitore','Data Consegna']).sum().unstack(level=0)['Numero Dosi']
+        self.tblConsegneTMP = self.tblConsegneTMP.rename(columns = {i: 'Consegne ' + i for i in self.tblConsegneTMP.keys()} )
+        
+        self.tblSomministrazioniConsegneFornitore = pd.concat([self.tblSomministrazioniTMP, self.tblConsegneTMP],axis=1).cumsum().fillna(method='ffill').fillna(0)
+
         # TABELLA ANAGRAFICA
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.rename(columns=self.createNameMappingDict(self.tblInfoAnagrafica))
         self.tblInfoAnagrafica = self.tblInfoAnagrafica.iloc[:,[4,6,7,8,9,10,11]]
@@ -127,7 +136,7 @@ class Analysis:
     def GetReport(self):
         '''Manage report'''
         # Introduzione
-        self.Header()
+        # self.Header()
 
         # # Somministrazioni
         # self.Somministrazioni()
@@ -135,8 +144,8 @@ class Analysis:
         # # Anagrafica
         # self.Anagrafica()
 
-        # # Regionale
-        # self.Regionale()
+        # Regionale
+        self.Regionale()
 
 
     def Header(self):
@@ -193,6 +202,8 @@ class Analysis:
         st.markdown('***')
         st.subheader('Indicatori')
 
+        st.write(self.tblConsegne.groupby('Data Consegna').sum())
+
         KPI = {
                 'Dosi Somministrate Totali' : totSomministrate,
                 'Ultime Somministrazioni'   : qtaUltimeSomministrazioni,
@@ -232,6 +243,8 @@ class Analysis:
             self.VwSomministrazioniGiornoFornitore = self.tblSomministrazioni.groupby(['Data Somministrazione', 'Fornitore']).sum().unstack(level=1)[['Prima Dose','Seconda Dose']].fillna(0).astype(int)
             self.VwSomministrazioniCategoria = self.tblSomministrazioni.iloc[:,[1,5,6,7,8,9,10,11]].groupby('Fornitore').sum()
 
+
+
         def Analisi_somministrazioni(self):
             st.header('Analisi Dosi Somministrate')
             st.subheader('Analisi Temporale')
@@ -252,6 +265,10 @@ class Analysis:
             plt_ConsegneSomministrazioni = makePlot_ConsegneSomministrazioni(self.tblSomministrazioniConsegne)
             st.write(plt_ConsegneSomministrazioni)
 
+            # Plot consegne e somministrazioni per fornitore
+            plt_ConsegneSomministrazioniFornitore = makePlot_ConsegneSomministrazioniFornitore(self.tblSomministrazioniConsegneFornitore)
+            st.write(plt_ConsegneSomministrazioniFornitore)
+
             st.subheader('Analisi sul tipo di vaccino somministrato')
             st.markdown(
                 "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
@@ -265,6 +282,7 @@ class Analysis:
             #Plot somministrazioni per fornitore
             plt_somministrazioniFornitori = makePlot_SomministrazioniFornitori(self.VwSomministrazioniCategoria.T)
             st.write(plt_somministrazioniFornitori)
+
 
         CreateViews_somministrazioni(self)
         Analisi_somministrazioni(self)
