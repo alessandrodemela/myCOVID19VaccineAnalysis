@@ -136,13 +136,13 @@ class Analysis:
     def GetReport(self):
         '''Manage report'''
         # Introduzione
-        # self.Header()
+        self.Header()
 
-        # # Somministrazioni
-        # self.Somministrazioni()
+        # Somministrazioni
+        self.Somministrazioni()
 
-        # # Anagrafica
-        # self.Anagrafica()
+        # Anagrafica
+        self.Anagrafica()
 
         # Regionale
         self.Regionale()
@@ -202,7 +202,7 @@ class Analysis:
         st.markdown('***')
         st.subheader('Indicatori')
 
-        st.write(self.tblConsegne.groupby('Data Consegna').sum())
+        #st.write(self.tblConsegne.groupby('Data Consegna').sum())
 
         KPI = {
                 'Dosi Somministrate Totali' : totSomministrate,
