@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import geopandas as gpd
 import os
+import Sessions 
 from datetime import datetime as dt
 #from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot, BarPercSomministrazioni
 from grafici import *
@@ -36,9 +37,25 @@ mapRegioni = {
     'Trento'                    : 'Provincia Autonoma Trento',
     'Provincia autonoma Trento' : 'Provincia Autonoma Trento',
     'Umbria'                    : 'Umbria',
-    "Valle d'Aosta"             : "Valle d'Aosta / Vallée d'Aoste",
+    "Valle d'Aosta"             : 'Valle d\'Aosta / Vallée d\'Aoste',
     'Veneto'                    : 'Veneto'
 }
+
+
+class ReportBugs:
+    def __init__(self):
+        st.markdown('***')
+        st.header('Suggerimenti e segnalazioni')
+
+    def Report(self):
+        st.markdown(
+            'Per segnalazioni o suggerimenti: [github](https://github.com/alessandrodemela/myCOVID19VaccineAnalysis/issues/new), [email](about:blank)'
+        )
+
+        st.text_area("Testo:")
+        ss = Sessions.get(send=0)
+        if st.button('Invio'):
+            st.write('SEND IT!')
 
  
 # Manage report with GetReport()
@@ -147,18 +164,11 @@ class Analysis:
         # Regionale
         self.Regionale()
 
+        # Bug/suggestions
+        #bug = ReportBugs()
+        #bug.Report()
 
     def Header(self):
-
-        st.title('Report vaccinazioni COVID-19')
-
-        st.markdown('***')
-        st.markdown(
-            f'Ultimo Aggiornamento {self.readableDate}.  '
-            '\nIl codice di analisi è disponibile [qui](https://github.com/alessandrodemela/myCOVID19VaccineAnalysis).  '
-            '\nMentre i dati sono reperibili nel [repository ufficiale](https://github.com/italia/covid19-opendata-vaccini).'
-            )
-        st.markdown('***')
 
         st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27/12/2020 [\[1\]]'
                     '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
@@ -222,26 +232,30 @@ class Analysis:
         indicatori = makePlot_Indicatori(KPI, aux)
         st.write(indicatori)
 
+        st.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
         
         st.subheader('Dosi consegnate e somministrate per fornitore.')
         cDF = pd.DataFrame(self.tblConsegne.groupby('Fornitore').sum()).rename(columns={'Numero Dosi': 'Dosi Consegnate'})
         sDF = pd.DataFrame(self.tblSomministrazioni.groupby('Fornitore').sum()['Totale']).rename(columns={'Totale': 'Dosi Somministrate'})
         df = pd.concat([cDF,sDF],axis=1)
         df['% Somministrate/Consegnate'] = round(100 * df['Dosi Somministrate']/df['Dosi Consegnate'],2)
-        st.write(df.T.style.format('{:,}'))
+        st.write(df.T.style.format('{:,.2f}'))
 
-        st.subheader('Dosi somministrate da ciascuna regione.')
-        st.write(self.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
+        nBackWeeks = 5
+        st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks-1} settimane.')
+        plot_LastWeeks = makePlot_SomministrazioniLastWeek(self.tblSomministrazioni, nBackWeeks)
+        st.write(plot_LastWeeks)
+
+        #st.subheader('Dosi somministrate da ciascuna regione.')
+        #st.write(self.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
    
-
     def Somministrazioni(self):
 
         def CreateViews_somministrazioni(self):
             '''Creating Views'''
-
             self.VwSomministrazioniGiorno = self.tblSomministrazioni.groupby('Data Somministrazione').sum()[['Prima Dose','Seconda Dose','Totale']]
-            self.VwSomministrazioniGiornoFornitore = self.tblSomministrazioni.groupby(['Data Somministrazione', 'Fornitore']).sum().unstack(level=1)[['Prima Dose','Seconda Dose']].fillna(0).astype(int)
-            self.VwSomministrazioniCategoria = self.tblSomministrazioni.iloc[:,[1,5,6,7,8,9,10,11]].groupby('Fornitore').sum()
+            self.VwSomministrazioniGiornoFornitore = self.tblSomministrazioni.groupby(['Data Somministrazione', 'Fornitore']).sum().unstack(level=1)[['Totale']].fillna(0).astype(int)
+            self.VwSomministrazioniCategoria = self.tblSomministrazioni.iloc[:,[1,5,6,7,8,9,10,11,12,13,14]].groupby('Fornitore').sum()
 
 
 
@@ -249,7 +263,7 @@ class Analysis:
             st.header('Analisi Dosi Somministrate')
             st.subheader('Analisi Temporale')
             st.write(
-                "Questa sezione contiene l'analisi delle dosi somministrate quotidianamente, la data odierna potrebbe contenere un dato parziale. "
+                "Questa sezione contiene l'analisi delle dosi somministrate quotidianamente, la data odierna potrebbe contenere un dato parziale.    "
                 "Inoltre, si riporta anche la distribuzione temporale delle somministrazioni divisa per fornitore di vaccino."
             )
 
@@ -269,6 +283,11 @@ class Analysis:
             plt_ConsegneSomministrazioniFornitore = makePlot_ConsegneSomministrazioniFornitore(self.tblSomministrazioniConsegneFornitore)
             st.write(plt_ConsegneSomministrazioniFornitore)
 
+            st.markdown(
+                'Questi grafici mostrano l\'andamento per giorno delle somministrazioni e delle consegne di ciascun fornitore.    '
+                ' I dati sono rappresentati in milioni di dosi (Moderna e Vaxzevria) e decine di milioni di dosi (Pfizer).'
+            )
+
             st.subheader('Analisi sul tipo di vaccino somministrato')
             st.markdown(
                 "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
@@ -276,13 +295,16 @@ class Analysis:
                 " per il fatto di avere più di 80 anni. La platea over 80 rimanente potrebbe essere stata convocata per altre cause."
             )
             # Plot somministrazioni per categoria
+            st.markdown('#### Le dosi di vaccino per categoria.')
             plt_somministrazioniCategoria = makePlot_SomministrazioniCategoria(self.VwSomministrazioniCategoria)
             st.write(plt_somministrazioniCategoria)
 
             #Plot somministrazioni per fornitore
+            st.markdown('#### Le dosi di vaccino per fornitore.')
             plt_somministrazioniFornitori = makePlot_SomministrazioniFornitori(self.VwSomministrazioniCategoria.T)
             st.write(plt_somministrazioniFornitori)
 
+            st.write(self.VwSomministrazioniCategoria.T.style.format('{:,}'))
 
         CreateViews_somministrazioni(self)
         Analisi_somministrazioni(self)
@@ -297,11 +319,12 @@ class Analysis:
         def Analisi_anagrafica(self):
             st.header('Analisi Anagrafica della somministrazione')
             st.markdown(
-                'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.\n' 
-                '1. Il primo mostra le somministrazioni totali per età   '
-                '1. Il secondo è diviso per sesso   '
-                '1. Il terzo è suddiviso per vaccino somministrato   '
-                '1. Il quarto evidenzia il numero di dosi somministrate   '
+                'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.<br>' 
+                '1. Il primo mostra le somministrazioni totali per età;<br>   '
+                '2. Il secondo è diviso per sesso;<br>   '
+                '3. Il terzo è suddiviso per vaccino somministrato;<br>   '
+                '4. Il quarto evidenzia il numero di dosi somministrate.   ',
+                unsafe_allow_html=True
             )
 
             # Plot anagrafica Totale
@@ -317,21 +340,27 @@ class Analysis:
             st.markdown('***')
             st.header('Analisi Regionale delle somministrazioni')
             st.markdown(
-                'Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.<br>  '
+                'Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.    '
                 'Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.<br>  '
                 'Il terzo mostra la percentuale di dose consegnate a ciascuna regione in base alla loro popolazione. <br>'
-                'Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.',
+                'Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.<br>'
+                'L\'ultimo grafico, mette in relazione la percentuale di prima e seconda dose somministrata e il rapporto tra le dosi somministrate e consegnate.',
                 unsafe_allow_html=True
             )
 
             # 4 Plot sulle somministrazioni
+            st.subheader('Dosi somministrate e consegnate')
             plt_Regioni = makePlot_Regioni(self.tblAree)
+            st.write('')
             st.write(plt_Regioni)
 
-            # 4 Plot sulle somministrazioni
+            # scatterplot
+            st.subheader('Come si posiziona ciascuna regione')
             plt_Gartner = makePlot_MockGartner(self.tblAree)
             st.write(plt_Gartner)
 
-            st.write(self.tblFullRegioni.iloc[:,-4:])
+            self.toPrint = self.tblFullRegioni[['% Prima Dose', '% Seconda Dose', '% Dosi Consegnate/Abitanti', '% Dosi Somministrate/Dosi Consegnate']]
+            st.write(self.toPrint.style.format('{:.2f}'))
 
         Analisi_regionale(self)
+        st.markdown('***')
