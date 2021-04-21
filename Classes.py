@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import geopandas as gpd
 import os
-import Sessions 
 from datetime import datetime as dt
 #from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot, BarPercSomministrazioni
 from grafici import *
