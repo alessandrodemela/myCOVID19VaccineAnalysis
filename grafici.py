@@ -51,12 +51,10 @@ mapRegioni = {
 
 
 def makePlot_Indicatori(KPI, aux):
-    fig, axs = plt.subplots(3,2, figsize=(15,7))
-
-    cols = 2
+    cols = 1
     rows = int(np.ceil(len(KPI.items())/cols))
 
-    fig, axs = plt.subplots(nrows = rows, ncols = cols, figsize=(15,7))
+    fig, axs = plt.subplots(nrows = rows, ncols = cols, figsize=(8,15))
     axs = axs.ravel()
 
     colors = [

@@ -52,7 +52,6 @@ class ReportBugs:
         )
 
         st.text_area("Testo:")
-        ss = Sessions.get(send=0)
         if st.button('Invio'):
             st.write('SEND IT!')
 
@@ -83,6 +82,7 @@ class Analysis:
         }
 
         self.ETL()
+        self.getKPI()
 
     def createNameMappingDict(self,df):
         '''This function returns a dictionary which helps mapping columns names in a DataFrame'''
@@ -149,90 +149,64 @@ class Analysis:
 
         self.tblAree = self.tblAree.join(self.tblFullRegioni)
 
-    def GetReport(self):
-        '''Manage report'''
-        # Introduzione
-        self.Header()
+    def getKPI(self):
+        self.totSomministrate = self.tblSomministrazioni.Totale.sum()
+        self.totPrime = self.tblSomministrazioni['Prima Dose'].sum()
+        self.totSeconde = self.tblSomministrazioni['Seconda Dose'].sum()
+        self.platea = self.tblInfoAnagrafica['Totale Generale'].sum()
+        self.percPrime = round(self.totPrime/self.platea,4)
+        self.percSeconde = round(self.totSeconde/self.platea,4)
 
-        # Somministrazioni
-        self.Somministrazioni()
+        self.totConsegne = self.tblConsegne['Numero Dosi'].sum()
+        self.percConsegne = self.totSomministrate/self.totConsegne
 
-        # Anagrafica
-        self.Anagrafica()
+        self.ultimeConsegne = self.tblConsegne.groupby('Data Consegna').sum()[-1:].reset_index()
+        self.dataUltimaConsegna = self.ultimeConsegne.iloc[0,0].strftime('%d/%m/%Y')
+        self.qtaUltimaConsegna = self.ultimeConsegne.iloc[0,1]
 
-        # Regionale
-        self.Regionale()
+        self.ultimeSomministrazioni = self.tblSomministrazioni.groupby('Data Somministrazione').sum().reset_index().iloc[-7:,[0,-1]]
+        self.dataUltimeSomministrazioni = self.ultimeSomministrazioni['Data Somministrazione'].iloc[-1].strftime('%d/%m/%Y')
+        self.qtaUltimeSomministrazioni = self.ultimeSomministrazioni.iloc[-1,1]
+        self.qtaUltimeSomministrazioniWeek = int(self.ultimeSomministrazioni['Totale'].mean())
 
-        # Bug/suggestions
-        #bug = ReportBugs()
-        #bug.Report()
+        self.KPI = {
+                'Dosi Somministrate Totali' : self.totSomministrate,
+                'Ultime Somministrazioni'   : self.qtaUltimeSomministrazioni,
+                'Dosi Consegnate Totali'    : self.totConsegne,
+                'Ultime Consegne'           : self.qtaUltimaConsegna,
+                'Prime Dosi'                : self.totPrime,
+                'Seconde Dosi'              : self.totSeconde,
+        }
+        self.auxiliaryMeas = {
+            'Data Ultime Somministrazioni'  : self.dataUltimeSomministrazioni, 
+            'Data Ultima Consegna'          : self.dataUltimaConsegna,
+            'Percentuale Prime Dosi'        : self.percPrime, 
+            'Percentuale Seconde Dosi'      : self.percSeconde
+        }
 
     def Header(self):
-
         st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27/12/2020 [\[1\]]'
                     '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
-                    )
-
-        totSomministrate = self.tblSomministrazioni.Totale.sum()
-        totPrime = self.tblSomministrazioni['Prima Dose'].sum()
-        totSeconde = self.tblSomministrazioni['Seconda Dose'].sum()
-        platea = self.tblInfoAnagrafica['Totale Generale'].sum()
-        percPrime = round(totPrime/platea,4)
-        percSeconde = round(totSeconde/platea,4)
-
-        totConsegne = self.tblConsegne['Numero Dosi'].sum()
-        percConsegne = totSomministrate/totConsegne
-
-        ultimeConsegne = self.tblConsegne.groupby('Data Consegna').sum()[-1:].reset_index()
-        dataUltimaConsegna = ultimeConsegne.iloc[0,0].strftime('%d/%m/%Y')
-        qtaUltimaConsegna = ultimeConsegne.iloc[0,1]
-
-        ultimeSomministrazioni = self.tblSomministrazioni.groupby('Data Somministrazione').sum().reset_index().iloc[-7:,[0,-1]]
-        dataUltimeSomministrazioni = ultimeSomministrazioni['Data Somministrazione'].iloc[-1].strftime('%d/%m/%Y')
-        qtaUltimeSomministrazioni = ultimeSomministrazioni.iloc[-1,1]
-        qtaUltimeSomministrazioniWeek = int(ultimeSomministrazioni['Totale'].mean())
+                    )    
 
         st.markdown(
-            f'Al {self.readableDate} sono state somministrate **{totSomministrate:,}** dosi di vaccino, suddivise in **{totPrime:,}** prime dosi'
-            f' e **{totSeconde:,}** seconde dosi (ciclo completo). La percentuale di persone che ha ricevuto almeno una dose è '
-            f' del **{percPrime:.2%}**, mentre il **{percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
+            f'Al {self.readableDate} sono state somministrate **{self.totSomministrate:,}** dosi di vaccino, suddivise in **{self.totPrime:,}** prime dosi'
+            f' e **{self.totSeconde:,}** seconde dosi (ciclo completo). La percentuale di persone che ha ricevuto almeno una dose è '
+            f' del **{self.percPrime:.2%}**, mentre il **{self.percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
         )
 
         st.markdown(
-            f'Sono state consegnate **{totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{percConsegne:.2%}**.'
+            f'Sono state consegnate **{self.totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{self.percConsegne:.2%}**.'
         )
 
         st.markdown(
-            f"Il giorno **{dataUltimeSomministrazioni}** sono state somministrate **{qtaUltimeSomministrazioni:,}** dosi, mentre nell'"
-            f"ultima settimana sono state somministrate in media **{qtaUltimeSomministrazioniWeek:,}** dosi."
+            f"Il giorno **{self.dataUltimeSomministrazioni}** sono state somministrate **{self.qtaUltimeSomministrazioni:,}** dosi, mentre nell'"
+            f"ultima settimana sono state somministrate in media **{self.qtaUltimeSomministrazioniWeek:,}** dosi."
         )
-        st.markdown(f"L'ultima consegna è avvenuta il **{dataUltimaConsegna}** con **{qtaUltimaConsegna:,}** dosi.")
+        st.markdown(f"L'ultima consegna è avvenuta il **{self.dataUltimaConsegna}** con **{self.qtaUltimaConsegna:,}** dosi.")
 
         st.markdown('***')
-        st.subheader('Indicatori')
 
-        #st.write(self.tblConsegne.groupby('Data Consegna').sum())
-
-        KPI = {
-                'Dosi Somministrate Totali' : totSomministrate,
-                'Ultime Somministrazioni'   : qtaUltimeSomministrazioni,
-                'Dosi Consegnate Totali'    : totConsegne,
-                'Ultime Consegne'           : qtaUltimaConsegna,
-                'Prime Dosi'                : totPrime,
-                'Seconde Dosi'              : totSeconde,
-        }
-        aux = {
-            'Data Ultime Somministrazioni'  : dataUltimeSomministrazioni, 
-            'Data Ultima Consegna'          : dataUltimaConsegna,
-            'Percentuale Prime Dosi'        : percPrime, 
-            'Percentuale Seconde Dosi'      : percSeconde
-        }
-
-        indicatori = makePlot_Indicatori(KPI, aux)
-        st.write(indicatori)
-
-        st.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
-        
         st.subheader('Dosi consegnate e somministrate per fornitore.')
         cDF = pd.DataFrame(self.tblConsegne.groupby('Fornitore').sum()).rename(columns={'Numero Dosi': 'Dosi Consegnate'})
         sDF = pd.DataFrame(self.tblSomministrazioni.groupby('Fornitore').sum()['Totale']).rename(columns={'Totale': 'Dosi Somministrate'})
