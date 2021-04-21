@@ -54,7 +54,7 @@ def makePlot_Indicatori(KPI, aux):
     cols = 1
     rows = int(np.ceil(len(KPI.items())/cols))
 
-    fig, axs = plt.subplots(nrows = rows, ncols = cols, figsize=(8,15))
+    fig, axs = plt.subplots(nrows = rows, ncols = cols, figsize=(8,15), facecolor='#eceff4')
     axs = axs.ravel()
 
     colors = [
@@ -71,6 +71,7 @@ def makePlot_Indicatori(KPI, aux):
         ax.tick_params(axis='y', colors='w')
         ax.text(0.5, 0.9, i[0], font='Gill Sans', size=20, ha='center', va='center')
         ax.text(0.5, 0.5, '{:,}'.format(i[1]), font='Gill Sans', size=60, ha='center', va='center', color=c)
+        ax.axis('off')
 
     axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font='Gill Sans', size=20, ha='center', va='center')
     axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font='Gill Sans', size=20, ha='center', va='center')

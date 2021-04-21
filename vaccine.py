@@ -16,7 +16,7 @@ def GetReport(an):
 
     # Introduzione
     an.Header()
-    st.sidebar.write('Indicatori')
+    st.sidebar.header('Indicatori')
     st.sidebar.write(makePlot_Indicatori(an.KPI, an.auxiliaryMeas))
     st.sidebar.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
 
