@@ -5,7 +5,6 @@ import numpy as np
 import geopandas as gpd
 import os
 from datetime import datetime as dt
-#from grafici import SomministrazioniGiornoDose, ScatterAnagrafica, RadarAnagrafica, AnagraficaPlot, BarPercSomministrazioni
 from grafici import *
 
 plt.rcParams["font.family"] = "Gill Sans"
@@ -42,6 +41,8 @@ mapRegioni = {
 
 
 class ReportBugs:
+    '''This class is experimental'''
+
     def __init__(self):
         st.markdown('***')
         st.header('Suggerimenti e segnalazioni')
@@ -233,7 +234,7 @@ class Analysis:
 
 
         def Analisi_somministrazioni(self):
-            st.header('Analisi Dosi Somministrate')
+            st.header('Le Dosi Somministrate')
             st.subheader('Analisi Temporale')
             st.write(
                 "Questa sezione contiene l'analisi delle dosi somministrate quotidianamente, la data odierna potrebbe contenere un dato parziale.    "
@@ -290,7 +291,7 @@ class Analysis:
             self.VwFornitoreFascia = self.tblSomministrazioni.groupby(['Fascia Anagrafica','Fornitore']).sum().unstack(level=1)[['Totale']]
 
         def Analisi_anagrafica(self):
-            st.header('Analisi Anagrafica della somministrazione')
+            st.header('Le somministrazioni per fascia anagrafica')
             st.markdown(
                 'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.<br>' 
                 '1. Il primo mostra le somministrazioni totali per età;<br>   '
@@ -311,21 +312,25 @@ class Analysis:
 
         def Analisi_regionale(self):
             st.markdown('***')
-            st.header('Analisi Regionale delle somministrazioni')
-            st.markdown(
-                'Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.    '
-                'Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.<br>  '
-                'Il terzo mostra la percentuale di dose consegnate a ciascuna regione in base alla loro popolazione. <br>'
-                'Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.<br>'
-                'L\'ultimo grafico, mette in relazione la percentuale di prima e seconda dose somministrata e il rapporto tra le dosi somministrate e consegnate.',
-                unsafe_allow_html=True
+            st.header('L\'Analisi Regionale delle somministrazioni')
+            st.markdown('''
+                Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.    
+                1. Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.<br>  
+                1. Il terzo mostra la percentuale di dose consegnate a ciascuna regione in base alla loro popolazione.
+                1. Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.
+                1. L\'ultimo grafico, mette in relazione la percentuale di prima e seconda dose somministrata e il rapporto tra le dosi somministrate e consegnate.
+                '''
             )
 
             # 4 Plot sulle somministrazioni
             st.subheader('Dosi somministrate e consegnate')
             plt_Regioni = makePlot_Regioni(self.tblAree)
-            st.write('')
             st.write(plt_Regioni)
+
+            # Bar Plot
+            st.write('Gli stessi dati, ma rappresentati in modo diverso.')
+            plt_percBar = makePlot_BarPercSomministrazioni(self.tblAree)
+            st.write(plt_percBar)
 
             # scatterplot
             st.subheader('Come si posiziona ciascuna regione')
@@ -336,4 +341,16 @@ class Analysis:
             st.write(self.toPrint.style.format('{:.2f}'))
 
         Analisi_regionale(self)
+        st.markdown('***')
+
+    def Footer(self):
+        st.markdown('***')
+        st.markdown(
+            f"Ultimo Aggiornamento {dt.today().strftime('%d/%m/%Y %T %Z')}.    "
+            '\nIl codice di analisi è disponibile [qui](https://github.com/alessandrodemela/myCOVID19VaccineAnalysis),  '
+            ' i dati sono reperibili nel [repository ufficiale](https://github.com/italia/covid19-opendata-vaccini).<br>   '
+            'Per suggerimenti e segnalazioni, [apri un issue su github](https://github.com/alessandrodemela/myCOVID19VaccineAnalysis/issues/new).<br>    ',
+            unsafe_allow_html=True
+        )
+        #report = st.button('Vai alle segnalazioni')
         st.markdown('***')
