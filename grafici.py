@@ -49,7 +49,7 @@ mapRegioni = {
     'Veneto'                                : 'VEN'
 }
 
-coloreFornitori = ['firebrick','royalblue','goldenrod','hotpink']
+coloreFornitori = ['hotpink','firebrick','royalblue','goldenrod']
 
 
 # Plotting Functions
