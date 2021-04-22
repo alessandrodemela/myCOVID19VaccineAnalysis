@@ -353,7 +353,7 @@ def makePlot_SomministrazioniFornitori(df):
 
     df.plot.barh(
         stacked=True,
-        ax = axs[3],
+        ax = axs[-1],
         color=coloreFornitori,
         width=.9,
         fontsize=18
