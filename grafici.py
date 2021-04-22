@@ -137,7 +137,6 @@ def makePlot_SomministrazioniLastWeek(df, n):
     # Convert week labels in interval range
     xlabels=[]
     for i in df.index: 
-        print(*getDateRangeFromWeek(2021,i))
         xlabels.append(getDateRangeFromWeek(2021,i)[0]+'-'+getDateRangeFromWeek(2021,i)[1])
 
     # Now, plot
@@ -260,8 +259,6 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
     fig, axs = plt.subplots(ncols=2,nrows=int(round(len(lista) + .99)/2), figsize=(15,12))
     axs = axs.ravel()
 
-    print(lista)
-    
     
     
     for ax,i,c in zip(axs,lista,color):
@@ -536,7 +533,7 @@ def makePlot_BarPercSomministrazioni(df):
     ax1.grid(False)
     ax1.set_ylim([60,100])
     ax.set_ylim([0,35])
-    plt.legend(handles,labels, loc='best',fontsize=18, ncols=2)
+    plt.legend(handles,labels, loc='best',fontsize=18, cols=2)
 
     return fig
 
