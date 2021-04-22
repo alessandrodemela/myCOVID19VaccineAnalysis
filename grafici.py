@@ -311,7 +311,7 @@ def makePlot_SomministrazioniCategoria(df):
             y=df.keys()[i],
             ax=axs[i] if i<=8 else axs[10],
             legend=False,
-            colors=['firebrick','royalblue','goldenrod'],
+            colors=coloreFornitori,
             fontsize=15,
             label='',
             startangle=50
