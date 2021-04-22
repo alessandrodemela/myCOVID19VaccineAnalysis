@@ -181,7 +181,7 @@ def makePlot_SomministrazioniGiornoFornitore(df):
         stacked=True,
         figsize=(15,8),
         ax = ax,
-        color=['firebrick','royalblue','goldenrod','tomato','skyblue','gold'],
+        color=coloreFornitori,
         width=.9,
         ylabel='Somministrazioni',
         rot=0,
