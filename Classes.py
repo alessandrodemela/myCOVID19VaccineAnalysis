@@ -214,12 +214,14 @@ class Analysis:
         sDF = pd.DataFrame(self.tblSomministrazioni.groupby('Fornitore').sum()['Totale']).rename(columns={'Totale': 'Dosi Somministrate'})
         df = pd.concat([cDF,sDF],axis=1)
         df['% Somministrate/Consegnate'] = round(100 * df['Dosi Somministrate']/df['Dosi Consegnate'],2)
-        st.write(df.T.style.format('{:,.2f}'))
+        st.write(df.fillna(0).T.style.format('{:,.2f}'))
 
         nBackWeeks = 5
         st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks-1} settimane.')
         plot_LastWeeks = makePlot_SomministrazioniLastWeek(self.tblSomministrazioni, nBackWeeks)
         st.write(plot_LastWeeks)
+        
+        st.warning('Report in aggiornamento per l\'arrivo di Janssen. Alcuni grafici potrebbero contenere informazioni incorrette.')
 
         #st.subheader('Dosi somministrate da ciascuna regione.')
         #st.write(self.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
