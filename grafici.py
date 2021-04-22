@@ -247,20 +247,33 @@ def makePlot_ConsegneSomministrazioni(df):
 
 def makePlot_ConsegneSomministrazioniFornitore(df):
 
-    lista = [[i,j] for i,j in zip(df.keys()[:int(len(df.keys())/2)],df.keys()[int(len(df.keys())/2):])]
-    color=[['firebrick','tomato'],['royalblue','skyblue'],['goldenrod','gold'],['lightpink','hotpink']]
+    vSomministrazioni = []
+    if 'Somministrazioni Janssen' not in df.keys()[:int(len(df.keys())/2)]:
+        vSomministrazioni.append('Somministrazioni Janssen')
+        vSomministrazioni += list(df.keys()[:int(len(df.keys())/2)])
+    else:
+        vSomministrazioni = list(df.keys()[:int(len(df.keys())/2)])
+    
+    lista = [[i,j] for i,j in zip(vSomministrazioni,df.keys()[int(len(df.keys())/2):])]
+    color=[['lightpink','hotpink'],['firebrick','tomato'],['royalblue','skyblue'],['goldenrod','gold']]
 
     fig, axs = plt.subplots(ncols=2,nrows=int(round(len(lista) + .99)/2), figsize=(15,12))
     axs = axs.ravel()
 
+    print(lista)
+    
+    
+    
     for ax,i,c in zip(axs,lista,color):
+        sommJanssen = ('Somministrazioni Janssen' not in df.keys()) and ('Somministrazioni Janssen' in i)
+        print(i if not sommJanssen else ['Consegne Janssen'])
         df.plot(
-            y=i,
+            y=i if not sommJanssen else ['Consegne Janssen'],
             color=c,
             lw=2,
             ls='solid',
             ax=ax,
-            label=[l.split()[0] for l in i],
+            label=[l.split()[0] for l in i] if not sommJanssen else ['Consegne'],
             fontsize=18,
         )
         ax.grid(lw=.5)
@@ -276,10 +289,11 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
         ax.set_xlabel('Data', fontsize=18)
         ax.set_ylabel('Numero Dosi', fontsize=18)
 
-        ax.annotate(
-            f'Somministrate: {df[i].iloc[-1][0]/df[i].iloc[-1][1]:.2%}', 
-            fontsize=18,
-            xy = (mdates.date2num(list(df.index)[0]), df[i].max().max()*0.8))
+        if not sommJanssen:
+            ax.annotate(
+                f'Somministrate: {df[i].iloc[-1][0]/df[i].iloc[-1][1]:.2%}', 
+                fontsize=18,
+                xy = (mdates.date2num(list(df.index)[0]), df[i].max().max()*0.8))
         
     if (len(lista)%2!=0):
         fig.delaxes(axs[-1])
@@ -288,6 +302,7 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
 
 
     return fig
+
 
 
 def makePlot_SomministrazioniCategoria(df):
