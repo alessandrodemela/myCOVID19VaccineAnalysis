@@ -536,7 +536,7 @@ def makePlot_BarPercSomministrazioni(df):
     ax1.grid(False)
     ax1.set_ylim([60,100])
     ax.set_ylim([0,35])
-    plt.legend(handles,labels, loc='best',fontsize=18, 2)
+    plt.legend(handles,labels, loc='best',fontsize=18, ncols=2)
 
     return fig
 
