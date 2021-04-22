@@ -77,9 +77,10 @@ class Analysis:
 
 
         self.mapFornitore = {
-            'Pfizer/BioNTech': 'Pfizer/BioNTech',
-            'Moderna': 'Moderna',
-            'Vaxzevria (AstraZeneca)' : 'Vaxzevria' 
+            'Pfizer/BioNTech'           :   'Pfizer/BioNTech',
+            'Moderna'                   :   'Moderna',
+            'Vaxzevria (AstraZeneca)'   :   'Vaxzevria',
+            'Janssen'                   :   'Janssen' 
         }
 
         self.ETL()
