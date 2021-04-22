@@ -221,7 +221,7 @@ class Analysis:
         plot_LastWeeks = makePlot_SomministrazioniLastWeek(self.tblSomministrazioni, nBackWeeks)
         st.write(plot_LastWeeks)
         
-        st.warning('Report in aggiornamento per l\'arrivo di Janssen. Alcuni grafici potrebbero contenere informazioni incorrette.')
+       # st.warning('Report in aggiornamento per l\'arrivo di Janssen. Alcuni grafici potrebbero contenere informazioni incorrette.')
 
         #st.subheader('Dosi somministrate da ciascuna regione.')
         #st.write(self.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
