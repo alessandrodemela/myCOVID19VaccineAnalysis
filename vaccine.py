@@ -14,11 +14,11 @@ st.markdown('***')
 def GetReport(an):
     '''Manage report'''
 
-    # # Introduzione
-    # an.Header()
-    # st.sidebar.header('Indicatori')
-    # st.sidebar.write(makePlot_Indicatori(an.KPI, an.auxiliaryMeas))
-    # st.sidebar.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
+    # Introduzione
+    an.Header()
+    st.sidebar.header('Indicatori')
+    st.sidebar.write(makePlot_Indicatori(an.KPI, an.auxiliaryMeas))
+    st.sidebar.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
 
     # Somministrazioni
     an.Somministrazioni()
