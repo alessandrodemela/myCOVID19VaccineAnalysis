@@ -7,7 +7,7 @@ import os
 from datetime import datetime as dt
 from grafici import *
 
-plt.rcParams["font.family"] = "Gill Sans"
+plt.rcParams["font.family"] = "Sans Serif"
 plt.rcParams.update({'font.size': 25})
 
 # from plotly.subplots import make_subplots

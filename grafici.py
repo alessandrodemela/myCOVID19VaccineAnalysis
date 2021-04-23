@@ -73,14 +73,14 @@ def makePlot_Indicatori(KPI, aux):
         ax.set_facecolor('xkcd:white')
         ax.tick_params(axis='x', colors='w')
         ax.tick_params(axis='y', colors='w')
-        ax.text(0.5, 0.9, i[0], font='Gill Sans', size=35, ha='center', va='center')
-        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font='Gill Sans', size=70, ha='center', va='center', color=c)
+        ax.text(0.5, 0.9, i[0], font=' Gill Sans MT', size=35, ha='center', va='center')
+        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font=' Gill Sans MT', size=70, ha='center', va='center', color=c)
         ax.axis('off')
 
-    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font='Gill Sans', size=30, ha='center', va='center')
-    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font='Gill Sans', size=30, ha='center', va='center')
-    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font='Gill Sans', size=30, ha='center', va='center')
-    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font='Gill Sans', size=30, ha='center', va='center')
+    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font=' Gill Sans MT', size=30, ha='center', va='center')
+    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font=' Gill Sans MT', size=30, ha='center', va='center')
+    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font=' Gill Sans MT', size=30, ha='center', va='center')
+    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font=' Gill Sans MT', size=30, ha='center', va='center')
     
 
     plt.tight_layout()
@@ -168,8 +168,8 @@ def makePlot_SomministrazioniGiorno(df):
     ax.set_xticks(ticks)
     ax.set_xticklabels(labels, fontsize=18)
     ax.grid(lw=.2)
-    ax.set_xlabel(xlabel='Data', font='Gill Sans', fontsize=18)
-    ax.set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=18)
+    ax.set_xlabel(xlabel='Data', font=' Gill Sans MT', fontsize=18)
+    ax.set_ylabel(ylabel='Dosi Somministrate', font=' Gill Sans MT', fontsize=18)
     ax.legend(fontsize=18)
 
     return fig
@@ -191,8 +191,8 @@ def makePlot_SomministrazioniGiornoFornitore(df):
     ax.set_xticks(ticks)
     ax.set_xticklabels(labels, fontsize=18)
     ax.grid(lw=.2)
-    ax.set_xlabel(xlabel='Data', font='Gill Sans', fontsize=18)
-    ax.set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=18)
+    ax.set_xlabel(xlabel='Data', font=' Gill Sans MT', fontsize=18)
+    ax.set_ylabel(ylabel='Dosi Somministrate', font=' Gill Sans MT', fontsize=18)
 
     ax.legend([j for i,j in df.keys()],loc='upper left', fontsize=18)
 
@@ -345,7 +345,7 @@ def makePlot_SomministrazioniFornitori(df):
             rot=0,
             fontsize=18
         )
-        axs[i].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=18)
+        axs[i].set_ylabel(ylabel='Categoria', font=' Gill Sans MT', fontsize=18)
         axs[i].grid(lw=.5)
         axs[i].set_xlim([0,maxScale*1.02])
         axs[i].set_title(label=df.keys()[i], fontsize=20)
@@ -357,8 +357,8 @@ def makePlot_SomministrazioniFornitori(df):
         width=.9,
         fontsize=18
     )
-    axs[-1].set_xlabel(xlabel='Somministrazioni', font='Gill Sans', fontsize=18)
-    axs[-1].set_ylabel(ylabel='Categoria', font='Gill Sans', fontsize=18)
+    axs[-1].set_xlabel(xlabel='Somministrazioni', font=' Gill Sans MT', fontsize=18)
+    axs[-1].set_ylabel(ylabel='Categoria', font=' Gill Sans MT', fontsize=18)
     axs[-1].set_xlim([0,maxScale*1.02])
     axs[-1].set_title(label='Tutti i fornitori', fontsize=20)
     axs[-1].legend(fontsize=18)
@@ -642,13 +642,13 @@ def RadarAnagrafica(anaVacSumLat):
                 y[n]+.1*y[n],
                 s=i,
                 ha='center',
-                font='Gill Sans',
+                font=' Gill Sans MT',
                 fontsize='20'
                 )
         a.axis('off')
         for i in np.linspace(0,L,div):
             a.add_patch(plt.Circle(xy=(0,0),radius=i, fill=None, color='gray', lw=.2))
-            a.text(x=i*np.cos(4),y=i * np.sin(4),s=str(int(i*100))+'%',va='center',ha='center',font='Gill Sans', fontsize='10')
+            a.text(x=i*np.cos(4),y=i * np.sin(4),s=str(int(i*100))+'%',va='center',ha='center',font=' Gill Sans MT', fontsize='10')
 
         totIta = anaVacSumLat['Seconda Dose'].sum() / anaVacSumLat['Platea'].sum()
         a.add_patch(plt.Circle(xy=(0,0), radius=totIta, fill=None, color='cornflowerblue', lw=3, ls='--'))
@@ -666,7 +666,7 @@ def RadarAnagrafica(anaVacSumLat):
             lw=1,
             color='tab:gray'
         ),
-        font='Gill Sans',
+        font=' Gill Sans MT',
         fontsize=18,
         va='center',
         color='dimgray'
@@ -682,7 +682,7 @@ def RadarAnagrafica(anaVacSumLat):
             lw=1,
             color='tab:gray'
         ),
-        font='Gill Sans',
+        font=' Gill Sans MT',
         fontsize=18,
         va='center',
         color='dimgray'
@@ -722,14 +722,14 @@ def ScatterAnagrafica(anaVacSumLat):
     axs.axis('off')
 
     for n,i in enumerate(anaVacSumLat['Fascia Anagrafica']): 
-        axs.text(x=i,y=0.975,s=i, fontsize=55, ha='center', va='top', fontfamily='Gill Sans', c='#156e45')
+        axs.text(x=i,y=0.975,s=i, fontsize=55, ha='center', va='top', fontfamily=' Gill Sans MT', c='#156e45')
 
     #for n,i in enumerate(anaVacSumLat['% Seconda Dose Sul Totale']):   
-    #    axs[1].text(x=n, y=1, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='navy')
+    #    axs[1].text(x=n, y=1, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily=' Gill Sans MT', c='navy')
     #for n,i in enumerate(anaVacSumLat['% Seconda Dose Assoluta']):   
-    #    axs[1].text(x=n, y=1.013, s=str(i,2))+'%', ha='center', va='bottom', fontsize=60, fontfamily='Gill Sans', c='#d20060')
+    #    axs[1].text(x=n, y=1.013, s=str(i,2))+'%', ha='center', va='bottom', fontsize=60, fontfamily=' Gill Sans MT', c='#d20060')
     #for n,i in enumerate(anaVacSumLat['% Totale Assoluto']):   
-    #    axs[1].text(x=n, y=1.026, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily='Gill Sans', c='#e39f1f')
+    #    axs[1].text(x=n, y=1.026, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily=' Gill Sans MT', c='#e39f1f')
 
         
     axs.annotate("Totale\nSomministrazioni",
@@ -740,7 +740,7 @@ def ScatterAnagrafica(anaVacSumLat):
                                 lw=3,
                                 color='k'
                             ),
-                font='Gill Sans',
+                font=' Gill Sans MT',
                 fontsize=60,
             )
     #axs[1].annotate("% Seconde Dosi\nSulla Platea",
@@ -750,7 +750,7 @@ def ScatterAnagrafica(anaVacSumLat):
     #                            connectionstyle = "angle,angleA=90,angleB=0,rad=50",
     #                            lw=3
     #                           ),
-    #            font='Gill Sans',
+    #            font=' Gill Sans MT',
     #            fontsize=45,
     #            )
     axs.annotate(
@@ -763,7 +763,7 @@ def ScatterAnagrafica(anaVacSumLat):
             lw=3,
             color='k'
             ),
-        font='Gill Sans',
+        font=' Gill Sans MT',
         fontsize=60,
     )
     axs.annotate(
@@ -777,7 +777,7 @@ def ScatterAnagrafica(anaVacSumLat):
             color='k'
         ),
         ha='left',
-        font='Gill Sans',
+        font=' Gill Sans MT',
         fontsize=60,
     )
     #axs[1].annotate("% Dose Somministrate\nSul Totale Delle Dosi",
@@ -788,7 +788,7 @@ def ScatterAnagrafica(anaVacSumLat):
     #                            lw=3
     #                           ),
     #            ha='left',
-    #            font='Gill Sans',
+    #            font=' Gill Sans MT',
     #            fontsize=45,
     #           )
     #axs[1].annotate("% Seconde Dosi\nSulla Platea",
@@ -798,11 +798,11 @@ def ScatterAnagrafica(anaVacSumLat):
     #                            connectionstyle = "angle,angleA=90,angleB=0,rad=40",
     #                            lw=3
     #                           ),
-    #            font='Gill Sans',
+    #            font=' Gill Sans MT',
     #            fontsize=45,
     #            ha='center'
     #            )
-    #axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font='Gill Sans', fontsize=80, ha='center')
+    #axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font=' Gill Sans MT', fontsize=80, ha='center')
     plt.tight_layout()
     plt.subplots_adjust(left=.5,right=2.1)
 
@@ -823,8 +823,8 @@ def makePlot_SomministrazioniCategoriaOLD(df):
             fontsize=15
         )
         axs[i].set_title(label=df.keys()[i], fontsize=18)
-        axs[i].set_xlabel(xlabel='Data', font='Gill Sans', fontsize=18)
-        axs[i].set_ylabel(ylabel='Dosi Somministrate', font='Gill Sans', fontsize=18)
+        axs[i].set_xlabel(xlabel='Data', font=' Gill Sans MT', fontsize=18)
+        axs[i].set_ylabel(ylabel='Dosi Somministrate', font=' Gill Sans MT', fontsize=18)
         axs[i].grid(lw=.5)
 
     plt.tight_layout()                                                  
