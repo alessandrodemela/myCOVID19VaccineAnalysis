@@ -73,14 +73,14 @@ def makePlot_Indicatori(KPI, aux):
         ax.set_facecolor('xkcd:white')
         ax.tick_params(axis='x', colors='w')
         ax.tick_params(axis='y', colors='w')
-        ax.text(0.5, 0.9, i[0], font='Gill Sans', size=20, ha='center', va='center')
-        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font='Gill Sans', size=60, ha='center', va='center', color=c)
+        ax.text(0.5, 0.9, i[0], font='Gill Sans', size=35, ha='center', va='center')
+        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font='Gill Sans', size=70, ha='center', va='center', color=c)
         ax.axis('off')
 
-    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font='Gill Sans', size=20, ha='center', va='center')
-    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font='Gill Sans', size=20, ha='center', va='center')
-    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font='Gill Sans', size=20, ha='center', va='center')
-    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font='Gill Sans', size=20, ha='center', va='center')
+    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font='Gill Sans', size=30, ha='center', va='center')
+    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font='Gill Sans', size=30, ha='center', va='center')
+    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font='Gill Sans', size=30, ha='center', va='center')
+    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font='Gill Sans', size=30, ha='center', va='center')
     
 
     plt.tight_layout()
@@ -301,7 +301,6 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
     return fig
 
 
-
 def makePlot_SomministrazioniCategoria(df):
     fig, axs = plt.subplots(nrows=4,ncols=3,figsize=(15,15))
     axs = axs.ravel()
@@ -376,7 +375,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
     
     df['Totale'].plot.bar(
         legend=False,
-        color='royalblue',
+        color='steelblue',
         width = .9,
         ax = axs[0],
         fontsize=15,
@@ -416,7 +415,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
     )
     
     titles = [
-        'Distribuzione vaccini per fascia anagrafica', 'Distribuzione vaccini per fascia anagrafica divisi per sesso',
+        'Distribuzione vaccini per fascia anagrafica', 'Distribuzione vaccini per fascia anagrafica\ndivisi per sesso',
         'Distribuzione vaccini per fascia anagrafica\ndivisi per fornitore', 'Distribuzione vaccini per fascia anagrafica divisi\n per dose somministrata'
     ]
     for i,t in zip(axs, titles): 
@@ -424,7 +423,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         i.set_ylabel('Totale Somministrazioni',fontsize=18)
         i.set_xlabel('Fascia Anagrafica',fontsize=18)
         i.set_title(t, fontsize=18)
-        i.legend(loc='best',fontsize=18)
+        if i != axs[0]:
+            i.legend(loc='best',fontsize=18) 
 
     axs[-1].set_ylabel('Totale Somministrazioni - Generale',fontsize=18)
     axs[-1].set_ylim([0,df['Totale Generale'].max()*1.2])
