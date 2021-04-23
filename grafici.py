@@ -512,7 +512,7 @@ def makePlot_BarPercSomministrazioni(df):
         label='% Dosi Somministrate/Dosi Consegnate')
 
     xlabels = ['Italia'] + [mapRegioni[i] for i in df.index]
-    for a,yl in zip(fig.axes, ['% Somministrazioni/Abitanti', '% Dosi Somministrate/Dosi Consegnate']):
+    for a,yl in zip(fig.axes, ['% Dosi Somministrate', '% Dosi Somministrate/Dosi Consegnate']):
         a.set_xticks(x)
         a.tick_params(labelsize=18)
         a.set_xticklabels(
