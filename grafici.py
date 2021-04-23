@@ -263,7 +263,7 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
     
     for ax,i,c in zip(axs,lista,color):
         sommJanssen = ('Somministrazioni Janssen' not in df.keys()) and ('Somministrazioni Janssen' in i)
-        print(i if not sommJanssen else ['Consegne Janssen'])
+
         df.plot(
             y=i if not sommJanssen else ['Consegne Janssen'],
             color=c,
