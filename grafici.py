@@ -588,10 +588,11 @@ def makePlot_MockGartner(df):
     ax.set_xlabel('% Seconda Dose', fontsize=18)
     
     hline = df['Prima Dose'].sum()/df['Totale Generale'].sum()*100
+    print(hline)
     vline = df['Seconda Dose'].sum()/df['Totale Generale'].sum()*100
     ax.hlines(
         xmin=0, xmax=100,
-        y=df['% Prima Dose'].mean(),
+        y=hline,
         ls='--',lw=2,color='tab:gray', alpha=.5
     )
     ax.vlines(
@@ -600,11 +601,11 @@ def makePlot_MockGartner(df):
         ls='--',lw=2,color='tab:gray', alpha=.5
     )
     ax.text(
-        x=df['% Seconda Dose'].max(), y=hline-.1, s='% Prima Dose\nItalia', 
-        c='tab:gray', fontsize=18, va='baseline', ha='center'
+        x=df['% Seconda Dose'].max()*1.04, y=hline, s='% Prima Dose\nItalia', 
+        c='tab:gray', fontsize=18, va='bottom', ha='right'
     )
     ax.text(
-        y=df['% Prima Dose'].max()+1, x=vline, s='% Seconda Dose\nItalia', 
+        y=df['% Prima Dose'].max()+1, x=vline, s='% Seconda\nDose Italia', 
         c='tab:gray', fontsize=18, va='top', ha='left',rotation=-90
     )
     

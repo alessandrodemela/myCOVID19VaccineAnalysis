@@ -177,7 +177,7 @@ class Analysis:
                 'Dosi Consegnate Totali'    : self.totConsegne,
                 'Ultime Consegne'           : self.qtaUltimaConsegna,
                 'Prime Dosi'                : self.totPrime,
-                'Seconde Dosi'              : self.totSeconde,
+                'Persone Vaccinate'         : self.totSeconde,
         }
         self.auxiliaryMeas = {
             'Data Ultime Somministrazioni'  : self.dataUltimeSomministrazioni, 
@@ -187,6 +187,8 @@ class Analysis:
         }
 
     def Header(self):
+        st.warning('I dati sulle prime e seconde dosi potrebbero essere incorretti, a causa delle dosi somministrate con Janssen.')
+
         st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27/12/2020 [\[1\]]'
                     '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
                     )    
@@ -318,7 +320,7 @@ class Analysis:
             st.header('L\'Analisi Regionale delle somministrazioni')
             st.markdown('''
                 Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.    
-                1. Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.<br>  
+                1. Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.  
                 1. Il terzo mostra la percentuale di dose consegnate a ciascuna regione in base alla loro popolazione.
                 1. Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.
                 1. L\'ultimo grafico, mette in relazione la percentuale di prima e seconda dose somministrata e il rapporto tra le dosi somministrate e consegnate.
