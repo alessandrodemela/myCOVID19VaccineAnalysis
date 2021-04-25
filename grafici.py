@@ -1,4 +1,5 @@
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 from datetime import datetime, timedelta
 import locale
@@ -73,14 +74,14 @@ def makePlot_Indicatori(KPI, aux):
         ax.set_facecolor('xkcd:white')
         ax.tick_params(axis='x', colors='w')
         ax.tick_params(axis='y', colors='w')
-        ax.text(0.5, 0.9, i[0], font=' Gill Sans MT', size=35, ha='center', va='center')
-        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font=' Gill Sans MT', size=70, ha='center', va='center', color=c)
+        ax.text(0.5, 0.9, i[0], font=' Gill Sans MT', size=30, ha='center', va='center')
+        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font=' Gill Sans MT', size=65, ha='center', va='center', color=c)
         ax.axis('off')
 
-    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font=' Gill Sans MT', size=30, ha='center', va='center')
-    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font=' Gill Sans MT', size=30, ha='center', va='center')
-    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font=' Gill Sans MT', size=30, ha='center', va='center')
-    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font=' Gill Sans MT', size=30, ha='center', va='center')
+    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font=' Gill Sans MT', size=25, ha='center', va='center')
+    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font=' Gill Sans MT', size=25, ha='center', va='center')
+    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font=' Gill Sans MT', size=25, ha='center', va='center')
+    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font=' Gill Sans MT', size=25, ha='center', va='center')
     
 
     plt.tight_layout()
@@ -301,28 +302,47 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
     return fig
 
 
-def makePlot_SomministrazioniCategoria(df):
-    fig, axs = plt.subplots(nrows=4,ncols=3,figsize=(15,15))
-    axs = axs.ravel()
+def makePlot_SomministrazioniCategoria(df, pie=False):
 
-    for i in range(df.keys().size):
-        df.plot.pie(
-            y=df.keys()[i],
-            ax=axs[i] if i<=8 else axs[10],
-            legend=False,
-            colors=coloreFornitori,
-            fontsize=15,
-            label='',
-            startangle=50
+    if pie:
+        fig, axs = plt.subplots(nrows=4,ncols=3,figsize=(15,15))
+        axs = axs.ravel()
+
+        for i in range(df.keys().size):
+            df.plot.pie(
+                y=df.keys()[i],
+                ax=axs[i] if i<=8 else axs[10],
+                legend=False,
+                colors=coloreFornitori,
+                fontsize=15,
+                label='',
+                startangle=50
+            )
+            axs[i].set_title(label=df.keys()[i], fontsize=18)
+            axs[i].grid(lw=.5)
+
+        axs[10].set_title(label=df.keys()[9], fontsize=18)
+        plt.tight_layout()                                                  
+
+        fig.delaxes(axs[9])
+        fig.delaxes(axs[11])
+
+    else:
+        fig, ax = plt.subplots(1,1,figsize=(15,8))
+
+        df = (100*df.div(df.sum())).T
+        df.plot.barh(
+            stacked=True, 
+            legend=False, 
+            color=coloreFornitori,
+            width=.95,
+            ax=ax,
+            fontsize=18,
+            xlim=[0,100]
         )
-        axs[i].set_title(label=df.keys()[i], fontsize=18)
-        axs[i].grid(lw=.5)
 
-    axs[10].set_title(label=df.keys()[9], fontsize=18)
-    plt.tight_layout()                                                  
-
-    fig.delaxes(axs[9])
-    fig.delaxes(axs[11])
+        ax.set_xlabel(xlabel='% Dosi Somministrate', fontsize=18)
+        ax.legend(bbox_to_anchor=(0.5, 1.05), loc='center', fontsize=18, ncol=4)
 
     return fig
 
@@ -613,6 +633,80 @@ def makePlot_MockGartner(df):
     plt.tight_layout()
 
     return fig
+
+
+def Bonus():
+    st.header('Sezione Bonus')
+    st.subheader('I colori delle regioni dal 6/11/2020, secondo il D.P.C.M 4/11/2020.')
+
+    aree = gpd.read_file('../COVID-19/aree/shp/dpc-covid-19-ita-aree-nuove-g.shp')
+
+    aree['datasetIni'] = pd.to_datetime(aree['datasetIni'], format='%d/%m/%Y').dt.date
+
+    aree = aree.fillna(datetime.today().date())
+
+    aree['legSpecRif'] = aree['legSpecRif'].map(
+        {
+            'art.1'              : 'GIALLO',
+            'art.2'              : 'ARANCIONE',
+            'art.3'              : 'ROSSO',
+            'art.1 comma 11'     : 'BIANCO'
+        }
+    )
+    aree['colorCode'] = aree['legSpecRif'].map(
+        {
+            'GIALLO' : 'gold',
+            'ARANCIONE' : 'darkorange',
+            'ROSSO' : 'firebrick',
+            'BIANCO': 'lightblue'
+        }
+    )
+
+    aree = aree[['nomeTesto', 'datasetIni', 'legSpecRif', 'colorCode']]
+
+    aree = aree.sort_values(['nomeTesto', 'datasetIni'])
+    regioni = [i for i in aree.nomeTesto.unique() if i!='Intero territorio nazionale']
+
+    fig, ax = plt.subplots(figsize=(15, 10))
+
+    for reg in regioni:
+
+        areaReg = aree[(aree['nomeTesto']==reg) | (aree['nomeTesto']=='Intero territorio nazionale')].sort_values('datasetIni').reset_index().drop(columns=['index'])
+        
+        if areaReg.loc[0,'datasetIni'] != datetime(2020, 11, 6):
+            areaReg.loc[0,'datasetIni'] = datetime(2020, 11, 6).date()
+        
+        areaReg['permanenza'] =  [
+                (areaReg['datasetIni'].iloc[i+1]-areaReg['datasetIni'].iloc[i]).days if i!=len(areaReg)-1 else 14
+                for i in range(len(areaReg))
+            ] 
+
+        areaRegPlot = areaReg[['datasetIni','permanenza','colorCode']]
+        
+        w = timedelta(0)
+        init = datetime(2020,11,6)
+        start = areaRegPlot['datasetIni'].min()
+        
+        for i in range(len(areaRegPlot)):
+            start += w
+            w = timedelta(int(areaRegPlot['permanenza'].iloc[i]))
+
+            c = areaRegPlot['colorCode'].iloc[i]
+            ax.barh(
+                reg, w, left = datetime(day=start.day, month=start.month, year=start.year), 
+                color=c, edgecolor=c),
+
+    myFmt = mdates.DateFormatter('%d %b %y')
+    ax.xaxis.set_major_formatter(myFmt)
+    ax.set_ylim([-0.5,20.5])
+
+    ax.vlines(
+        ymin=-1, ymax=21,
+        x=datetime.today(),
+        ls='--',lw=2,color='midnightblue', alpha=1
+    )
+
+    st.write(fig)
 
 
 ## EXPERIMENTAL/UNUSED PLOTS

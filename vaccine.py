@@ -1,7 +1,7 @@
 #!/Users/alessandrodemela/opt/anaconda3/bin/python
 
 from Classes import Analysis, ReportBugs
-from grafici import makePlot_Indicatori
+from grafici import makePlot_Indicatori, Bonus
 from datetime import datetime as dt
 
 import streamlit as st
@@ -29,10 +29,8 @@ def GetReport(an):
     # Regionale
     an.Regionale()
 
-    # Bug/suggestions
-    # elif sezione=='Segnalazioni':
-    #     bug = ReportBugs()
-    #     bug.Report()
+    # Bonus
+    Bonus()
 
     # Footer
     an.Footer()
