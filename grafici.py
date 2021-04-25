@@ -150,7 +150,7 @@ def makePlot_SomministrazioniLastWeek(df, n):
 def makePlot_SomministrazioniGiorno(df):
     fig, ax = plt.subplots(1,1,figsize=(15,8))
     df.plot.bar(
-        y=['Prima Dose', 'Seconda Dose'],
+        y=['Prima Dose', 'Persone Vaccinate'],
         stacked=True,
         fontsize=18,
         #color=['cornflowerblue','darksalmon'],
@@ -367,7 +367,7 @@ def makePlot_SomministrazioniFornitori(df):
         )
         axs[i].set_ylabel(ylabel='Categoria', font=' Gill Sans MT', fontsize=18)
         axs[i].grid(lw=.5)
-        axs[i].set_xlim([0,maxScale*1.02])
+        #axs[i].set_xlim([0,maxScale*1.02])
         axs[i].set_title(label=df.keys()[i], fontsize=20)
 
     df.plot.barh(
@@ -424,7 +424,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
         ax=axs[3],
         width=.9
      )
-    df[['Prima Dose', 'Seconda Dose']].plot.bar(
+    df[['Prima Dose', 'Persone Vaccinate']].plot.bar(
         stacked=False,
         legend=False,
         color=['cornflowerblue','salmon'],
@@ -462,7 +462,7 @@ def makePlot_Regioni(df):
 
     iters = [
         ['% Prima Dose','Blues'],
-        ['% Seconda Dose','Reds'],
+        ['% Persone Vaccinate','Reds'],
         ['% Dosi Consegnate/Abitanti','Greens'],
         ['% Dosi Somministrate/Dosi Consegnate','Oranges']
     ]
@@ -502,8 +502,8 @@ def makePlot_BarPercSomministrazioni(df):
     yPrimaIta = df['Prima Dose'].sum()/df['Totale Generale'].sum()*100
     yPrima = pd.concat([pd.Series({'Italia': yPrimaIta}),df['% Prima Dose']])
 
-    ySecondaIta = df['Seconda Dose'].sum()/df['Totale Generale'].sum()*100
-    ySeconda = pd.concat([pd.Series({'Italia': ySecondaIta}),df['% Seconda Dose']])
+    ySecondaIta = df['Persone Vaccinate'].sum()/df['Totale Generale'].sum()*100
+    ySeconda = pd.concat([pd.Series({'Italia': ySecondaIta}),df['% Persone Vaccinate']])
 
     ySommConsegneITa = df['Totale'].sum()/df['Numero Dosi Consegnate'].sum()*100
     ySommConsegne = pd.concat([pd.Series({'Italia': ySommConsegneITa}),df['% Dosi Somministrate/Dosi Consegnate']])
@@ -520,7 +520,7 @@ def makePlot_BarPercSomministrazioni(df):
         height=ySeconda, 
         width=width, 
         color='salmon', 
-        label='% Seconda Dose'
+        label='% Persone Vaccinate'
     )
     ax1=ax.twinx()
     ax1.scatter(
@@ -600,16 +600,16 @@ def makePlot_MockGartner(df):
                 fontsize=15
             )
 
-    scatter(ax,'% Seconda Dose','% Prima Dose')
+    scatter(ax,'% Persone Vaccinate','% Prima Dose')
     colorbar(ax)
-    attachLabels(ax,'% Seconda Dose','% Prima Dose')
+    attachLabels(ax,'% Persone Vaccinate','% Prima Dose')
         
     ax.set_ylabel('% Prima Dose', fontsize=18)
-    ax.set_xlabel('% Seconda Dose', fontsize=18)
+    ax.set_xlabel('% Persone Vaccinate', fontsize=18)
     
     hline = df['Prima Dose'].sum()/df['Totale Generale'].sum()*100
     print(hline)
-    vline = df['Seconda Dose'].sum()/df['Totale Generale'].sum()*100
+    vline = df['Persone Vaccinate'].sum()/df['Totale Generale'].sum()*100
     ax.hlines(
         xmin=0, xmax=100,
         y=hline,
@@ -621,7 +621,7 @@ def makePlot_MockGartner(df):
         ls='--',lw=2,color='tab:gray', alpha=.5
     )
     ax.text(
-        x=df['% Seconda Dose'].max()*1.04, y=hline, s='% Prima Dose\nItalia', 
+        x=df['% Persone Vaccinate'].max()*1.04, y=hline, s='% Prima Dose\nItalia', 
         c='tab:gray', fontsize=18, va='bottom', ha='right'
     )
     ax.text(
@@ -658,7 +658,7 @@ def Bonus():
             'GIALLO' : 'gold',
             'ARANCIONE' : 'darkorange',
             'ROSSO' : 'firebrick',
-            'BIANCO': 'lightblue'
+            'BIANCO': 'white'
         }
     )
 
@@ -696,8 +696,10 @@ def Bonus():
                 reg, w, left = datetime(day=start.day, month=start.month, year=start.year), 
                 color=c, edgecolor=c),
 
+    ax.yaxis.set_tick_params(labelsize=18)
     myFmt = mdates.DateFormatter('%d %b %y')
     ax.xaxis.set_major_formatter(myFmt)
+    ax.xaxis.set_tick_params(labelsize=18)
     ax.set_ylim([-0.5,20.5])
 
     ax.vlines(
@@ -715,15 +717,15 @@ def Bonus():
 def RadarAnagrafica(anaVacSumLat):
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16,8))
 
-    maxZoom = 1.1 * max(anaVacSumLat['% Seconda Dose Assoluta'])/100
+    maxZoom = 1.1 * max(anaVacSumLat['% Persone Vaccinate Assoluta'])/100
 
     for a,L,div in zip(ax,[1,maxZoom],[11,6]):
 
         x = [ L * np.cos(n * 2*np.pi/len(anaVacSumLat)) for n,i in enumerate(anaVacSumLat['Totale'])]
         y = [ L * np.sin(n * 2*np.pi/len(anaVacSumLat)) for n,i in enumerate(anaVacSumLat['Totale'])]
 
-        Tx = [ i/100 * np.cos(n * 2*np.pi/len(anaVacSumLat)) for n,i in enumerate(anaVacSumLat['% Seconda Dose Assoluta'])]
-        Ty = [ i/100 * np.sin(n * 2*np.pi/len(anaVacSumLat)) for n,i in enumerate(anaVacSumLat['% Seconda Dose Assoluta'])]
+        Tx = [ i/100 * np.cos(n * 2*np.pi/len(anaVacSumLat)) for n,i in enumerate(anaVacSumLat['% Persone Vaccinate Assoluta'])]
+        Ty = [ i/100 * np.sin(n * 2*np.pi/len(anaVacSumLat)) for n,i in enumerate(anaVacSumLat['% Persone Vaccinate Assoluta'])]
 
         x.append(x[0]),y.append(y[0])
         Tx.append(Tx[0]),Ty.append(Ty[0])
@@ -745,7 +747,7 @@ def RadarAnagrafica(anaVacSumLat):
             a.add_patch(plt.Circle(xy=(0,0),radius=i, fill=None, color='gray', lw=.2))
             a.text(x=i*np.cos(4),y=i * np.sin(4),s=str(int(i*100))+'%',va='center',ha='center',font=' Gill Sans MT', fontsize='10')
 
-        totIta = anaVacSumLat['Seconda Dose'].sum() / anaVacSumLat['Platea'].sum()
+        totIta = anaVacSumLat['Persone Vaccinate'].sum() / anaVacSumLat['Platea'].sum()
         a.add_patch(plt.Circle(xy=(0,0), radius=totIta, fill=None, color='cornflowerblue', lw=3, ls='--'))
 
         for ix,iy in zip(x[:-1],y[:-1]):
@@ -799,16 +801,16 @@ def ScatterAnagrafica(anaVacSumLat):
             )
     axs.scatter(x=anaVacSumLat['Fascia Anagrafica'],
                 y=[1 for i in range(len(anaVacSumLat))],
-                s=anaVacSumLat['Seconda Dose']/resize,
+                s=anaVacSumLat['Persone Vaccinate']/resize,
                 c='Steelblue',
-                label='Seconda Dose',
+                label='Persone Vaccinate',
                 alpha=.8
             )
     axs.scatter(x=anaVacSumLat['Fascia Anagrafica'],
                 y=[1 for i in range(len(anaVacSumLat))],
                 s=anaVacSumLat['Platea']/resize,
                 c='gray',
-                label='Seconda Dose',
+                label='Persone Vaccinate',
                 alpha=.2
             )
 
@@ -819,9 +821,9 @@ def ScatterAnagrafica(anaVacSumLat):
     for n,i in enumerate(anaVacSumLat['Fascia Anagrafica']): 
         axs.text(x=i,y=0.975,s=i, fontsize=55, ha='center', va='top', fontfamily=' Gill Sans MT', c='#156e45')
 
-    #for n,i in enumerate(anaVacSumLat['% Seconda Dose Sul Totale']):   
+    #for n,i in enumerate(anaVacSumLat['% Persone Vaccinate Sul Totale']):   
     #    axs[1].text(x=n, y=1, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily=' Gill Sans MT', c='navy')
-    #for n,i in enumerate(anaVacSumLat['% Seconda Dose Assoluta']):   
+    #for n,i in enumerate(anaVacSumLat['% Persone Vaccinate Assoluta']):   
     #    axs[1].text(x=n, y=1.013, s=str(i,2))+'%', ha='center', va='bottom', fontsize=60, fontfamily=' Gill Sans MT', c='#d20060')
     #for n,i in enumerate(anaVacSumLat['% Totale Assoluto']):   
     #    axs[1].text(x=n, y=1.026, s=str(i,2))+'%', ha='center', va='bottom', fontsize=50, fontfamily=' Gill Sans MT', c='#e39f1f')

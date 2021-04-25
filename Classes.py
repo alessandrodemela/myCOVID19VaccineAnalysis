@@ -88,7 +88,7 @@ class Analysis:
 
     def createNameMappingDict(self,df):
         '''This function returns a dictionary which helps mapping columns names in a DataFrame'''
-        nameMappingDict = {oldName : oldName.replace('_',' ').title().replace('Categoria', '').replace('Nome Area', 'Regione/P.A.').replace('Denominazione Regione', 'Regione/P.A.') for oldName in df.columns}
+        nameMappingDict = {oldName : oldName.replace('_',' ').title().replace('Categoria', '').replace('Nome Area', 'Regione/P.A.').replace('Denominazione Regione', 'Regione/P.A.').replace('Seconda Dose', 'Persone Vaccinate') for oldName in df.columns}
         return nameMappingDict
     
     def ETL(self):
@@ -96,9 +96,14 @@ class Analysis:
 
         # TABELLA DELLE SOMMINISTRAZIONI (fatti)
         self.tblSomministrazioni = self.tblSomministrazioni.rename(columns=self.createNameMappingDict(self.tblSomministrazioni))
-        self.tblSomministrazioni['Totale'] = self.tblSomministrazioni[['Prima Dose','Seconda Dose']].sum(axis=1)
+        self.tblSomministrazioni['Totale'] = self.tblSomministrazioni[['Prima Dose','Persone Vaccinate']].sum(axis=1)
         self.tblSomministrazioni = self.tblSomministrazioni.drop(columns=['Codice Nuts1', 'Codice Nuts2', 'Codice Regione Istat', 'Area'])
         self.tblSomministrazioni['Data Somministrazione'] = pd.to_datetime(self.tblSomministrazioni['Data Somministrazione']).dt.date
+
+        JanssenIndex = self.tblSomministrazioni[self.tblSomministrazioni['Fornitore']=='Janssen'].index.tolist()
+
+        self.tblSomministrazioni.loc[JanssenIndex,'Persone Vaccinate'] = self.tblSomministrazioni.loc[JanssenIndex,'Prima Dose']
+        self.tblSomministrazioni.loc[JanssenIndex,'Prima Dose'] = 0
         
         self.tblSomministrazioni['Fornitore'] = self.tblSomministrazioni['Fornitore'].map(self.mapFornitore)
 
@@ -145,7 +150,7 @@ class Analysis:
         self.tblFullRegioni = self.tblFullRegioni.join(self.tblConsegne.groupby('Regione/P.A.').sum()).rename(columns={'Numero Dosi': 'Numero Dosi Consegnate'})
         self.tblFullRegioni['% Dosi Somministrate/Dosi Consegnate'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Numero Dosi Consegnate'] *100,2)
         self.tblFullRegioni['% Prima Dose'] = round(self.tblFullRegioni['Prima Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
-        self.tblFullRegioni['% Seconda Dose'] = round(self.tblFullRegioni['Seconda Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
+        self.tblFullRegioni['% Persone Vaccinate'] = round(self.tblFullRegioni['Persone Vaccinate']/self.tblFullRegioni['Totale Generale'] *100,2)
         self.tblFullRegioni['% Totale'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Totale Generale'] *100,2)
         self.tblFullRegioni['% Dosi Consegnate/Abitanti'] = round(self.tblFullRegioni['Numero Dosi Consegnate']/self.tblFullRegioni['Totale Generale']*100,2)
 
@@ -154,7 +159,7 @@ class Analysis:
     def getKPI(self):
         self.totSomministrate = self.tblSomministrazioni.Totale.sum()
         self.totPrime = self.tblSomministrazioni['Prima Dose'].sum()
-        self.totSeconde = self.tblSomministrazioni['Seconda Dose'].sum()
+        self.totSeconde = self.tblSomministrazioni['Persone Vaccinate'].sum()
         self.platea = self.tblInfoAnagrafica['Totale Generale'].sum()
         self.percPrime = round(self.totPrime/self.platea,4)
         self.percSeconde = round(self.totSeconde/self.platea,4)
@@ -232,7 +237,7 @@ class Analysis:
 
         def CreateViews_somministrazioni(self):
             '''Creating Views'''
-            self.VwSomministrazioniGiorno = self.tblSomministrazioni.groupby('Data Somministrazione').sum()[['Prima Dose','Seconda Dose','Totale']]
+            self.VwSomministrazioniGiorno = self.tblSomministrazioni.groupby('Data Somministrazione').sum()[['Prima Dose','Persone Vaccinate','Totale']]
             self.VwSomministrazioniGiornoFornitore = self.tblSomministrazioni.groupby(['Data Somministrazione', 'Fornitore']).sum().unstack(level=1)[['Totale']].fillna(0).astype(int)
             self.VwSomministrazioniCategoria = self.tblSomministrazioni.iloc[:,[1,5,6,7,8,9,10,11,12,13,14]].groupby('Fornitore').sum()
 
@@ -292,7 +297,7 @@ class Analysis:
         def CreateViews_anagrafica(self):
             '''Creating Views'''
 
-            self.VwTotaleFascia = self.tblSomministrazioni.groupby(['Fascia Anagrafica']).sum()[['Totale','Sesso Maschile','Sesso Femminile','Prima Dose', 'Seconda Dose']].join(self.tblInfoAnagrafica.groupby('Range Eta').sum()['Totale Generale'])
+            self.VwTotaleFascia = self.tblSomministrazioni.groupby(['Fascia Anagrafica']).sum()[['Totale','Sesso Maschile','Sesso Femminile','Prima Dose', 'Persone Vaccinate']].join(self.tblInfoAnagrafica.groupby('Range Eta').sum()['Totale Generale'])
             self.VwFornitoreFascia = self.tblSomministrazioni.groupby(['Fascia Anagrafica','Fornitore']).sum().unstack(level=1)[['Totale']]
 
         def Analisi_anagrafica(self):
@@ -342,7 +347,7 @@ class Analysis:
             plt_Gartner = makePlot_MockGartner(self.tblAree)
             st.write(plt_Gartner)
 
-            self.toPrint = self.tblFullRegioni[['% Prima Dose', '% Seconda Dose', '% Dosi Consegnate/Abitanti', '% Dosi Somministrate/Dosi Consegnate']]
+            self.toPrint = self.tblFullRegioni[['% Prima Dose', '% Persone Vaccinate', '% Dosi Consegnate/Abitanti', '% Dosi Somministrate/Dosi Consegnate']]
             st.write(self.toPrint.style.format('{:.2f}'))
 
         Analisi_regionale(self)
