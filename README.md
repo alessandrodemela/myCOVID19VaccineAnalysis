@@ -1,11 +1,11 @@
 # COVID-19 Vaccine Analysis Report
 Repository for my personal analysis of COVID-19 vaccination campaign in Italy
 
-The application can be run via `streamlit run vaccine.py`. Make sure you have `streamlit` [installed](https://streamlit.io/#install).
+The application can be run via `streamlit run vaccine.py`. Make sure you have `streamlit` package [installed](https://streamlit.io/#install).
 
 Otherwise, the application can be seen at this [link](https://share.streamlit.io/alessandrodemela/mycovid19vaccineanalysis/main/vaccine.py).
 
-The application directly downloads data from [here](https://github.com/italia/covid19-opendata-vaccini) via `pandas`.
+The application directly collects data from [here](https://github.com/italia/covid19-opendata-vaccini).
 
 Description of the repository
 * `aree` directory contains data of regional maps;
@@ -17,7 +17,4 @@ Description of the repository
 
 
 ## To do
-* KPI in place of header;
-* In header, *Dosi Somministrate per fornitore* table;
-* Reformat date in plots;
-* Analsys of delivered doses.
+* 
