@@ -188,7 +188,7 @@ def makePlot_ConsegneSomministrazioni(df):
 
     labels = [datetime(day=d,month=m,year=2021).strftime('%d %b') for m in range(1,datetime.today().month+1) for d in [1,15] ]
     labelsTMP = [i.strftime('%d %b') for i in df.index]
-    ticks_loc = ax.get_xticks().tolist()
+    ticks_loc = ax.get_xticks().tolist()[:2*datetime.today().month]
     ax1.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
     ax1.set_xticklabels(labels, fontsize=18)
 
@@ -239,7 +239,7 @@ def makePlot_ConsegneSomministrazioniFornitore(df):
         formatData='%B'
         labels = [datetime(day=1,month=m,year=2021).strftime(formatData) for m in range(1,datetime.today().month+1)]
         labelsTMP = [i.strftime(formatData) for i in df.index]
-        ticks_loc = ax.get_xticks().tolist()
+        ticks_loc = ax.get_xticks().tolist()[:2*datetime.today().month]
         ax.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc[::2]))
         ax.set_xticklabels(labels, fontsize=18)
         ax.set_xlabel('Data', fontsize=18)
@@ -597,7 +597,7 @@ def Bonus():
     st.header('Sezione Bonus')
     st.subheader('I colori delle regioni dal 6/11/2020, secondo il D.P.C.M 4/11/2020.')
 
-    aree = gpd.read_file('../COVID-19/aree/shp/dpc-covid-19-ita-aree-nuove-g.shp')
+    aree = gpd.read_file('aree/shp/dpc-covid-19-ita-aree-nuove-g.shp')
 
     aree['datasetIni'] = pd.to_datetime(aree['datasetIni'], format='%d/%m/%Y').dt.date
 

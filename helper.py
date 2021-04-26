@@ -5,6 +5,7 @@ from sklearn.linear_model import LinearRegression
 
 ###############################
 # Auxiliary objects
+
 def getTicksLabels(a):
     formatData = '%d %b'
     labels = [datetime(day=d,month=m,year=2021).strftime(formatData) for m in range(1,datetime.today().month+1) for d in [1,15] ]
@@ -12,6 +13,7 @@ def getTicksLabels(a):
     ticks=[labelsTMP.index(i) for i in labels]
 
     return labels, ticks
+
 
 mapRegioni = {
     'Abruzzo'                               : 'ABR',

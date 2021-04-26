@@ -245,7 +245,6 @@ class Analysis:
             f'Un valore analogo della stima della settimana corrente, basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane è ' 
             f'**{int(predictCurrentWeek(df,True)):,}**.'
         )
-    
    
     def Somministrazioni(self):
 
