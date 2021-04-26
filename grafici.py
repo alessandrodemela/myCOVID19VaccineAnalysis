@@ -63,7 +63,6 @@ def makePlot_SomministrazioniLastWeek(df, n):
         checkSunday = (datetime.today().isocalendar()[2]<7) and (datetime.today().isocalendar()[2]==1 and df.iloc[-1,0] != datetime.today().date())
         
         dfweek = df.groupby(level=0).sum()
-        dfweek.plot.bar(legend=False, fontsize=18, ax=ax)
 
         predicted = predictCurrentWeek(df)
 
@@ -84,6 +83,8 @@ def makePlot_SomministrazioniLastWeek(df, n):
         else:
             ax.text(x=i,y=.75*predicted,s=f"Valore\nStimato:\n{int(predicted):,}",fontsize=15,ha='center',va='bottom',color='white')
         
+        dfweek.plot.bar(legend=False, fontsize=18, ax=ax)
+
         ax.set_xlabel('Settimana', fontsize=18)
         ax.set_ylabel('Somministrazioni', fontsize=18)
         ax.set_xticklabels(labels=xlabels, rotation=0)

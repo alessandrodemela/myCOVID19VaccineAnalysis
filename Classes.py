@@ -74,7 +74,7 @@ class Analysis:
 
         # ultimo aggiornamento
         self.lastUpdateDataset = pd.read_json('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/last-update-dataset.json', typ='series')[0].to_pydatetime()
-        self.readableDate = self.lastUpdateDataset.date().strftime('%d/%m/%Y')
+        self.readableDate = self.lastUpdateDataset.date().strftime('%d %B %Y')
 
 
         self.mapFornitore = {
@@ -168,12 +168,13 @@ class Analysis:
         self.totConsegne = self.tblConsegne['Numero Dosi'].sum()
         self.percConsegne = self.totSomministrate/self.totConsegne
 
-        self.ultimeConsegne = self.tblConsegne.groupby('Data Consegna').sum()[-1:].reset_index()
-        self.dataUltimaConsegna = self.ultimeConsegne.iloc[0,0].strftime('%d/%m/%Y')
-        self.qtaUltimaConsegna = self.ultimeConsegne.iloc[0,1]
+        self.ultimeConsegne = self.tblConsegne.groupby(['Data Consegna','Fornitore']).sum()
+        self.dataUltimaConsegna = self.ultimeConsegne.index.max()[0].strftime('%d %B %Y')
+        self.qtaUltimaConsegna = int(self.ultimeConsegne.loc[self.ultimeConsegne.index.max()[0]].sum())
+        self.ultimiFornitori = ', '.join(self.ultimeConsegne.loc[self.ultimeConsegne.index.max()[0]].index)
 
         self.ultimeSomministrazioni = self.tblSomministrazioni.groupby('Data Somministrazione').sum().reset_index().iloc[-7:,[0,-1]]
-        self.dataUltimeSomministrazioni = self.ultimeSomministrazioni['Data Somministrazione'].iloc[-1].strftime('%d/%m/%Y')
+        self.dataUltimeSomministrazioni = self.ultimeSomministrazioni['Data Somministrazione'].iloc[-1].strftime('%d %B %Y')
         self.qtaUltimeSomministrazioni = self.ultimeSomministrazioni.iloc[-1,1]
         self.qtaUltimeSomministrazioniWeek = int(self.ultimeSomministrazioni['Totale'].mean())
 
@@ -195,7 +196,7 @@ class Analysis:
     def Header(self):
         # st.warning('I dati sulle prime e seconde dosi potrebbero essere incorretti, a causa delle dosi somministrate con Janssen.')
 
-        st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27/12/2020 [\[1\]]'
+        st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27 Dicembre 2020 [\[1\]]'
                     '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
                     )    
 
@@ -213,7 +214,10 @@ class Analysis:
             f"Il giorno **{self.dataUltimeSomministrazioni}** sono state somministrate **{self.qtaUltimeSomministrazioni:,}** dosi, mentre nell'"
             f"ultima settimana sono state somministrate in media **{self.qtaUltimeSomministrazioniWeek:,}** dosi."
         )
-        st.markdown(f"L'ultima consegna è avvenuta il **{self.dataUltimaConsegna}** con **{self.qtaUltimaConsegna:,}** dosi.")
+        st.markdown(
+            f"L'ultima consegna è avvenuta il **{self.dataUltimaConsegna}** con **{self.qtaUltimaConsegna:,}** dosi complessive di vaccini " 
+            f"**{self.ultimiFornitori}**."
+        )
 
         st.markdown('***')
 
@@ -238,12 +242,12 @@ class Analysis:
         
         st.write(
             'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. '
-            'La stima viene effettuata sommando le somministrazioni fino alla data odierna, rapportandole alla media percentuale '
-            'dello stesso periodo nelle {} settimane precedenti.'.format(nBackWeeks)
+            'La stima viene effettuata sommando le somministrazioni settimanali fino alla data odierna, rapportandole alla media percentuale '
+            f'dello stesso periodo nelle {nBackWeeks} settimane precedenti.'
         )
         st.write(
-            f'Un valore analogo della stima della settimana corrente, basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane è ' 
-            f'**{int(predictCurrentWeek(df,True)):,}**.'
+            f'Un valore analogo della stima della settimana corrente, basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane è di ' 
+            f'**{int(predictCurrentWeek(df,True)):,}** dosi stimate.'
         )
    
     def Somministrazioni(self):
