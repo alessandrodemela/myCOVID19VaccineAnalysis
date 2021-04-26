@@ -6,6 +6,7 @@ import geopandas as gpd
 import os
 from datetime import datetime as dt
 from grafici import *
+from helper import *
 
 plt.rcParams["font.family"] = "Sans Serif"
 plt.rcParams.update({'font.size': 25})
@@ -192,7 +193,7 @@ class Analysis:
         }
 
     def Header(self):
-        st.warning('I dati sulle prime e seconde dosi potrebbero essere incorretti, a causa delle dosi somministrate con Janssen.')
+        # st.warning('I dati sulle prime e seconde dosi potrebbero essere incorretti, a causa delle dosi somministrate con Janssen.')
 
         st.markdown('La somministrazione dei vaccini contro la COVID-19, è cominciata il 27/12/2020 [\[1\]]'
                     '(http://www.salute.gov.it/portale/news/p3_2_1_1_1.jsp?lingua=italiano&menu=notizie&p=dalministero&id=5242).'
@@ -223,15 +224,28 @@ class Analysis:
         df['% Somministrate/Consegnate'] = round(100 * df['Dosi Somministrate']/df['Dosi Consegnate'],2)
         st.write(df.fillna(0).T.style.format('{:,.2f}'))
 
-        nBackWeeks = 5
-        st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks-1} settimane.')
-        plot_LastWeeks = makePlot_SomministrazioniLastWeek(self.tblSomministrazioni, nBackWeeks)
+        nBackWeeks = 4
+
+        # Prepare DataFrame for plotting last weeks
+        df = self.tblSomministrazioni[['Data Somministrazione','Totale']].groupby('Data Somministrazione').sum().reset_index()
+        df['Settimana'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().week+1
+        df['Giorno'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().day
+        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[-(nBackWeeks+1)*7:-8,]
+
+        st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks} settimane.')
+        plot_LastWeeks = makePlot_SomministrazioniLastWeek(df, nBackWeeks)
         st.write(plot_LastWeeks)
         
-       # st.warning('Report in aggiornamento per l\'arrivo di Janssen. Alcuni grafici potrebbero contenere informazioni incorrette.')
-
-        #st.subheader('Dosi somministrate da ciascuna regione.')
-        #st.write(self.tblSomministrazioni[['Regione/P.A.','Totale']].groupby('Regione/P.A.').sum().T.style.format('{:,}'))
+        st.write(
+            'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. '
+            'La stima viene effettuata sommando le somministrazioni fino alla data odierna, rapportandole alla media percentuale '
+            'dello stesso periodo nelle {} settimane precedenti.'.format(nBackWeeks)
+        )
+        st.write(
+            f'Un valore analogo della stima della settimana corrente, basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane è ' 
+            f'**{int(predictCurrentWeek(df,True)):,}**.'
+        )
+    
    
     def Somministrazioni(self):
 

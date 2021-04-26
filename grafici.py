@@ -12,47 +12,14 @@ from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable 
 import matplotlib.ticker as mticker
 import matplotlib.dates as mdates
-from sklearn.linear_model import LinearRegression
+
+from helper import *
 
 import seaborn as sns
 sns.set()
 
-# Auxiliary objects
-def getTicksLabels(a):
-    formatData = '%d %b'
-    labels = [datetime(day=d,month=m,year=2021).strftime(formatData) for m in range(1,datetime.today().month+1) for d in [1,15] ]
-    labelsTMP = [i.strftime(formatData) for i in a]
-    ticks=[labelsTMP.index(i) for i in labels]
 
-    return labels, ticks
-
-mapRegioni = {
-    'Abruzzo'                               : 'ABR',
-    'Basilicata'                            : 'BAS',
-    'Provincia Autonoma Bolzano / Bozen'    : 'PAB',
-    'Calabria'                              : 'CAL',
-    'Campania'                              : 'CAM',
-    'Emilia-Romagna'                        : 'EMR',
-    'Friuli-Venezia Giulia'                 : 'FVG',
-    'Lazio'                                 : 'LAZ',
-    'Liguria'                               : 'LIG',
-    'Lombardia'                             : 'LOM',
-    'Marche'                                : 'MAR',
-    'Molise'                                : 'MOL',
-    'Piemonte'                              : 'PIE',
-    'Puglia'                                : 'PUG',
-    'Sardegna'                              : 'SAR',
-    'Sicilia'                               : 'SIC',
-    'Toscana'                               : 'TOS',
-    'Provincia Autonoma Trento'             : 'PAT',
-    'Umbria'                                : 'UMB',
-    "Valle d'Aosta / Vallée d'Aoste"        : 'VDA',
-    'Veneto'                                : 'VEN'
-}
-
-coloreFornitori = ['hotpink','firebrick','royalblue','goldenrod']
-
-
+############################################
 # Plotting Functions
 
 def makePlot_Indicatori(KPI, aux):
@@ -74,14 +41,14 @@ def makePlot_Indicatori(KPI, aux):
         ax.set_facecolor('xkcd:white')
         ax.tick_params(axis='x', colors='w')
         ax.tick_params(axis='y', colors='w')
-        ax.text(0.5, 0.9, i[0], font=' Gill Sans MT', size=30, ha='center', va='center')
-        ax.text(0.5, 0.5, '{:,}'.format(i[1]), font=' Gill Sans MT', size=65, ha='center', va='center', color=c)
+        ax.text(0.5, 0.9, i[0], size=30, ha='center', va='center')
+        ax.text(0.5, 0.5, '{:,}'.format(i[1]), size=65, ha='center', va='center', color=c)
         ax.axis('off')
 
-    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], font=' Gill Sans MT', size=25, ha='center', va='center')
-    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], font=' Gill Sans MT', size=25, ha='center', va='center')
-    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', font=' Gill Sans MT', size=25, ha='center', va='center')
-    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', font=' Gill Sans MT', size=25, ha='center', va='center')
+    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], size=25, ha='center', va='center')
+    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], size=25, ha='center', va='center')
+    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', size=25, ha='center', va='center')
+    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', size=25, ha='center', va='center')
     
 
     plt.tight_layout()
@@ -90,54 +57,45 @@ def makePlot_Indicatori(KPI, aux):
 
 
 def makePlot_SomministrazioniLastWeek(df, n):
-    def getDateRangeFromWeek(p_year,p_week):
-        firstdayofweek = datetime.strptime(f'{p_year}-W{int(p_week )- 1}-1', "%Y-W%W-%w").date()
-        lastdayofweek = firstdayofweek + timedelta(days=6.9)
-        return firstdayofweek.strftime('%d/%m'), lastdayofweek.strftime('%d/%m')
-
-    def predictCurrentWeek():
-        '''Predict current week'''
-        X=np.array(df.index)[:-1].reshape(-1,1)
-        y=df.Totale[:-1]
-        Xpred = [[np.array(df.index)[-1]]]
-
-        return LinearRegression().fit(X,y).predict(Xpred)
-
     def makePlot(fig, ax):
         '''Make the actual Plot'''
 
-        predicted = predictCurrentWeek()
-        ax.bar(n-1, predicted, color='tab:gray',alpha=0.5,width=.5)
+        checkSunday = (datetime.today().isocalendar()[2]<7) and (datetime.today().isocalendar()[2]==1 and df.iloc[-1,0] != datetime.today().date())
+        
+        dfweek = df.groupby(level=0).sum()
+        dfweek.plot.bar(legend=False, fontsize=18, ax=ax)
 
-        df.plot.bar(legend=False, fontsize=18, ax=ax)
+        predicted = predictCurrentWeek(df)
+
+        st.write(predicted)
 
         for i in range(len(xlabels)):
             last = True if i==len(xlabels)-1 else False
             ax.text(
-                x=i, y=df['Totale'].iloc[i]- [5e4 if last else 0], 
-                s=f"{df['Totale'].iloc[i]:,}",
+                x=i, y=dfweek['Totale'].iloc[i]- [5e4 if (last and checkSunday) else 0], 
+                s=f"{dfweek['Totale'].iloc[i]:,}",
                 fontsize=15,ha='center',
-                va='bottom' if not last else 'top',
-                color='k' if not last else 'white',
+                va='bottom' if not (last and checkSunday) else 'top',
+                color='k' if not (last and checkSunday) else 'white',
+                label='Totale'
             )
-        ax.text(x=i,y=predicted,s=f"{int(predicted):,}",fontsize=15,ha='center',va='bottom',color='k',alpha=.5)
-
+            
+        if(checkSunday):
+            ax.bar(n, predicted, color='tab:gray',alpha=0.5,width=.5, label='Stima')
+            ax.text(x=i,y=predicted,s=f"{int(predicted):,}",fontsize=15,ha='center',va='bottom',color='k',alpha=.5)
+        else:
+            ax.text(x=i,y=.75*predicted,s=f"Valore\nStimato:\n{int(predicted):,}",fontsize=15,ha='center',va='bottom',color='white')
+        
         ax.set_xlabel('Settimana', fontsize=18)
         ax.set_ylabel('Somministrazioni', fontsize=18)
         ax.set_xticklabels(labels=xlabels, rotation=0)
-        ax.set_ylim([0,predicted[0]*1.1])
+        ax.set_ylim([0,predictCurrentWeek(df,True)*1.1])
         ax.grid(lw=.2)
-        ax.legend(['Stima','Totale'], fontsize=15, loc='upper left')
-
-
-    # Prepare DataFrame
-    df = df[['Data Somministrazione','Totale']].groupby('Data Somministrazione').sum().reset_index()
-    df['Settimana'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().week+1
-    df = df.groupby('Settimana').sum()[:-2][-n:]
+        ax.legend(fontsize=15, loc='upper left')
 
     # Convert week labels in interval range
     xlabels=[]
-    for i in df.index: 
+    for i in df.groupby(level=0).sum().index:
         xlabels.append(getDateRangeFromWeek(2021,i)[0]+'-'+getDateRangeFromWeek(2021,i)[1])
 
     # Now, plot
@@ -169,8 +127,8 @@ def makePlot_SomministrazioniGiorno(df):
     ax.set_xticks(ticks)
     ax.set_xticklabels(labels, fontsize=18)
     ax.grid(lw=.2)
-    ax.set_xlabel(xlabel='Data', font=' Gill Sans MT', fontsize=18)
-    ax.set_ylabel(ylabel='Dosi Somministrate', font=' Gill Sans MT', fontsize=18)
+    ax.set_xlabel(xlabel='Data', fontsize=18)
+    ax.set_ylabel(ylabel='Dosi Somministrate', fontsize=18)
     ax.legend(fontsize=18)
 
     return fig
@@ -192,8 +150,8 @@ def makePlot_SomministrazioniGiornoFornitore(df):
     ax.set_xticks(ticks)
     ax.set_xticklabels(labels, fontsize=18)
     ax.grid(lw=.2)
-    ax.set_xlabel(xlabel='Data', font=' Gill Sans MT', fontsize=18)
-    ax.set_ylabel(ylabel='Dosi Somministrate', font=' Gill Sans MT', fontsize=18)
+    ax.set_xlabel(xlabel='Data', fontsize=18)
+    ax.set_ylabel(ylabel='Dosi Somministrate', fontsize=18)
 
     ax.legend([j for i,j in df.keys()],loc='upper left', fontsize=18)
 
@@ -365,7 +323,7 @@ def makePlot_SomministrazioniFornitori(df):
             rot=0,
             fontsize=18
         )
-        axs[i].set_ylabel(ylabel='Categoria', font=' Gill Sans MT', fontsize=18)
+        axs[i].set_ylabel(ylabel='Categoria', fontsize=18)
         axs[i].grid(lw=.5)
         #axs[i].set_xlim([0,maxScale*1.02])
         axs[i].set_title(label=df.keys()[i], fontsize=20)
@@ -377,8 +335,8 @@ def makePlot_SomministrazioniFornitori(df):
         width=.9,
         fontsize=18
     )
-    axs[-1].set_xlabel(xlabel='Somministrazioni', font=' Gill Sans MT', fontsize=18)
-    axs[-1].set_ylabel(ylabel='Categoria', font=' Gill Sans MT', fontsize=18)
+    axs[-1].set_xlabel(xlabel='Somministrazioni', fontsize=18)
+    axs[-1].set_ylabel(ylabel='Categoria', fontsize=18)
     axs[-1].set_xlim([0,maxScale*1.02])
     axs[-1].set_title(label='Tutti i fornitori', fontsize=20)
     axs[-1].legend(fontsize=18)
@@ -739,13 +697,13 @@ def RadarAnagrafica(anaVacSumLat):
                 y[n]+.1*y[n],
                 s=i,
                 ha='center',
-                font=' Gill Sans MT',
+        
                 fontsize='20'
                 )
         a.axis('off')
         for i in np.linspace(0,L,div):
             a.add_patch(plt.Circle(xy=(0,0),radius=i, fill=None, color='gray', lw=.2))
-            a.text(x=i*np.cos(4),y=i * np.sin(4),s=str(int(i*100))+'%',va='center',ha='center',font=' Gill Sans MT', fontsize='10')
+            a.text(x=i*np.cos(4),y=i * np.sin(4),s=str(int(i*100))+'%',va='center',ha='center', fontsize='10')
 
         totIta = anaVacSumLat['Persone Vaccinate'].sum() / anaVacSumLat['Platea'].sum()
         a.add_patch(plt.Circle(xy=(0,0), radius=totIta, fill=None, color='cornflowerblue', lw=3, ls='--'))
@@ -763,7 +721,6 @@ def RadarAnagrafica(anaVacSumLat):
             lw=1,
             color='tab:gray'
         ),
-        font=' Gill Sans MT',
         fontsize=18,
         va='center',
         color='dimgray'
@@ -779,7 +736,6 @@ def RadarAnagrafica(anaVacSumLat):
             lw=1,
             color='tab:gray'
         ),
-        font=' Gill Sans MT',
         fontsize=18,
         va='center',
         color='dimgray'
@@ -837,7 +793,6 @@ def ScatterAnagrafica(anaVacSumLat):
                                 lw=3,
                                 color='k'
                             ),
-                font=' Gill Sans MT',
                 fontsize=60,
             )
     #axs[1].annotate("% Seconde Dosi\nSulla Platea",
@@ -847,7 +802,7 @@ def ScatterAnagrafica(anaVacSumLat):
     #                            connectionstyle = "angle,angleA=90,angleB=0,rad=50",
     #                            lw=3
     #                           ),
-    #            font=' Gill Sans MT',
+    #          ,
     #            fontsize=45,
     #            )
     axs.annotate(
@@ -860,7 +815,6 @@ def ScatterAnagrafica(anaVacSumLat):
             lw=3,
             color='k'
             ),
-        font=' Gill Sans MT',
         fontsize=60,
     )
     axs.annotate(
@@ -874,7 +828,6 @@ def ScatterAnagrafica(anaVacSumLat):
             color='k'
         ),
         ha='left',
-        font=' Gill Sans MT',
         fontsize=60,
     )
     #axs[1].annotate("% Dose Somministrate\nSul Totale Delle Dosi",
@@ -885,7 +838,7 @@ def ScatterAnagrafica(anaVacSumLat):
     #                            lw=3
     #                           ),
     #            ha='left',
-    #            font=' Gill Sans MT',
+    #          ,
     #            fontsize=45,
     #           )
     #axs[1].annotate("% Seconde Dosi\nSulla Platea",
@@ -895,11 +848,11 @@ def ScatterAnagrafica(anaVacSumLat):
     #                            connectionstyle = "angle,angleA=90,angleB=0,rad=40",
     #                            lw=3
     #                           ),
-    #            font=' Gill Sans MT',
+    #          ,
     #            fontsize=45,
     #            ha='center'
     #            )
-    #axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica',font=' Gill Sans MT', fontsize=80, ha='center')
+    #axs.text(x=4.,y=1.03,s='Vaccinazioni per fascia anagrafica, fontsize=80, ha='center')
     plt.tight_layout()
     plt.subplots_adjust(left=.5,right=2.1)
 
@@ -920,8 +873,8 @@ def makePlot_SomministrazioniCategoriaOLD(df):
             fontsize=15
         )
         axs[i].set_title(label=df.keys()[i], fontsize=18)
-        axs[i].set_xlabel(xlabel='Data', font=' Gill Sans MT', fontsize=18)
-        axs[i].set_ylabel(ylabel='Dosi Somministrate', font=' Gill Sans MT', fontsize=18)
+        axs[i].set_xlabel(xlabel='Data', fontsize=18)
+        axs[i].set_ylabel(ylabel='Dosi Somministrate', fontsize=18)
         axs[i].grid(lw=.5)
 
     plt.tight_layout()                                                  
