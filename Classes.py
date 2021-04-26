@@ -288,8 +288,6 @@ class Analysis:
             st.subheader('Analisi sul tipo di vaccino somministrato')
             st.markdown(
                 "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
-                " La categoria `Over 80` non contiene tutta la popolazione di età superiore a 80 anni, ma rappresenta la popolazione chiamata al vaccino"
-                " per il fatto di avere più di 80 anni. La platea over 80 rimanente potrebbe essere stata convocata per altre cause."
             )
             # Plot somministrazioni per categoria
             st.markdown('#### Le dosi di vaccino per categoria.')
