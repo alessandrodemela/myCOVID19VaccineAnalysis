@@ -67,8 +67,6 @@ def makePlot_SomministrazioniLastWeek(df, n):
 
         predicted = predictCurrentWeek(df)
 
-        st.write(predicted)
-
         for i in range(len(xlabels)):
             last = True if i==len(xlabels)-1 else False
             ax.text(
