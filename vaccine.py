@@ -16,21 +16,15 @@ def GetReport(an):
 
     # Introduzione
     an.Header()
-    st.sidebar.header('Indicatori')
-    st.sidebar.write(makePlot_Indicatori(an.KPI, an.auxiliaryMeas))
-    st.sidebar.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
 
-    # Somministrazioni
+    # # Somministrazioni
     an.Somministrazioni()
 
-    # Anagrafica
+    # # Anagrafica
     an.Anagrafica()
 
     # Regionale
     an.Regionale()
-
-    # Bonus
-    Bonus()
 
     # Footer
     an.Footer()

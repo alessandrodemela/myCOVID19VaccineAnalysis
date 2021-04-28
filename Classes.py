@@ -57,8 +57,7 @@ class ReportBugs:
         if st.button('Invio'):
             st.write('SEND IT!')
 
- 
-# Manage report with GetReport()
+
 class Analysis:
 
     def __init__(self):
@@ -161,6 +160,7 @@ class Analysis:
         self.totSomministrate = self.tblSomministrazioni.Totale.sum()
         self.totPrime = self.tblSomministrazioni['Prima Dose'].sum()
         self.totSeconde = self.tblSomministrazioni['Persone Vaccinate'].sum()
+        self.monodosi = int(self.tblSomministrazioni.where(self.tblSomministrazioni['Fornitore']=='Janssen')['Persone Vaccinate'].dropna().sum())
         self.platea = self.tblInfoAnagrafica['Totale Generale'].sum()
         self.percPrime = round(self.totPrime/self.platea,4)
         self.percSeconde = round(self.totSeconde/self.platea,4)
@@ -179,12 +179,12 @@ class Analysis:
         self.qtaUltimeSomministrazioniWeek = int(self.ultimeSomministrazioni['Totale'].mean())
 
         self.KPI = {
-                'Dosi Somministrate Totali' : self.totSomministrate,
-                'Ultime Somministrazioni'   : self.qtaUltimeSomministrazioni,
-                'Dosi Consegnate Totali'    : self.totConsegne,
-                'Ultime Consegne'           : self.qtaUltimaConsegna,
-                'Prime Dosi'                : self.totPrime,
-                'Persone Vaccinate'         : self.totSeconde,
+            'Dosi Somministrate Totali' : self.totSomministrate,
+            'Ultime Somministrazioni'   : self.qtaUltimeSomministrazioni,
+            'Dosi Consegnate Totali'    : self.totConsegne,
+            'Ultime Consegne'           : self.qtaUltimaConsegna,
+            'Prime Dosi'                : self.totPrime,
+            'Persone Vaccinate'         : self.totSeconde,
         }
         self.auxiliaryMeas = {
             'Data Ultime Somministrazioni'  : self.dataUltimeSomministrazioni, 
@@ -202,12 +202,12 @@ class Analysis:
 
         st.markdown(
             f'Al {self.readableDate} sono state somministrate **{self.totSomministrate:,}** dosi di vaccino, suddivise in **{self.totPrime:,}** prime dosi'
-            f' e **{self.totSeconde:,}** seconde dosi (ciclo completo). La percentuale di persone che ha ricevuto almeno una dose è '
+            f' e **{self.totSeconde:,}** persone hanno completato il ciclo, di cui **{self.monodosi:,}** con vaccino monodose (Janssen). La percentuale di persone che ha ricevuto almeno una dose è '
             f' del **{self.percPrime:.2%}**, mentre il **{self.percSeconde:.2%}** della popolazione ha ricevuto entrambe le dosi.'
         )
 
         st.markdown(
-            f'Sono state consegnate **{self.totConsegne:,}** dosi e la percentuale di somministrazione è pari al **{self.percConsegne:.2%}**.'
+            f'Sono state consegnate **{self.totConsegne:,}** dosi. La percentuale di dosi somministrate su quelle consegnate è pari al **{self.percConsegne:.2%}**.'
         )
 
         st.markdown(
@@ -218,6 +218,10 @@ class Analysis:
             f"L'ultima consegna è avvenuta il **{self.dataUltimaConsegna}** con **{self.qtaUltimaConsegna:,}** dosi complessive di vaccini " 
             f"**{self.ultimiFornitori}**."
         )
+
+        st.subheader('Indicatori')
+        st.write(makePlot_Indicatori(self.KPI, self.auxiliaryMeas))
+        st.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
 
         st.markdown('***')
 
@@ -234,7 +238,7 @@ class Analysis:
         df = self.tblSomministrazioni[['Data Somministrazione','Totale']].groupby('Data Somministrazione').sum().reset_index()
         df['Settimana'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().week+1
         df['Giorno'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().day
-        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[-(nBackWeeks+1)*7:-8,]
+        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[-(nBackWeeks+1)*7-datetime.today().isocalendar()[2]:-8,]
 
         st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks} settimane.')
         plot_LastWeeks = makePlot_SomministrazioniLastWeek(df, nBackWeeks)
@@ -277,16 +281,17 @@ class Analysis:
             st.write(plt_somministrazioniGiornoFornitore)
 
             # Plot consegne e somministrazioni
+            st.markdown('### Le dosi consegnate e somministrate')
             plt_ConsegneSomministrazioni = makePlot_ConsegneSomministrazioni(self.tblSomministrazioniConsegne)
             st.write(plt_ConsegneSomministrazioni)
 
             # Plot consegne e somministrazioni per fornitore
+            st.markdown('### Le dosi consegnate e somministrate per fornitore.')
             plt_ConsegneSomministrazioniFornitore = makePlot_ConsegneSomministrazioniFornitore(self.tblSomministrazioniConsegneFornitore)
             st.write(plt_ConsegneSomministrazioniFornitore)
 
             st.markdown(
-                'Questi grafici mostrano l\'andamento per giorno delle somministrazioni e delle consegne di ciascun fornitore.    '
-                ' I dati sono rappresentati in milioni di dosi (Moderna e Vaxzevria) e decine di milioni di dosi (Pfizer).'
+                'Questi grafici mostrano l\'andamento per giorno delle somministrazioni e delle consegne di ciascun fornitore. '
             )
 
             st.subheader('Analisi sul tipo di vaccino somministrato')
@@ -312,19 +317,24 @@ class Analysis:
         def CreateViews_anagrafica(self):
             '''Creating Views'''
 
-            self.VwTotaleFascia = self.tblSomministrazioni.groupby(['Fascia Anagrafica']).sum()[['Totale','Sesso Maschile','Sesso Femminile','Prima Dose', 'Persone Vaccinate']].join(self.tblInfoAnagrafica.groupby('Range Eta').sum()['Totale Generale'])
+            self.VwTotaleFascia = self.tblSomministrazioni.groupby(
+                ['Fascia Anagrafica']
+                ).sum()[
+                    ['Totale','Sesso Maschile','Sesso Femminile','Prima Dose', 'Persone Vaccinate']
+                ].join(self.tblInfoAnagrafica.groupby('Range Eta').sum()[['Totale Generale', 'Totale Genere Maschile', 'Totale Genere Femminile']])
             self.VwFornitoreFascia = self.tblSomministrazioni.groupby(['Fascia Anagrafica','Fornitore']).sum().unstack(level=1)[['Totale']]
+
 
         def Analisi_anagrafica(self):
             st.header('Le somministrazioni per fascia anagrafica')
-            st.markdown(
-                'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.<br>' 
-                '1. Il primo mostra le somministrazioni totali per età;<br>   '
-                '2. Il secondo è diviso per sesso;<br>   '
-                '3. Il terzo è suddiviso per vaccino somministrato;<br>   '
-                '4. Il quarto evidenzia il numero di dosi somministrate.   ',
-                unsafe_allow_html=True
-            )
+            # st.markdown(
+            #     'I grafici seguenti, in funzione dell\'età anagrafica mostrano il numero di somministrazioni effettuate.<br>' 
+            #     '1. Il primo mostra le somministrazioni totali per età;<br>   '
+            #     '2. Il secondo è diviso per sesso;<br>   '
+            #     '3. Il terzo è suddiviso per vaccino somministrato;<br>   '
+            #     '4. Il quarto evidenzia il numero di dosi somministrate.   ',
+            #     unsafe_allow_html=True
+            # )
 
             # Plot anagrafica Totale
             plt_Anagrafica = makePlot_AnalisiAnagraficaTotale(self.VwTotaleFascia, self.VwFornitoreFascia)
@@ -338,14 +348,7 @@ class Analysis:
         def Analisi_regionale(self):
             st.markdown('***')
             st.header('L\'Analisi Regionale delle somministrazioni')
-            st.markdown('''
-                Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione.    
-                1. Il primo e il secondo grafico mostrano, rispettivamente, la percentuale di prime e seconde dosi somministrate sulla popolazione della regione.  
-                1. Il terzo mostra la percentuale di dose consegnate a ciascuna regione in base alla loro popolazione.
-                1. Il quarto mostra il rapporto percentuale fra dosi somministrate e dose consegnate a ciascuna regione.
-                1. L\'ultimo grafico, mette in relazione la percentuale di prima e seconda dose somministrata e il rapporto tra le dosi somministrate e consegnate.
-                '''
-            )
+            st.markdown('Questa è un\'analisi delle dosi somministrate e consegnate in ogni regione divise per varie categorie di somministrazione')
 
             # 4 Plot sulle somministrazioni
             st.subheader('Dosi somministrate e consegnate')
@@ -353,17 +356,14 @@ class Analysis:
             st.write(plt_Regioni)
 
             # Bar Plot
-            st.write('Gli stessi dati, ma rappresentati in modo diverso.')
-            plt_percBar = makePlot_BarPercSomministrazioni(self.tblAree)
-            st.write(plt_percBar)
+            #st.write('Gli stessi dati, ma rappresentati in modo diverso.')
+            #plt_percBar = makePlot_BarPercSomministrazioni(self.tblAree)
+            #st.write(plt_percBar)
 
             # scatterplot
             st.subheader('Come si posiziona ciascuna regione')
             plt_Gartner = makePlot_MockGartner(self.tblAree)
             st.write(plt_Gartner)
-
-            self.toPrint = self.tblFullRegioni[['% Prima Dose', '% Persone Vaccinate', '% Dosi Consegnate/Abitanti', '% Dosi Somministrate/Dosi Consegnate']]
-            st.write(self.toPrint.style.format('{:.2f}'))
 
         Analisi_regionale(self)
         st.markdown('***')

@@ -13,247 +13,399 @@ from matplotlib.cm import ScalarMappable
 import matplotlib.ticker as mticker
 import matplotlib.dates as mdates
 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 from helper import *
 
 import seaborn as sns
 sns.set()
 
 
+
 ############################################
 # Plotting Functions
 
 def makePlot_Indicatori(KPI, aux):
-    cols = 1
-    rows = int(np.ceil(len(KPI.items())/cols))
-
-    fig, axs = plt.subplots(nrows = rows, ncols = cols, figsize=(8,15), facecolor='#eceff4')
-    axs = axs.ravel()
 
     colors = [
-        'k',
-        'k',
-        'k',
-        'k',
-        sns.color_palette()[0],         # prime dosi
-        sns.color_palette()[1]          # seconde dosi
+        '#000000',
+        '#000000',
+        '#000000',
+        '#000000',
+        '#3c5da0',         # prime dosi
+        '#d37042'          # seconde dosi
     ]
-    for ax,i,c in zip(axs,KPI.items(),colors):
-        ax.set_facecolor('xkcd:white')
-        ax.tick_params(axis='x', colors='w')
-        ax.tick_params(axis='y', colors='w')
-        ax.text(0.5, 0.9, i[0], size=30, ha='center', va='center')
-        ax.text(0.5, 0.5, '{:,}'.format(i[1]), size=65, ha='center', va='center', color=c)
-        ax.axis('off')
 
-    axs[1].text(0.5, 0.2, aux['Data Ultime Somministrazioni'], size=25, ha='center', va='center')
-    axs[3].text(0.5, 0.2, aux['Data Ultima Consegna'], size=25, ha='center', va='center')
-    axs[4].text(0.5, 0.2, f'{aux["Percentuale Prime Dosi"]:.2%}', size=25, ha='center', va='center')
-    axs[5].text(0.5, 0.2, f'{aux["Percentuale Seconde Dosi"]:.2%}', size=25, ha='center', va='center')
-    
+    fig = make_subplots(
+        rows=3, cols=2, start_cell="top-left",
+        vertical_spacing=0, horizontal_spacing=0
+    )
 
-    plt.tight_layout()
+    for i,c,n in zip(KPI.items(),colors,[[i, j] for i in range(1,4) for j in range(1,3)]):
+        fig.add_annotation(
+            x=0.5, y=0.9,
+            text=i[0],
+            showarrow=False,
+            font=dict(size=20),
+            row=n[0],
+            col=n[1]
+        )
+        fig.add_annotation(
+            x=0.5, y=0.5,
+            text='<b>{:,}</b>'.format(i[1]),
+            showarrow=False,
+            font=dict(size=35),
+            row=n[0],
+            col=n[1]
+        )  
+
+    fig.add_annotation(
+        x=0.5, y=0.25,
+        text=aux['Data Ultime Somministrazioni'],
+        showarrow=False,
+        font=dict(size=15),
+        row=1,
+        col=2
+    )  
+    fig.add_annotation(
+        x=0.5, y=0.25,
+        text=aux['Data Ultima Consegna'],
+        showarrow=False,
+        font=dict(size=15),
+        row=2,
+        col=2
+    )  
+    fig.add_annotation(
+        x=0.5, y=0.2,
+        text=f'<b>{aux["Percentuale Prime Dosi"]:.2%}',
+        showarrow=False,
+        font=dict(size=20, color='cornflowerblue'),
+        row=3,
+        col=1
+    )  
+    fig.add_annotation(
+        x=0.5, y=0.2,
+        text=f'<b>{aux["Percentuale Seconde Dosi"]:.2%}',
+        showarrow=False,
+        font=dict(size=20, color='#d37042'),
+        row=3,
+        col=2
+    )  
+
+    fig.update_layout(
+        width=730, height=120*3,
+        margin=dict(l=5, r=5, t=20, b=20),
+    )
+
+    fig.update_yaxes(showgrid=False, zeroline=False, range=[0,1], showticklabels=False)
+    fig.update_xaxes(showgrid=False, zeroline=False, range=[0,1], showticklabels=False)    
 
     return fig
 
 
 def makePlot_SomministrazioniLastWeek(df, n):
-    def makePlot(fig, ax):
-        '''Make the actual Plot'''
-
-        checkSunday = (datetime.today().isocalendar()[2]<7) and (datetime.today().isocalendar()[2]==1 and df.iloc[-1,0] != datetime.today().date())
-        
+    def makePlot(fig):
         dfweek = df.groupby(level=0).sum()
+
+        #checkSunday = (datetime.today().isocalendar()[2]<7) and (datetime.today().isocalendar()[2]==1 or df.iloc[-1,0] != datetime.today().date())
 
         predicted = predictCurrentWeek(df)
 
-        for i in range(len(xlabels)):
-            last = True if i==len(xlabels)-1 else False
-            ax.text(
-                x=i, y=dfweek['Totale'].iloc[i]- [5e4 if (last and checkSunday) else 0], 
-                s=f"{dfweek['Totale'].iloc[i]:,}",
-                fontsize=15,ha='center',
-                va='bottom' if not (last and checkSunday) else 'top',
-                color='k' if not (last and checkSunday) else 'white',
-                label='Totale'
+        fig.add_trace(
+            go.Bar(
+                x=[datetime.today().isocalendar()[1]+1],
+                y=[int(predictCurrentWeek(df,True))],
+                marker_color='dimgray',
+                texttemplate='%{y:,}',
+                textposition='auto',
+                hovertemplate='%{y}',
+                name='Stima<br>Lineare',
+                #opacity=.7,
+                visible=True
             )
-            
-        if(checkSunday):
-            ax.bar(n, predicted, color='tab:gray',alpha=0.5,width=.5, label='Stima')
-            ax.text(x=i,y=predicted,s=f"{int(predicted):,}",fontsize=15,ha='center',va='bottom',color='k',alpha=.5)
-        else:
-            ax.text(x=i,y=.75*predicted,s=f"Valore\nStimato:\n{int(predicted):,}",fontsize=15,ha='center',va='bottom',color='white')
-        
-        dfweek.plot.bar(legend=False, fontsize=18, ax=ax)
+        )
+        fig.add_trace(
+            go.Bar(
+                x=[datetime.today().isocalendar()[1]+1],
+                y=[int(predicted)],
+                marker_color='dimgray',
+                texttemplate='%{y:,}',
+                textposition='auto',
+                hovertemplate='%{y}',
+                name='Stima<br>Proporzionale',
+                #opacity=.5,
+                visible=False
+            )
+        )
+        fig.add_trace(
+            go.Bar(
+                x=dfweek.index,
+                y=dfweek['Totale'],
+                marker_color='#3c5da0',
+                texttemplate='%{y:,}',
+                textposition='auto',
+                hovertemplate='%{y}',
+                name='Totale'
+            )
+        )
 
-        ax.set_xlabel('Settimana', fontsize=18)
-        ax.set_ylabel('Somministrazioni', fontsize=18)
-        ax.set_xticklabels(labels=xlabels, rotation=0)
-        ax.set_ylim([0,predictCurrentWeek(df,True)*1.1])
-        ax.grid(lw=.2)
-        ax.legend(fontsize=15, loc='upper left')
+        fig.update_layout(barmode='overlay')
+        fig.update_layout(
+            barmode='overlay',
+            width=730,
+            legend=dict(
+                yanchor="bottom",
+                y=1,
+                xanchor="left",
+                x=.6
+            ),
+            updatemenus=[
+                dict(
+                    type="buttons",
+                    direction="right",
+                    x=.535,
+                    y=1.16,
+                    showactive=True,
+                    font= dict(color='gray'),
+                    buttons=list(
+                        [
+                            dict(
+                                label="Stima Lineare",
+                                method="update",
+                                args=[
+                                    {"visible": [True, False, True]},
+                                ],
+                            ),
+                            dict(
+                                label="Stima Proporzionale",
+                                method="update",
+                                args=[
+                                    {"visible": [False, True, True]},
+                                ],
+                            ),
+                        ]
+                    ),
+                )
+            ]
+        )
 
+        fig.update_yaxes(showgrid=False, zeroline=False, tickformat=',', title='Numero Dosi')
+        fig.update_xaxes(showgrid=False, zeroline=False, title='Settimana', ticktext=xlabels, tickvals=dfweek.index)
     # Convert week labels in interval range
     xlabels=[]
     for i in df.groupby(level=0).sum().index:
         xlabels.append(getDateRangeFromWeek(2021,i)[0]+'-'+getDateRangeFromWeek(2021,i)[1])
 
     # Now, plot
-    fig, ax = plt.subplots(1,1,figsize=(15,5))
-    makePlot(fig, ax)
+    fig = go.Figure()
+    makePlot(fig)
     
     return fig
 
 
 def makePlot_SomministrazioniGiorno(df):
-    fig, ax = plt.subplots(1,1,figsize=(15,8))
-    df.plot.bar(
-        y=['Prima Dose', 'Persone Vaccinate'],
-        stacked=True,
-        fontsize=18,
-        #color=['cornflowerblue','darksalmon'],
-        width=.9,
-        rot=0,
-        ax=ax,
+
+    fig = go.Figure()
+
+    x=df.index
+    fig.add_trace(
+        go.Bar(
+            x=x,
+            y=df['Prima Dose'],
+            name='Prima Dose',
+            marker_color='#3c5da0',
+            hovertemplate='%{y:,.0f}',
+            marker_line_width=0
+        )
     )
-    dataPlot = (df.reset_index()['Totale'].rolling(window=7).mean()).fillna(df['Totale'][:7].mean())
-    ax.plot(
-        dataPlot,
-        lw=3,
-        color='forestgreen',
-        label='Totale Somministrazioni Giornaliere (Media Mobile 7gg)'
+    fig.add_trace(
+        go.Bar(
+            x=x,
+            y=df['Persone Vaccinate'],
+            name='Persone Vaccinate',
+            marker_color='#d37042',
+            hovertemplate='%{y:,.0f}',
+            marker_line_width=0
+        )
     )
-    labels, ticks = getTicksLabels(df.index)
-    ax.set_xticks(ticks)
-    ax.set_xticklabels(labels, fontsize=18)
-    ax.grid(lw=.2)
-    ax.set_xlabel(xlabel='Data', fontsize=18)
-    ax.set_ylabel(ylabel='Dosi Somministrate', fontsize=18)
-    ax.legend(fontsize=18)
+    fig.add_trace(
+        go.Scatter(
+            x=x, 
+            y=df['Totale'].rolling(7).mean(),
+            mode='lines',
+            name='Totale',
+            line=dict(color='forestgreen', width=3),
+            hovertemplate='%{y:,.0f}'
+        )
+    )
+
+    fig.update_layout(
+        barmode='stack',
+        yaxis=dict(tickformat=".f"), 
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        ),
+        font_size=15,
+        margin=dict(l=5, r=5, t=20, b=20),
+        hovermode="x",
+    )
+
+    fig.update_yaxes(showgrid=False, tickformat=',', title='Dosi Somministrate')
+    fig.update_xaxes(showgrid=False, title='Data')
 
     return fig
 
 
 def makePlot_SomministrazioniGiornoFornitore(df):
-    fig, ax = plt.subplots()
-    df.plot.bar(
-        stacked=True,
-        figsize=(15,8),
-        ax = ax,
-        color=coloreFornitori,
-        width=.9,
-        ylabel='Somministrazioni',
-        rot=0,
-        fontsize=18,
-    )
-    labels, ticks = getTicksLabels(df.index)
-    ax.set_xticks(ticks)
-    ax.set_xticklabels(labels, fontsize=18)
-    ax.grid(lw=.2)
-    ax.set_xlabel(xlabel='Data', fontsize=18)
-    ax.set_ylabel(ylabel='Dosi Somministrate', fontsize=18)
+    fig = go.Figure()
 
-    ax.legend([j for i,j in df.keys()],loc='upper left', fontsize=18)
+    x=df.index
+
+    for i,c in zip(df, coloreFornitori):
+        fig.add_trace(
+            go.Bar(
+                x=x,
+                y=df[i],
+                name=i[1],
+                marker_color=c,
+                hovertemplate='%{y:,.0f}',
+                marker_line_width=0
+            )
+        )
+
+    fig.update_layout(
+        barmode='stack',
+        yaxis=dict(tickformat=".f"), 
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        ),
+        font_size=15,
+        margin=dict(l=5, r=5, t=20, b=20),
+        hovermode="x"
+    )
+
+    fig.update_yaxes(showgrid=False, tickformat=',', title='Dosi Somministrate')
+    fig.update_xaxes(showgrid=False, title='Data'),
 
     return fig
 
 
 def makePlot_ConsegneSomministrazioni(df):
-    fig,ax=plt.subplots(1,1,figsize=(15,8))
-    df.plot(
-        y=['Dosi Somministrate','Dosi Consegnate'],
-        color=['salmon','cornflowerblue'],
-        lw=2,
-        fontsize=18,
-        xlabel='Data',
-        ax=ax,
-        legend=False,
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    for i,c in zip(df.columns,['salmon','cornflowerblue']):
+        fig.add_trace(
+            go.Scatter(
+                x = df.index,
+                y = df[i],
+                marker_color=c,
+                line_width=2,
+                name=i,
+                hoverinfo='y',
+                hovertemplate='%{y:,.0f}'
+            )
+        )
+        
+    fig.add_trace(
+        go.Scatter(
+            x = df.index,
+            y = df['% Somministrazioni/Consegne'],
+            marker_color='forestgreen',
+            line_width=2,
+            name='% Somministrazioni/Consegne',
+            hoverinfo='y',
+            hovertemplate='%{y:.2f}%'
+        ),
+        secondary_y=True,
     )
-    ax.set_ylabel('Numero Dosi',fontsize=18)
-    ax.set_xlabel('Data',fontsize=18)
-    ax.grid(lw=.4)
-
-    ax1=ax.twinx()
-    df['% Somministrazioni/Consegne'].plot(
-        color=['forestgreen'],
-        lw=2,
-        fontsize=15,
-        xlabel='Data',
-        label='% Somministrazioni/Consegne (media mobile 7gg)',
-        ax=ax1,
-        ylim=[0,100]
+        
+    fig.update_layout(
+        yaxis=dict(tickformat=","), 
+        legend=dict(
+            yanchor="bottom",
+            y=0.01,
+            xanchor="right",
+            x=0.92
+        ),
+        font_size=15,
+        margin=dict(l=5, r=5, t=35, b=20),
+        hovermode="x",
+        width=730, height=500,
     )
-    ax1.set_ylabel('% Dosi Somministrazioni/Dosi Consegna',fontsize=18)
-    ax1.grid(False)
 
-    labels = [datetime(day=d,month=m,year=2021).strftime('%d %b') for m in range(1,datetime.today().month+1) for d in [1,15] ]
-    labelsTMP = [i.strftime('%d %b') for i in df.index]
-    ticks_loc = ax.get_xticks().tolist()[:2*datetime.today().month]
-    ax1.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-    ax1.set_xticklabels(labels, fontsize=18)
-
-    handles,labels = [],[]
-    for ax in fig.axes:
-        for h,l in zip(*ax.get_legend_handles_labels()):
-            handles.append(h)
-            labels.append(l)
-            
-    plt.legend(handles,labels, loc='lower right',fontsize=15)
-
+    fig.update_yaxes(showgrid=False, zeroline=False, title_text="Numero Dosi", secondary_y=False, )
+    fig.update_yaxes(showgrid=False, title_text="% Somministrazioni/Consegne", secondary_y=True, range=[5,100])
+    fig.update_xaxes(showgrid=False, title='Data')
     return fig
 
 
 def makePlot_ConsegneSomministrazioniFornitore(df):
+    fig = make_subplots(
+        rows=2, cols=2, start_cell="top-left",
+        subplot_titles=('Janssen', 'Moderna', 'Pfizer/BioNTech', 'Vaxzevria')
+    )
 
-    vSomministrazioni = []
-    if 'Somministrazioni Janssen' not in df.keys()[:int(len(df.keys())/2)]:
-        vSomministrazioni.append('Somministrazioni Janssen')
-        vSomministrazioni += list(df.keys()[:int(len(df.keys())/2)])
-    else:
-        vSomministrazioni = list(df.keys()[:int(len(df.keys())/2)])
-    
+    vSomministrazioni = list(df.keys()[:int(len(df.keys())/2)])
+        
     lista = [[i,j] for i,j in zip(vSomministrazioni,df.keys()[int(len(df.keys())/2):])]
     color=[['lightpink','hotpink'],['firebrick','tomato'],['royalblue','skyblue'],['goldenrod','gold']]
+    text='somministrazioni %{y:,.0f}\n%somministrazioni %{}'
 
-    fig, axs = plt.subplots(ncols=2,nrows=int(round(len(lista) + .99)/2), figsize=(15,12))
-    axs = axs.ravel()
 
-    
-    
-    for ax,i,c in zip(axs,lista,color):
-        sommJanssen = ('Somministrazioni Janssen' not in df.keys()) and ('Somministrazioni Janssen' in i)
-
-        df.plot(
-            y=i if not sommJanssen else ['Consegne Janssen'],
-            color=c,
-            lw=2,
-            ls='solid',
-            ax=ax,
-            label=[l.split()[0] for l in i] if not sommJanssen else ['Consegne'],
-            fontsize=18,
+    for i,c,n in zip(lista,color, [[1,1],[1,2],[2,1],[2,2]]):
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=df[i[1]],
+                marker_color=c[1],
+                name=i[1],
+                hovertemplate="%{y:,.0f}",
+            ),
+            row=n[0], col=n[1]
         )
-        ax.grid(lw=.5)
-        ax.set_title(i[0].split()[1],fontsize=18)
-        ax.legend(fontsize=15)
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=df[i[0]],
+                marker_color=c[0],
+                name=i[0],
+                hovertemplate =
+                    '%{y:,.0f}'+
+                    '<br>% Somm. %{text:.2f}%',
+                text = 100 * df[i[0]]/df[i[1]],
+                
+            ),
+            row=n[0], col=n[1],
+        )
 
-        formatData='%B'
-        labels = [datetime(day=1,month=m,year=2021).strftime(formatData) for m in range(1,datetime.today().month+1)]
-        labelsTMP = [i.strftime(formatData) for i in df.index]
-        ticks_loc = ax.get_xticks().tolist()[:2*datetime.today().month]
-        ax.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc[::2]))
-        ax.set_xticklabels(labels, fontsize=18)
-        ax.set_xlabel('Data', fontsize=18)
-        ax.set_ylabel('Numero Dosi', fontsize=18)
+    for i in range(2):
+        fig.update_yaxes(title="Numero Dosi", row=i+1, col=1)
+    fig.update_yaxes(showgrid=False)
+    fig.update_xaxes(showgrid=False, title='Data')
 
-        if not sommJanssen:
-            ax.annotate(
-                f'Somministrate: {df[i].iloc[-1][0]/df[i].iloc[-1][1]:.2%}', 
-                fontsize=18,
-                xy = (mdates.date2num(list(df.index)[0]), df[i].max().max()*0.8))
-        
-    if (len(lista)%2!=0):
-        fig.delaxes(axs[-1])
-
-    plt.tight_layout()  
+    fig.update_layout(
+        yaxis=dict(tickformat=","),
+        legend=dict(
+            yanchor="top",
+            y=-0.3,
+            xanchor="left",
+            x=0.01,
+            itemclick='toggle'
+        ),
+        showlegend=False,
+        font_size=15,
+        margin=dict(l=5, r=20, t=40, b=20),
+        width=730, height=800,
+        hovermode="x unified",
+    )
+    
 
 
     return fig
@@ -285,168 +437,294 @@ def makePlot_SomministrazioniCategoria(df, pie=False):
         fig.delaxes(axs[11])
 
     else:
-        fig, ax = plt.subplots(1,1,figsize=(15,8))
-
         df = (100*df.div(df.sum())).T
-        df.plot.barh(
-            stacked=True, 
-            legend=False, 
-            color=coloreFornitori,
-            width=.95,
-            ax=ax,
-            fontsize=18,
-            xlim=[0,100]
-        )
+        fig = go.Figure()
 
-        ax.set_xlabel(xlabel='% Dosi Somministrate', fontsize=18)
-        ax.legend(bbox_to_anchor=(0.5, 1.05), loc='center', fontsize=18, ncol=4)
+        for i,c in zip(range(len(df.keys())), coloreFornitori):
+            fig.add_trace(
+                go.Bar(
+                    y=df.index, 
+                    x=df.iloc[:,i],
+                    marker_color=c,
+                    orientation='h',
+                    name=df.keys()[i],
+                    hovertemplate='%{x:.2f}%'
+                )
+            )
+
+        fig.update_yaxes(showgrid=False)
+        fig.update_xaxes(showgrid=False, title='% Dosi Somministrate', range=[0,100], showline=False)
+        fig.update_layout(barmode='stack')
+        fig.update_layout(
+            yaxis=dict(tickformat=","),
+            legend=dict(
+                yanchor="top",
+                y=-0.3,
+                xanchor="left",
+                x=0.01,
+                itemclick='toggle'
+            ),
+            font_size=15,
+            margin=dict(l=5, r=20, t=30, b=20),
+           # width=900, height=500,
+            hovermode="y unified",
+        )
 
     return fig
 
 
 def makePlot_SomministrazioniFornitori(df):
-    nrows = len(df.keys())+1
-    fig, axs = plt.subplots(nrows=nrows,ncols=1,figsize=(15,6*nrows))
-    axs = axs.ravel()
-
-    maxScale = df.sum(axis=1).max()
+    fig = make_subplots(
+        rows=5, cols=1, start_cell="top-left",
+        subplot_titles=('Janssen', 'Moderna', 'Pfizer/BioNTech', 'Vaxzevria', 'Tutti i vaccini'),
+        vertical_spacing = 0.05
+    )
 
     for i,c in zip(range(df.keys().size),coloreFornitori):
-        df.plot.barh(
-            y=df.keys()[i],
-            ax=axs[i],
-            legend=False,
-            ylabel='Somministrazioni',
-            width=.9,
-            color=c,
-            rot=0,
-            fontsize=18
+        fig.add_trace(
+            go.Bar(
+                y=df.index, 
+                x=df.iloc[:,i],
+                marker_color=c,
+                orientation='h',
+                name=df.keys()[i],
+                hovertemplate='%{x:,.0f}',
+                texttemplate='%{x:,}',
+                textposition='auto'
+            ),
+            row=i+1, col=1
         )
-        axs[i].set_ylabel(ylabel='Categoria', fontsize=18)
-        axs[i].grid(lw=.5)
-        #axs[i].set_xlim([0,maxScale*1.02])
-        axs[i].set_title(label=df.keys()[i], fontsize=20)
+        fig.add_trace(
+            go.Bar(
+                y=df.index, 
+                x=df.iloc[:,i],
+                marker_color=c,
+                orientation='h',
+                name=df.keys()[i],
+                hovertemplate='%{x:,.0f}',
+            ),
+            row=5, col=1
+        )
 
-    df.plot.barh(
-        stacked=True,
-        ax = axs[-1],
-        color=coloreFornitori,
-        width=.9,
-        fontsize=18
-    )
-    axs[-1].set_xlabel(xlabel='Somministrazioni', fontsize=18)
-    axs[-1].set_ylabel(ylabel='Categoria', fontsize=18)
-    axs[-1].set_xlim([0,maxScale*1.02])
-    axs[-1].set_title(label='Tutti i fornitori', fontsize=20)
-    axs[-1].legend(fontsize=18)
-    axs[-1].grid(lw=.5)
-
-    plt.tight_layout()                                                     
+        fig.update_layout(
+            barmode='stack',
+            width=730, height=1600,
+            hovermode="y",
+            showlegend=False,
+        )
+        fig.update_xaxes(title="Numero Dosi")
+        fig.update_xaxes(showgrid=False)
+        fig.update_yaxes(showgrid=False, title='Categoria')                                              
 
     return fig
 
 
 def makePlot_AnalisiAnagraficaTotale(df, df_f):
-    fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(15,12))
-    axs = axs.ravel()  
-    
-    df['Totale'].plot.bar(
-        legend=False,
-        color='steelblue',
-        width = .9,
-        ax = axs[0],
-        fontsize=15,
-        rot=0
-    )
-    df[['Sesso Maschile', 'Sesso Femminile']].plot.bar(
-        stacked=True,
-        legend=False,
-        color=['steelblue','coral'],
-        width = .9,
-        ax = axs[1],
-        fontsize=15,
-        rot=0
-    )
-    df_f.plot.bar(
-        stacked=True,
-        legend=False,
-        color=coloreFornitori,
-        width = .9,
-        ax = axs[2],
-        fontsize=15,
-        rot=0
-    )
-    df['Totale Generale'].plot.bar( 
-        alpha=.3,
-        ax=axs[3],
-        width=.9
-     )
-    df[['Prima Dose', 'Persone Vaccinate']].plot.bar(
-        stacked=False,
-        legend=False,
-        color=['cornflowerblue','salmon'],
-        width = .9,
-        ax = axs[3],
-        fontsize=15,
-        rot=0
-    )
-    
     titles = [
-        'Distribuzione vaccini per fascia anagrafica', 'Distribuzione vaccini per fascia anagrafica\ndivisi per sesso',
-        'Distribuzione vaccini per fascia anagrafica\ndivisi per fornitore', 'Distribuzione vaccini per fascia anagrafica divisi\n per dose somministrata'
-    ]
-    for i,t in zip(axs, titles): 
-        i.grid(lw=.2)
-        i.set_ylabel('Totale Somministrazioni',fontsize=18)
-        i.set_xlabel('Fascia Anagrafica',fontsize=18)
-        i.set_title(t, fontsize=18)
-        if i != axs[0]:
-            i.legend(loc='best',fontsize=18) 
+            'Distribuzione vaccini<br>per fascia anagrafica totale', 'Distribuzione vaccini per fascia anagrafica<br>divisi per sesso',
+            'Distribuzione vaccini per fascia<br>anagrafica e per fornitore', 'Distribuzione vaccini per fascia anagrafica<br> e per dose somministrata'
+        ]
 
-    axs[-1].set_ylabel('Totale Somministrazioni - Generale',fontsize=18)
-    axs[-1].set_ylim([0,df['Totale Generale'].max()*1.2])
-    axs[2].legend([j for i,j in df_f.keys()],loc='upper left',fontsize=18)
+    fig = make_subplots(
+        rows=2, cols=2, start_cell="top-left",
+        subplot_titles=titles,
+    )
 
-    plt.tight_layout()
+
+    fig.add_trace(
+        go.Bar(
+            x=df.index,
+            y=df['Totale'],
+            name='',
+            marker_color='#3c5da0',
+            text = 100 * df['Totale']/df['Totale Generale'],
+            hovertemplate =
+                '%{y:,.0f}'+
+                '<br>%{text:.2f}% del totale',
+        ),
+        row=1, col=1
+    )
+    for i,c,s in zip(['Sesso Maschile', 'Sesso Femminile'], ['steelblue','coral'], ['Totale Genere Maschile', 'Totale Genere Femminile']):
+        fig.add_trace(
+            go.Bar(
+                x=df.index,
+                y=df[i],
+                text = 100 * df[i]/df[s],
+                hovertemplate =
+                '%{y:,.0f}'+
+                '<br>%{text:.2f}% del totale',
+                name=i,
+                marker_color=c
+            ),
+            row=1, col=2
+        )
+
+    for n,v in enumerate(df_f):
+        fig.add_trace(
+            go.Bar(
+                x=df_f.index,
+                y=df_f[v],
+                marker_color=coloreFornitori[n],
+                name=v[1],
+                hovertemplate ='%{y:,.0f}'
+            ),
+            row=2, col=1
+        )
+        
+    df['Totale Generale']
+    for i,c in zip(['Prima Dose', 'Persone Vaccinate'], ['cornflowerblue','salmon']):
+        fig.add_trace(
+            go.Bar(
+                x=df.index,
+                y=df[i],
+                name=i,
+                marker_color=c,
+                text = 100 * df[i]/df['Totale Generale'],
+                hovertemplate =
+                    '%{y:,.0f}'+
+                    '<br>%{text:.2f}% del totale',
+            ),
+            row=2, col=2
+        )
+        
+    fig.update_layout(barmode='stack', showlegend=False, width=750, height=800, font_size=15, hovermode='x')
+    fig.update_yaxes(title='Dosi Somministrate', row=1, col=1)
+    fig.update_yaxes(title='Dosi Somministrate', row=2, col=1)
+    fig.update_yaxes(showgrid=False)
+    fig.update_xaxes(showgrid=False, title='Fascia Anagrafica')
     
 
     return fig
  
 
 def makePlot_Regioni(df):
-    fig, axs = plt.subplots(nrows=2,ncols=2, figsize=(15,20))
-    axs = axs.ravel()
+    fig = go.Figure()
 
-    iters = [
-        ['% Prima Dose','Blues'],
-        ['% Persone Vaccinate','Reds'],
-        ['% Dosi Consegnate/Abitanti','Greens'],
-        ['% Dosi Somministrate/Dosi Consegnate','Oranges']
-    ]
-    for i,ax in zip(iters,axs):
-        df.plot(
-            column=i[0],
-            cmap=i[1],
-            ax=ax
-        )
-        norm = Normalize(vmin=df[i[0]].min(),vmax=df[i[0]].max())
-        cbar = fig.colorbar(
-            ScalarMappable(
-                norm=norm,
-                cmap=i[1],
+    fig.add_trace(
+        go.Choroplethmapbox(
+            locations=df.index,
+            z=df["% Prima Dose"]/100,
+            geojson = gpd.GeoSeries(df['geometry']).__geo_interface__,
+            colorscale='blues',
+            name='',
+            autocolorscale=False,
+            text = df["Prima Dose"],
+            hovertemplate='Prime Dosi: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> degli abitanti',
+            colorbar=dict(
+                tickformat='.2%'
             ),
-            ax=ax, 
-            shrink=0.5,
-            label=i[0],
-        )
-        cbar.set_label(i[0],fontsize=20)
+            visible=True,
+        ),
+    )
+    fig.add_trace(
+        go.Choroplethmapbox(
+            locations=df.index,
+            z=df["% Persone Vaccinate"]/100,
+            geojson = gpd.GeoSeries(df['geometry']).__geo_interface__,
+            colorscale='orrd',
+            name='',
+            autocolorscale=False,
+            text = df["Persone Vaccinate"],
+            hovertemplate='Persone Vaccinate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> degli abitanti',
+            colorbar=dict(
+                tickformat='.2%'
+            ),
+            visible=False,
+        ),
+    )
+    fig.add_trace(
+        go.Choroplethmapbox(
+            locations=df.index,
+            z=df["% Dosi Consegnate/Abitanti"]/100,
+            geojson = gpd.GeoSeries(df['geometry']).__geo_interface__,
+            colorscale='blugrn',
+            name='',
+            autocolorscale=False,
+            text = df['Numero Dosi Consegnate'],
+            hovertemplate='Dosi Consegnate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> degli abitanti',
+            colorbar=dict(
+                tickformat='.2%'
+            ),
+            visible=False,
+        ),
+    )
+    fig.add_trace(
+        go.Choroplethmapbox(
+            locations=df.index,
+            z=df['% Dosi Somministrate/Dosi Consegnate']/100,
+            geojson = gpd.GeoSeries(df['geometry']).__geo_interface__,
+            colorscale='redor',
+            name='',
+            autocolorscale=False,
+            text = df["Totale"],
+            hovertemplate='Dosi Somministrate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> delle dosi consegnate',
+            colorbar=dict(
+                tickformat='.2%'
+            ),
+            visible=False,
+        ),
+    )
 
-        ax.axis('off')
-        df.boundary.plot(ax=ax, color='k', lw=1)
-        ax.legend()
-                    
-    plt.tight_layout()
-
+    fig.update_layout(
+        title='% Prima Dose',
+        hovermode='closest',
+        mapbox_style="carto-positron",
+        mapbox=dict(
+            center=go.layout.mapbox.Center(
+                lat=42,
+                lon=12
+            ),
+            zoom=4.5,
+        ),
+        width=730,
+        height=700,
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="right",
+                x=1,
+                y=1.08,
+                showactive=True,
+                font= dict(color='gray'),
+                buttons=list(
+                    [
+                        dict(
+                            label="% Prima Dose",
+                            method="update",
+                            args=[
+                                {"visible": [True, False, False, False]},
+                                {"title": "% Prima Dose",},
+                            ],
+                        ),
+                        dict(
+                            label="% Persone Vaccinate",
+                            method="update",
+                            args=[
+                                {"visible": [False, True, False, False]},
+                                {"title": "% Persone Vaccinate",},
+                            ],
+                        ),
+                        dict(
+                            label="% Dosi Consegnate/<br>Abitanti",
+                            method="update",
+                            args=[
+                                {"visible": [False, False, True, False]},
+                                {"title": "% Dosi Consegnate/Abitanti",},
+                            ],
+                        ),
+                        dict(
+                            label="% Dosi Somministrate/<br>Dosi Consegnate",
+                            method="update",
+                            args=[
+                                {"visible": [False, False, False, True]},
+                                {"title": "% Dosi Somministrate/Dosi Consegnate",},
+                            ],
+                        ),
+                    ]
+                ),
+            )
+        ]
+    )
     return fig
 
 
@@ -516,78 +794,52 @@ def makePlot_BarPercSomministrazioni(df):
 
 
 def makePlot_MockGartner(df):  
-    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(15,8))
-    cmap = 'autumn_r'
-    
-    def scatter(ax,lx,ly):
-        df.plot.scatter(
-            ax=ax,
-            x=lx, 
-            y=ly,  
-            c='% Dosi Somministrate/Dosi Consegnate',
-            edgecolor='k',
-            cmap=cmap,
-            s=1000,
-            lw=1,
-            ylim=(df[ly].min()/1.05,df[ly].max()*1.05),
-            xlim=(df[lx].min()/1.05,df[lx].max()*1.05),
-            colorbar=False
-        )  
-        
-    def colorbar(ax):
-        norm = Normalize(vmin=df['% Dosi Somministrate/Dosi Consegnate'].min(),vmax=df['% Dosi Somministrate/Dosi Consegnate'].max())
-        cbar = fig.colorbar(
-                ScalarMappable(
-                    norm=norm,
-                    cmap=cmap,
-                ),
-                ax=ax, 
-                shrink=0.9,
-        )
-        cbar.set_label('% Dosi Somministrate/Dosi Consegnate',fontsize=20)
-        
-    def attachLabels(ax,lx,ly):
-        for i in df.index:
-            ax.text(
-                s=mapRegioni[i],
-                x=df.loc[i,lx],
-                y=df.loc[i,ly],
-                ha='center',
-                va='center',
-                fontsize=15
-            )
+    fig = go.Figure()
 
-    scatter(ax,'% Persone Vaccinate','% Prima Dose')
-    colorbar(ax)
-    attachLabels(ax,'% Persone Vaccinate','% Prima Dose')
-        
-    ax.set_ylabel('% Prima Dose', fontsize=18)
-    ax.set_xlabel('% Persone Vaccinate', fontsize=18)
-    
-    hline = df['Prima Dose'].sum()/df['Totale Generale'].sum()*100
-    print(hline)
-    vline = df['Persone Vaccinate'].sum()/df['Totale Generale'].sum()*100
-    ax.hlines(
-        xmin=0, xmax=100,
-        y=hline,
-        ls='--',lw=2,color='tab:gray', alpha=.5
+    fig.add_trace(
+        go.Scatter(
+            x=df['% Persone Vaccinate']/100,
+            y=df['% Prima Dose']/100,
+            mode='markers',
+            name='',
+            text=df['% Dosi Somministrate/Dosi Consegnate']/100,
+            hovertemplate='<b>'+df.index+'</b><br>% Persone Vaccinate <b>%{x:.2%}</b><br>% Prima Dose <b>%{y:.2%}</b><br>% Dosi Somministrate/Dosi Consegnate <b>%{text:.2%}</b>',
+            marker=dict(
+                size=30,
+                color=df['% Dosi Somministrate/Dosi Consegnate']/100,
+                colorscale='redor',
+                colorbar=dict(
+                    title='% Dosi Somministrate/<br>Dosi Consegnate',
+                    tickformat='%.2f'
+                )
+            ),
+        ),
     )
-    ax.vlines(
-        ymin=0, ymax=100,
-        x=vline,
-        ls='--',lw=2,color='tab:gray', alpha=.5
+    vline = df['Persone Vaccinate'].sum()/df['Totale Generale'].sum()
+    fig.add_vline(
+        x=vline, 
+        line_width=1.3, 
+        line_dash="dash", 
+        line_color="slategray",
+        annotation_text="% Persone Vaccinate Italia", 
+        annotation_position="bottom right",
     )
-    ax.text(
-        x=df['% Persone Vaccinate'].max()*1.04, y=hline, s='% Prima Dose\nItalia', 
-        c='tab:gray', fontsize=18, va='bottom', ha='right'
+    hline = df['Prima Dose'].sum()/df['Totale Generale'].sum()
+    fig.add_hline(
+        y=hline, 
+        line_width=1.3, 
+        line_dash="dash", 
+        line_color="slategray",
+        annotation_text="% Prima Dose Italia", 
+        annotation_position="bottom right",
     )
-    ax.text(
-        y=df['% Prima Dose'].max()+1, x=vline, s='% Seconda\nDose Italia', 
-        c='tab:gray', fontsize=18, va='top', ha='left',rotation=-90
-    )
-    
 
-    plt.tight_layout()
+    fig.update_yaxes(showgrid=False, title='% Prima Dose', tickformat='%.2f')
+    fig.update_xaxes(showgrid=False, title='% Persone Vaccinate', tickformat='%.2f')
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=20, b=20),
+        width=730, height=500
+    )
 
     return fig
 

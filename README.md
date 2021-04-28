@@ -14,8 +14,6 @@ the delivered and received doses per day, it shows how the doses are delivered a
 population age and social class and finally it makes a comparison among Italian region 
 in order to underline where the campaign proceeds better.
 
-It features a bonus plot, which is uncommon to find, describing the Italian regional restriction 
-from Novembre 6th 2020. It's not related to the analysis, but I think it's worth to show.
 
 ## Description of the repository
 * `aree` directory contains data of regional maps;
@@ -26,4 +24,4 @@ from Novembre 6th 2020. It's not related to the analysis, but I think it's worth
 
 
 ## To do
-* improve plot visualisation with `plotly`
+* *Per aspera ad astra*

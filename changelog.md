@@ -1,3 +1,6 @@
+## v2.0
+New Update with plotly graphs
+
 ## v1.1
 Added sidebar with KPI
 
