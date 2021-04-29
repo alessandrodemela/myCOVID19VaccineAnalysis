@@ -246,7 +246,7 @@ class Analysis:
         
         st.write(
             'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. '
-            'La stima viene effettuata sommando le somministrazioni settimanali fino alla data odierna, rapportandole alla media percentuale '
+            'La stima viene effettuata sommando le somministrazioni settimanali fino alla data odierna, rapportandole alla media percentuale'
             f'dello stesso periodo nelle {nBackWeeks} settimane precedenti.'
         )
         st.write(

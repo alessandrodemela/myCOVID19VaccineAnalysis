@@ -50,7 +50,7 @@ def makePlot_Indicatori(KPI, aux):
             font=dict(size=20),
         )
         fig.add_annotation(
-            x=xs[n%2], y=ys[n%3]-.1,
+            x=xs[n%2], y=ys[int(n/2)]-.1,
             text='{:,}'.format(i[1]),
             showarrow=False,
             font=dict(size=35),
@@ -82,7 +82,7 @@ def makePlot_Indicatori(KPI, aux):
     )  
 
     fig.update_layout(
-        width=730, height=130*3,
+        #width=730, height=130*3,
         margin=dict(l=5, r=5, t=20, b=20),
     )
 
@@ -663,8 +663,7 @@ def makePlot_Regioni(df):
             ),
             zoom=4.5,
         ),
-        width=730,
-        height=700,
+        width=730, height=700,
         updatemenus=[
             dict(
                 type="buttons",
@@ -787,10 +786,14 @@ def makePlot_MockGartner(df):
         go.Scatter(
             x=df['% Persone Vaccinate']/100,
             y=df['% Prima Dose']/100,
-            mode='markers',
+            text=df.index,
+            mode='markers+text',
+            textposition='middle right',
             name='',
-            text=df['% Dosi Somministrate/Dosi Consegnate']/100,
-            hovertemplate='<b>'+df.index+'</b><br>% Persone Vaccinate <b>%{x:.2%}</b><br>% Prima Dose <b>%{y:.2%}</b><br>% Dosi Somministrate/Dosi Consegnate <b>%{text:.2%}</b>',
+            customdata=df['% Dosi Somministrate/Dosi Consegnate']/100,
+            hovertemplate='<b>'+df.index+
+            '</b><br>% Persone Vaccinate <b>%{x:.2%}</b><br>% Prima Dose <b>%{y:.2%}</b>'
+            '<br>% Dosi Somministrate/Dosi Consegnate <b> %{customdata:.2%}</b>',
             marker=dict(
                 size=30,
                 color=df['% Dosi Somministrate/Dosi Consegnate']/100,
