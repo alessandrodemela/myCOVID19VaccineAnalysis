@@ -37,69 +37,57 @@ def makePlot_Indicatori(KPI, aux):
         '#d37042'          # seconde dosi
     ]
 
-    fig = make_subplots(
-        rows=3, cols=2, start_cell="top-left",
-        vertical_spacing=0, horizontal_spacing=0
-    )
+    fig = go.Figure()
 
-    for i,c,n in zip(KPI.items(),colors,[[i, j] for i in range(1,4) for j in range(1,3)]):
+    xs = [0.25,0.75]
+    ys = [0.9, 0.6, 0.3]
+
+    for n,i in enumerate(KPI.items()):
         fig.add_annotation(
-            x=0.5, y=0.9,
+            x=xs[n%2], y=ys[int(n/2)],
             text=i[0],
             showarrow=False,
             font=dict(size=20),
-            row=n[0],
-            col=n[1]
         )
         fig.add_annotation(
-            x=0.5, y=0.5,
-            text='<b>{:,}</b>'.format(i[1]),
+            x=xs[n%2], y=ys[n%3]-.1,
+            text='{:,}'.format(i[1]),
             showarrow=False,
             font=dict(size=35),
-            row=n[0],
-            col=n[1]
         )  
 
     fig.add_annotation(
-        x=0.5, y=0.25,
+        x=xs[1], y=ys[0]-.18,
         text=aux['Data Ultime Somministrazioni'],
         showarrow=False,
         font=dict(size=15),
-        row=1,
-        col=2
     )  
     fig.add_annotation(
-        x=0.5, y=0.25,
+        x=xs[1], y=ys[1]-.18,
         text=aux['Data Ultima Consegna'],
         showarrow=False,
         font=dict(size=15),
-        row=2,
-        col=2
     )  
     fig.add_annotation(
-        x=0.5, y=0.2,
+        x=xs[0], y=ys[2]-.19,
         text=f'<b>{aux["Percentuale Prime Dosi"]:.2%}',
         showarrow=False,
-        font=dict(size=20, color='cornflowerblue'),
-        row=3,
-        col=1
+        font=dict(size=22, color='#3c5da0'),
     )  
     fig.add_annotation(
-        x=0.5, y=0.2,
+        x=xs[1], y=ys[2]-.19,
         text=f'<b>{aux["Percentuale Seconde Dosi"]:.2%}',
         showarrow=False,
-        font=dict(size=20, color='#d37042'),
-        row=3,
-        col=2
+        font=dict(size=22,color='#d37042'),
     )  
 
     fig.update_layout(
-        width=730, height=120*3,
+        width=730, height=130*3,
         margin=dict(l=5, r=5, t=20, b=20),
     )
 
     fig.update_yaxes(showgrid=False, zeroline=False, range=[0,1], showticklabels=False)
-    fig.update_xaxes(showgrid=False, zeroline=False, range=[0,1], showticklabels=False)    
+    fig.update_xaxes(showgrid=False, zeroline=False, range=[0,1], showticklabels=False)     
 
     return fig
 
@@ -205,7 +193,6 @@ def makePlot_SomministrazioniLastWeek(df, n):
 
 
 def makePlot_SomministrazioniGiorno(df):
-
     fig = go.Figure()
 
     x=df.index
@@ -539,8 +526,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
             marker_color='#3c5da0',
             text = 100 * df['Totale']/df['Totale Generale'],
             hovertemplate =
-                '%{y:,.0f}'+
-                '<br>%{text:.2f}% del totale',
+                '<b>%{y:,.0f}'+
+                '<br><b>%{text:.2f}%</b> del totale',
         ),
         row=1, col=1
     )
@@ -551,8 +538,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
                 y=df[i],
                 text = 100 * df[i]/df[s],
                 hovertemplate =
-                '%{y:,.0f}'+
-                '<br>%{text:.2f}% del totale',
+                '<b>%{y:,.0f}</b> '+
+                '<br><b>%{text:.2f}%</b> del totale',
                 name=i,
                 marker_color=c
             ),
@@ -566,7 +553,7 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
                 y=df_f[v],
                 marker_color=coloreFornitori[n],
                 name=v[1],
-                hovertemplate ='%{y:,.0f}'
+                hovertemplate ='<b>%{y:,.0f}</b> '
             ),
             row=2, col=1
         )
@@ -581,8 +568,8 @@ def makePlot_AnalisiAnagraficaTotale(df, df_f):
                 marker_color=c,
                 text = 100 * df[i]/df['Totale Generale'],
                 hovertemplate =
-                    '%{y:,.0f}'+
-                    '<br>%{text:.2f}% del totale',
+                    '<b>%{y:,.0f}</b> '+
+                    '<br><b>%{text:.2f}%</b> del totale',
             ),
             row=2, col=2
         )
@@ -609,7 +596,7 @@ def makePlot_Regioni(df):
             name='',
             autocolorscale=False,
             text = df["Prima Dose"],
-            hovertemplate='Prime Dosi: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> degli abitanti',
+            hovertemplate='Prime Dosi: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> della platea',
             colorbar=dict(
                 tickformat='.2%'
             ),
@@ -625,7 +612,7 @@ def makePlot_Regioni(df):
             name='',
             autocolorscale=False,
             text = df["Persone Vaccinate"],
-            hovertemplate='Persone Vaccinate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> degli abitanti',
+            hovertemplate='Persone Vaccinate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> della platea',
             colorbar=dict(
                 tickformat='.2%'
             ),
@@ -641,7 +628,7 @@ def makePlot_Regioni(df):
             name='',
             autocolorscale=False,
             text = df['Numero Dosi Consegnate'],
-            hovertemplate='Dosi Consegnate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> degli abitanti',
+            hovertemplate='Dosi Consegnate: <b>%{text:,}</b><br>pari al <b>%{z:.2%}</b> della platea',
             colorbar=dict(
                 tickformat='.2%'
             ),

@@ -1,3 +1,6 @@
+## v2.0.1
+Minors updates to several plots
+
 ## v2.0
 New Update with plotly graphs
 

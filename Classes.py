@@ -221,7 +221,7 @@ class Analysis:
 
         st.subheader('Indicatori')
         st.write(makePlot_Indicatori(self.KPI, self.auxiliaryMeas))
-        st.write('La percentuale di prime e seconde dosi somministrate è da intendersi sulla platea 16+.')
+        st.write(f'La percentuale di prime dosi somministrate e persone vaccinate è da intendersi sulla platea 16+, pari a {self.platea:,.0f} abitanti su {59641488:,.0f}.')
 
         st.markdown('***')
 
@@ -250,8 +250,7 @@ class Analysis:
             f'dello stesso periodo nelle {nBackWeeks} settimane precedenti.'
         )
         st.write(
-            f'Un valore analogo della stima della settimana corrente, basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane è di ' 
-            f'**{int(predictCurrentWeek(df,True)):,}** dosi stimate.'
+            f'Un valore analogo della stima della settimana corrente è basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane.'
         )
    
     def Somministrazioni(self):
