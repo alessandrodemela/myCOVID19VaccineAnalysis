@@ -250,7 +250,7 @@ class Analysis:
             'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. ')
         st.write(
             'La stima proporzionale viene effettuata sommando le somministrazioni settimanali fino alla data odierna, rapportandole alla media d'
-            f'dello stesso periodo nelle {nBackWeeks} settimane precedenti. Il dato potrebbe non essere corretto '
+            f"dello stesso periodo nelle {nBackWeeks} settimane precedenti. La stima potrebbe non essere corretta fino all'ultimo aggiornamento del dato odierno." 
         )
         st.write(
             f'Un valore analogo della stima della settimana corrente è basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane.'
