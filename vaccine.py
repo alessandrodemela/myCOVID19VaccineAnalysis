@@ -17,10 +17,10 @@ def GetReport(an):
     # Introduzione
     an.Header()
 
-    # # Somministrazioni
+    # Somministrazioni
     an.Somministrazioni()
 
-    # # Anagrafica
+    # Anagrafica
     an.Anagrafica()
 
     # Regionale

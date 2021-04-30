@@ -229,8 +229,9 @@ class Analysis:
         cDF = pd.DataFrame(self.tblConsegne.groupby('Fornitore').sum()).rename(columns={'Numero Dosi': 'Dosi Consegnate'})
         sDF = pd.DataFrame(self.tblSomministrazioni.groupby('Fornitore').sum()['Totale']).rename(columns={'Totale': 'Dosi Somministrate'})
         df = pd.concat([cDF,sDF],axis=1)
-        df['% Somministrate/Consegnate'] = round(100 * df['Dosi Somministrate']/df['Dosi Consegnate'],2)
-        st.write(df.fillna(0).T.style.format('{:,.2f}'))
+        df['% Somministrate/Consegnate'] = round(df['Dosi Somministrate'].astype(float)/df['Dosi Consegnate'],4).map('{:.2%}'.format)
+        df.iloc[:,:2] = df.iloc[:,:2].applymap('{:,.0f}'.format)
+        st.write(df)
 
         nBackWeeks = 4
 
@@ -238,16 +239,18 @@ class Analysis:
         df = self.tblSomministrazioni[['Data Somministrazione','Totale']].groupby('Data Somministrazione').sum().reset_index()
         df['Settimana'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().week+1
         df['Giorno'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().day
-        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[-(nBackWeeks+1)*7-datetime.today().isocalendar()[2]:-8,]
+
+        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[-(nBackWeeks+1)*8-1:-8,:]
 
         st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks} settimane.')
         plot_LastWeeks = makePlot_SomministrazioniLastWeek(df, nBackWeeks)
         st.write(plot_LastWeeks)
         
         st.write(
-            'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. '
-            'La stima viene effettuata sommando le somministrazioni settimanali fino alla data odierna, rapportandole alla media percentuale'
-            f'dello stesso periodo nelle {nBackWeeks} settimane precedenti.'
+            'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. ')
+        st.write(
+            'La stima proporzionale viene effettuata sommando le somministrazioni settimanali fino alla data odierna, rapportandole alla media d'
+            f'dello stesso periodo nelle {nBackWeeks} settimane precedenti. Il dato potrebbe non essere corretto '
         )
         st.write(
             f'Un valore analogo della stima della settimana corrente è basato su un modello di regressione lineare sulle ultime {nBackWeeks} settimane.'
