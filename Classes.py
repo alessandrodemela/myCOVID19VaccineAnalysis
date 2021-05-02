@@ -231,7 +231,6 @@ class Analysis:
         df = pd.concat([cDF,sDF],axis=1)
         df['% Somministrate/Consegnate'] = round(df['Dosi Somministrate'].astype(float)/df['Dosi Consegnate'],4).map('{:.2%}'.format)
         df.iloc[:,:2] = df.iloc[:,:2].applymap('{:,.0f}'.format)
-        st.write(df)
 
         nBackWeeks = 4
 
@@ -240,7 +239,9 @@ class Analysis:
         df['Settimana'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().week+1
         df['Giorno'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().day
 
-        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[-(nBackWeeks+1)*8-1:-8,:]
+        lastRows = -8
+        lastWeek = lastRows-datetime.today().isocalendar()[2]
+        df = df.groupby(['Settimana', 'Giorno']).sum().iloc[lastWeek-nBackWeeks*7:lastRows]
 
         st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks} settimane.')
         plot_LastWeeks = makePlot_SomministrazioniLastWeek(df, nBackWeeks)

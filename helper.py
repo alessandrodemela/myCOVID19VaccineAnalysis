@@ -46,7 +46,6 @@ def predictCurrentWeek(df, regression=False):
     '''Predict current week'''
     if regression:
         df = df.groupby(level=0).sum()
-        st.write()
         X=np.array(df.index)[:-1].reshape(-1,1)
         y=df.Totale[:-1]
         Xpred = [[np.array(df.index)[-1]]]
