@@ -17,27 +17,27 @@ def getTicksLabels(a):
 
 
 # mapRegioni = {
-#     'Abruzzo'                               : 'ABR',
-#     'Basilicata'                            : 'BAS',
-#     'Provincia Autonoma Bolzano / Bozen'    : 'PAB',
-#     'Calabria'                              : 'CAL',
-#     'Campania'                              : 'CAM',
-#     'Emilia-Romagna'                        : 'EMR',
-#     'Friuli-Venezia Giulia'                 : 'FVG',
-#     'Lazio'                                 : 'LAZ',
-#     'Liguria'                               : 'LIG',
-#     'Lombardia'                             : 'LOM',
-#     'Marche'                                : 'MAR',
-#     'Molise'                                : 'MOL',
-#     'Piemonte'                              : 'PIE',
-#     'Puglia'                                : 'PUG',
-#     'Sardegna'                              : 'SAR',
-#     'Sicilia'                               : 'SIC',
-#     'Toscana'                               : 'TOS',
-#     'Provincia Autonoma Trento'             : 'PAT',
-#     'Umbria'                                : 'UMB',
-#     "Valle d'Aosta / Vallée d'Aoste"        : 'VDA',
-#     'Veneto'                                : 'VEN'
+#     'Abruzzo'                               :     'ABR',
+#     'Basilicata'                            :     'BAS',
+#     'Provincia Autonoma Bolzano / Bozen'    :     'PAB',
+#     'Calabria'                              :     'CAL',
+#     'Campania'                              :     'CAM',
+#     'Emilia-Romagna'                        :     'EMR',
+#     'Friuli-Venezia Giulia'                 :     'FVG',
+#     'Lazio'                                 :     'LAZ',
+#     'Liguria'                               :     'LIG',
+#     'Lombardia'                             :     'LOM',
+#     'Marche'                                :     'MAR',
+#     'Molise'                                :     'MOL',
+#     'Piemonte'                              :     'PIE',
+#     'Puglia'                                :     'PUG',
+#     'Sardegna'                              :     'SAR',
+#     'Sicilia'                               :     'SIC',
+#     'Toscana'                               :     'TOS',
+#     'Provincia Autonoma Trento'             :     'PAT',
+#     'Umbria'                                :     'UMB',
+#     "Valle d'Aosta / Vallée d'Aoste"        :     'VDA',
+#     'Veneto'                                :     'VEN'
 # }
 
 coloreFornitori = ['hotpink','firebrick','royalblue','goldenrod']
@@ -46,6 +46,7 @@ def predictCurrentWeek(df, regression=False):
     '''Predict current week'''
     if regression:
         df = df.groupby(level=0).sum()
+
         X=np.array(df.index)[:-1].reshape(-1,1)
         y=df.Totale[:-1]
         Xpred = [[np.array(df.index)[-1]]]
@@ -54,10 +55,11 @@ def predictCurrentWeek(df, regression=False):
 
     else:
         dfAvgDay = (df.div(df.groupby(['Settimana']).sum()[:-1])).groupby('Giorno').mean()
+
         try:
             return (df.loc[datetime.today().isocalendar()[1]+1].cumsum() / dfAvgDay.cumsum()).dropna().values[-1][0]
         except Exception as e:
-            return None
+            return 0
 
 
 def getDateRangeFromWeek(p_year,p_week):

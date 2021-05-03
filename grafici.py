@@ -89,17 +89,16 @@ def makePlot_Indicatori(KPI, aux):
 def makePlot_SomministrazioniLastWeek(df, n):
     def makePlot(fig):
         dfweek = df.groupby(level=0).sum()
-
         #checkSunday = (datetime.today().isocalendar()[2]<7) and (datetime.today().isocalendar()[2]==1 or df.iloc[-1,0] != datetime.today().date())
         predicted = predictCurrentWeek(df)
 
         fig.add_trace(
             go.Bar(
-                x=[datetime.today().isocalendar()[1]+1],
+                x=[df.index[-1][0]],
                 y=[int(predictCurrentWeek(df,True))],
                 marker_color='dimgray',
                 texttemplate='%{y:,}',
-                textposition='outside',
+                textposition='auto',
                 hovertemplate='%{y}',
                 name='Stima<br>Lineare',
                 #opacity=.7,
@@ -108,11 +107,11 @@ def makePlot_SomministrazioniLastWeek(df, n):
         )
         fig.add_trace(
             go.Bar(
-                x=[datetime.today().isocalendar()[1]+1],
+                x=[df.index[-1][0]],
                 y=[int(predicted)],
                 marker_color='dimgray',
                 texttemplate='%{y:,}',
-                textposition='outside',
+                textposition='auto',
                 hovertemplate='%{y}',
                 name='Stima<br>Proporzionale',
                 #opacity=.5,

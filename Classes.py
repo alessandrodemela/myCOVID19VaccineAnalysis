@@ -240,7 +240,8 @@ class Analysis:
         df['Giorno'] = pd.to_datetime(df['Data Somministrazione']).dt.isocalendar().day
 
         lastRows = -8
-        lastWeek = lastRows-datetime.today().isocalendar()[2]
+        lastDay = self.tblSomministrazioni['Data Somministrazione'].iloc[-1]
+        lastWeek = lastRows-lastDay.isocalendar()[2]
         df = df.groupby(['Settimana', 'Giorno']).sum().iloc[lastWeek-nBackWeeks*7:lastRows]
 
         st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks} settimane.')
