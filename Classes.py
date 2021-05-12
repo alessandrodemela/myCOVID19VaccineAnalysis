@@ -231,6 +231,8 @@ class Analysis:
         df = pd.concat([cDF,sDF],axis=1)
         df['% Somministrate/Consegnate'] = round(df['Dosi Somministrate'].astype(float)/df['Dosi Consegnate'],4).map('{:.2%}'.format)
         df.iloc[:,:2] = df.iloc[:,:2].applymap('{:,.0f}'.format)
+        
+        st.write(df.T)
 
         st.write(df)
 
