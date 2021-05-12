@@ -762,6 +762,38 @@ def makePlot_MockGartner(df):
     return fig
 
 
+def makePlot_ConsegneSomministrazioniRegione(df):
+    fig = go.Figure()
+
+    for i,c in zip(df['Numero Dosi'].columns, coloreFornitori):
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=df['Numero Dosi'][i],
+                #sc=9
+                name=i,
+                mode='markers',
+                marker=dict(symbol='0', size=20, color=c),
+                hovertemplate='<b>%{y:.2f}%</b>',
+            )
+        )
+    fig.update_xaxes(
+        range=[-.5,20.5],
+        title='Regioni',
+        showgrid=False
+    )
+    fig.update_yaxes(
+        range=[-5,105],
+        title='% Somministrazioni'
+    )
+    fig.update_layout(
+        hovermode="x unified",
+        width=730, height=700
+    )
+
+    return fig
+
+
 def Bonus():
     st.header('Sezione Bonus')
     st.subheader('I colori delle regioni dal 6/11/2020, secondo il D.P.C.M 4/11/2020.')
