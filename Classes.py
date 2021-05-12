@@ -220,7 +220,7 @@ class Analysis:
         )
 
         st.subheader('Indicatori')
-        st.write(makePlot_Indicatori(self.KPI, self.auxiliaryMeas))
+        st.plotly_chart(makePlot_Indicatori(self.KPI, self.auxiliaryMeas))
         st.write(f'La percentuale di prime dosi somministrate e persone vaccinate è da intendersi sulla platea 16+, pari a {self.platea:,.0f} abitanti su {59641488:,.0f}.')
 
         st.markdown('***')
@@ -231,6 +231,8 @@ class Analysis:
         df = pd.concat([cDF,sDF],axis=1)
         df['% Somministrate/Consegnate'] = round(df['Dosi Somministrate'].astype(float)/df['Dosi Consegnate'],4).map('{:.2%}'.format)
         df.iloc[:,:2] = df.iloc[:,:2].applymap('{:,.0f}'.format)
+
+        st.write(df)
 
         nBackWeeks = 4
 
@@ -246,7 +248,7 @@ class Analysis:
 
         st.subheader(f'Dosi somministrate nelle ultime {nBackWeeks} settimane.')
         plot_LastWeeks = makePlot_SomministrazioniLastWeek(df, nBackWeeks)
-        st.write(plot_LastWeeks)
+        st.plotly_chart(plot_LastWeeks)
         
         st.write(
             'Il valore delle somministrazioni giornaliere, viene aggiornato più volte durante il giorno. ')
