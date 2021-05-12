@@ -11,8 +11,6 @@ from helper import *
 plt.rcParams["font.family"] = "Sans Serif"
 plt.rcParams.update({'font.size': 25})
 
-# from plotly.subplots import make_subplots
-# import plotly.graph_objects as go
 
 mapRegioni = {
     'Abruzzo'                   : 'Abruzzo',
@@ -349,6 +347,13 @@ class Analysis:
     
     def Regionale(self):
 
+        def CreateViews_regioni(self):
+            '''Creating Views'''
+            self.VwSomministrazioniRegione = self.tblSomministrazioni.groupby(['Regione/P.A.', 'Fornitore']).sum()[['Totale']].unstack().fillna(0).rename(columns={'Totale': 'Numero Dosi'})
+            self.VwConsegneRegione = self.tblConsegne.groupby(['Regione/P.A.', 'Fornitore']).sum().unstack(level=1)
+            self.VwSomministrazioniConsegneRegione = self.VwSomministrazioniRegione.div(self.VwConsegneRegione,axis=1)*100
+
+
         def Analisi_regionale(self):
             st.markdown('***')
             st.header('L\'Analisi Regionale delle somministrazioni')
@@ -369,6 +374,12 @@ class Analysis:
             plt_Gartner = makePlot_MockGartner(self.tblAree)
             st.write(plt_Gartner)
 
+            # consegne e somministrazioni
+            st.subheader('La percentuale di somministrazione di ciascun vaccino per ciascuna regione')
+            plt_consegneSomministrazioniRegione = makePlot_ConsegneSomministrazioniRegione(self.VwSomministrazioniConsegneRegione)
+            st.write(plt_consegneSomministrazioniRegione)
+
+        CreateViews_regioni(self)
         Analisi_regionale(self)
         st.markdown('***')
 
