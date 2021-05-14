@@ -780,7 +780,8 @@ def makePlot_ConsegneSomministrazioniRegione(df):
     fig.update_xaxes(
         range=[-.5,20.5],
         title='Regioni',
-        showgrid=False
+        showgrid=False,
+        zeroline=False,
     )
     fig.update_yaxes(
         range=[-5,105],
@@ -789,7 +790,8 @@ def makePlot_ConsegneSomministrazioniRegione(df):
     )
     fig.update_layout(
         hovermode="x unified",
-        width=730, height=700
+        width=730, height=700,
+        showlegend=False
     )
 
     return fig
@@ -797,7 +799,7 @@ def makePlot_ConsegneSomministrazioniRegione(df):
 
 def Bonus():
     st.header('Sezione Bonus')
-    st.subheader('I colori delle regioni dal 6/11/2020, secondo il D.P.C.M 4/11/2020.')
+    st.subheader('I colori delle regioni dal 6/11/2020, secondo il D.P.C.M. 4/11/2020.')
 
     aree = gpd.read_file('aree/shp/dpc-covid-19-ita-aree-nuove-g.shp')
 
@@ -866,7 +868,7 @@ def Bonus():
                         ]
                     ),
                     hovertemplate='<b> %{customdata[0]} </b><br> %{customdata[1]}',
-                    name=''
+                    name=reg
                 )
             )
 
@@ -877,6 +879,8 @@ def Bonus():
     ticktext = ticktext[::20]
 
     fig.update_layout(
+         margin=dict(l=5, r=5, t=25, b=20),
+        height=500, width=730,
         barmode='stack',
         showlegend=False,
          xaxis=dict(
@@ -888,4 +892,6 @@ def Bonus():
             ticktext = ticktext
         ),
     )
+
+    st.write(fig)
 
