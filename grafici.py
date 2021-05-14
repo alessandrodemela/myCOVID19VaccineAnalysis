@@ -826,7 +826,7 @@ def Bonus():
     aree = aree.sort_values(['nomeTesto', 'datasetIni'])
     regioni = [i for i in aree.nomeTesto.unique() if i!='Intero territorio nazionale']
 
-    fig, ax = plt.subplots(figsize=(15, 10))
+    fig=go.Figure()
 
     for reg in regioni:
 
@@ -840,33 +840,51 @@ def Bonus():
                 for i in range(len(areaReg))
             ] 
 
+        global areaRegPlot 
         areaRegPlot = areaReg[['datasetIni','permanenza','colorCode']]
         
         w = timedelta(0)
         init = datetime(2020,11,6)
         start = areaRegPlot['datasetIni'].min()
-        
+
         for i in range(len(areaRegPlot)):
-            start += w
-            w = timedelta(int(areaRegPlot['permanenza'].iloc[i]))
+            fig.add_trace(
+                go.Bar(
+                    orientation='h',
+                    x = [areaRegPlot.iloc[i,1]],
+                    y = [reg],
+                    marker=dict(
+                        color= areaRegPlot.iloc[i,2],
+                        line=dict(color=areaRegPlot.iloc[i,2], width=1)
+                    ),
+                    customdata = np.dstack(
+                        [
+                            ('Zona ROSSA' if areaRegPlot.iloc[i,2]=='firebrick' else 'Zona ARANCIONE' if areaRegPlot.iloc[i,2]=='darkorange' else 'Zona GIALLA' if areaRegPlot.iloc[i,2]=='gold' else 'Zona BIANCA',
+                             areaRegPlot.iloc[i,0].strftime('%d %b %Y') + ' - ' + areaRegPlot.iloc[i+1,0].strftime('%d %b %Y') if i+1<len(areaRegPlot) else areaRegPlot.iloc[i,0].strftime('%d %b %Y') + ' - '
+                            )
+                        ]
+                    ),
+                    hovertemplate='<b> %{customdata[0]} </b><br> %{customdata[1]}',
+                    name=''
+                )
+            )
 
-            c = areaRegPlot['colorCode'].iloc[i]
-            ax.barh(
-                reg, w, left = datetime(day=start.day, month=start.month, year=start.year), 
-                color=c, edgecolor=c),
+    delta = datetime.today().date() - datetime(2020,11,6).date()
+    ticktext = [(datetime(2020,11,6).date() + timedelta(days=x)).strftime('%d %b') for x in range(delta.days)]
 
-    ax.yaxis.set_tick_params(labelsize=18)
-    myFmt = mdates.DateFormatter('%d %b %y')
-    ax.xaxis.set_major_formatter(myFmt)
-    ax.xaxis.set_tick_params(labelsize=18)
-    ax.set_ylim([-0.5,20.5])
+    tickvals = [i for i in range(len(ticktext))][::20]
+    ticktext = ticktext[::20]
 
-    ax.vlines(
-        ymin=-1, ymax=21,
-        x=datetime.today(),
-        ls='--',lw=2,color='midnightblue', alpha=1
+    fig.update_layout(
+        barmode='stack',
+        showlegend=False,
+         xaxis=dict(
+            showgrid=False,
+            showline=False,
+            zeroline=False,
+            tickmode = 'array',
+            tickvals = tickvals,
+            ticktext = ticktext
+        ),
     )
-
-    st.write(fig)
-
 

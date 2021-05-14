@@ -26,6 +26,9 @@ def GetReport(an):
     # Regionale
     an.Regionale()
 
+    # Bonus
+    an.Bonus()
+
     # Footer
     an.Footer()
 
