@@ -784,6 +784,7 @@ def makePlot_ConsegneSomministrazioniRegione(df):
     )
     fig.update_yaxes(
         range=[-5,105],
+        showgrid=False,
         title='% Somministrazioni'
     )
     fig.update_layout(
