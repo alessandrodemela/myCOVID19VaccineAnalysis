@@ -303,14 +303,14 @@ class Analysis:
                 "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
             )
             # Plot somministrazioni per categoria
-            st.markdown('#### Le dosi di vaccino per categoria.')
+            #st.markdown('#### Le dosi di vaccino per categoria.')
             #plt_somministrazioniCategoria = makePlot_SomministrazioniCategoria(self.VwSomministrazioniCategoria)
-            st.write(plt_somministrazioniCategoria)
+            #st.write(plt_somministrazioniCategoria)
 
             #Plot somministrazioni per fornitore
-            st.markdown('#### Le dosi di vaccino per fornitore.')
+            #st.markdown('#### Le dosi di vaccino per fornitore.')
             #plt_somministrazioniFornitori = makePlot_SomministrazioniFornitori(self.VwSomministrazioniCategoria.T)
-            st.write(plt_somministrazioniFornitori)
+            #st.write(plt_somministrazioniFornitori)
 
             #st.write(self.VwSomministrazioniCategoria.T.style.format('{:,}'))
 
