@@ -264,7 +264,7 @@ class Analysis:
             '''Creating Views'''
             self.VwSomministrazioniGiorno = self.tblSomministrazioni.groupby('Data Somministrazione').sum()[['Prima Dose','Persone Vaccinate','Totale']]
             self.VwSomministrazioniGiornoFornitore = self.tblSomministrazioni.groupby(['Data Somministrazione', 'Fornitore']).sum().unstack(level=1)[['Totale']].fillna(0).astype(int)
-            self.VwSomministrazioniCategoria = self.tblSomministrazioni.iloc[:,[1,5,6,7,8,9,10,11,12,13,14]].groupby('Fornitore').sum()
+            #self.VwSomministrazioniCategoria = self.tblSomministrazioni.iloc[:,[1,5,6,7,8,9,10,11,12,13,14]].groupby('Fornitore').sum()
 
 
 
@@ -304,15 +304,15 @@ class Analysis:
             )
             # Plot somministrazioni per categoria
             st.markdown('#### Le dosi di vaccino per categoria.')
-            plt_somministrazioniCategoria = makePlot_SomministrazioniCategoria(self.VwSomministrazioniCategoria)
+            #plt_somministrazioniCategoria = makePlot_SomministrazioniCategoria(self.VwSomministrazioniCategoria)
             st.write(plt_somministrazioniCategoria)
 
             #Plot somministrazioni per fornitore
             st.markdown('#### Le dosi di vaccino per fornitore.')
-            plt_somministrazioniFornitori = makePlot_SomministrazioniFornitori(self.VwSomministrazioniCategoria.T)
+            #plt_somministrazioniFornitori = makePlot_SomministrazioniFornitori(self.VwSomministrazioniCategoria.T)
             st.write(plt_somministrazioniFornitori)
 
-            st.write(self.VwSomministrazioniCategoria.T.style.format('{:,}'))
+            #st.write(self.VwSomministrazioniCategoria.T.style.format('{:,}'))
 
         CreateViews_somministrazioni(self)
         Analisi_somministrazioni(self)
