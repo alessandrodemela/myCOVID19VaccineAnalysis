@@ -35,7 +35,9 @@ mapRegioni = {
     'Provincia autonoma Trento' : 'Provincia Autonoma Trento',
     'Umbria'                    : 'Umbria',
     "Valle d'Aosta"             : 'Valle d\'Aosta / Vallée d\'Aoste',
-    'Veneto'                    : 'Veneto'
+    'Veneto'                    : 'Veneto',
+    'P.A. Bolzano'              : 'Provincia Autonoma Bolzano / Bozen',
+    'P.A. Trento'               : 'Provincia Autonoma Trento'
 }
 
 
@@ -68,6 +70,8 @@ class Analysis:
         self.tblInfoAnagrafica = pd.read_csv('https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-statistici-riferimento/popolazione-istat-regione-range.csv')
         # aree
         self.tblAree = gpd.read_file('aree/shp/dpc-covid-19-ita-aree-nuove-g.shp')
+        # platea
+        self.tblPlatea = pd.read_csv('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/platea.csv')
 
         # ultimo aggiornamento
         self.lastUpdateDataset = pd.read_json('https://raw.githubusercontent.com/italia/covid19-opendata-vaccini/master/dati/last-update-dataset.json', typ='series')[0].to_pydatetime()
@@ -132,11 +136,22 @@ class Analysis:
         self.tblSomministrazioniConsegneFornitore = pd.concat([self.tblSomministrazioniTMP, self.tblConsegneTMP],axis=1).cumsum().fillna(method='ffill').fillna(0)
 
         # TABELLA ANAGRAFICA
-        self.tblInfoAnagrafica = self.tblInfoAnagrafica.rename(columns=self.createNameMappingDict(self.tblInfoAnagrafica))
-        self.tblInfoAnagrafica = self.tblInfoAnagrafica.iloc[:,[4,6,7,8,9,10,11]]
-        self.tblInfoAnagrafica = self.tblInfoAnagrafica.where(self.tblInfoAnagrafica['Range Eta']!='0-15').dropna()
-        self.tblInfoAnagrafica['Regione/P.A.'] = self.tblInfoAnagrafica['Regione/P.A.'].map(mapRegioni)
+        self.tblInfoAnagrafica =  self.tblInfoAnagrafica.rename(columns=self.createNameMappingDict(self.tblInfoAnagrafica))
         
+        self.platea = self.tblInfoAnagrafica['Totale Generale'].sum()
+
+        self.tblInfoAnagrafica =  self.tblInfoAnagrafica.iloc[:,[4,8,9,10,11]]
+        self.tblInfoAnagrafica =  self.tblInfoAnagrafica.where((self.tblInfoAnagrafica['Range Eta']!='0-15') & (self.tblInfoAnagrafica['Range Eta']!='16-19')).dropna()
+
+        self.tblPlatea = self.tblPlatea.rename(columns=self.createNameMappingDict(self.tblPlatea))
+        self.tblPlatea = self.tblPlatea.where(self.tblPlatea['Fascia Anagrafica'] == '12-19').dropna().iloc[:,1:]
+        self.tblPlatea.rename(columns={'Fascia Anagrafica' : 'Range Eta', 'Area': 'Regione/P.A.', 'Totale Popolazione': 'Totale Generale'}, inplace=True)
+
+        self.tblInfoAnagrafica = pd.concat([self.tblInfoAnagrafica, self.tblPlatea], ignore_index=True).fillna(0)
+        self.tblInfoAnagrafica['Regione/P.A.'] = self.tblInfoAnagrafica['Regione/P.A.'].map(mapRegioni)
+        self.tblInfoAnagrafica = self.tblInfoAnagrafica.sort_values(['Regione/P.A.', 'Range Eta'])
+
+        self.deltaTotalePlatea = self.tblInfoAnagrafica['Totale Generale'].sum() - self.platea
 
         # TABELLA AREE
         self.tblAree['nomeTesto'] = self.tblAree['nomeTesto'].map(mapRegioni)
@@ -147,10 +162,10 @@ class Analysis:
         self.tblFullRegioni = self.tblInfoAnagrafica.groupby('Regione/P.A.').sum().iloc[:,2:].join(self.tblSomministrazioni.groupby('Regione/P.A.').sum())
         self.tblFullRegioni = self.tblFullRegioni.join(self.tblConsegne.groupby('Regione/P.A.').sum()).rename(columns={'Numero Dosi': 'Numero Dosi Consegnate'})
         self.tblFullRegioni['% Dosi Somministrate/Dosi Consegnate'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Numero Dosi Consegnate'] *100,2)
-        self.tblFullRegioni['% Prima Dose'] = round(self.tblFullRegioni['Prima Dose']/self.tblFullRegioni['Totale Generale'] *100,2)
-        self.tblFullRegioni['% Persone Vaccinate'] = round(self.tblFullRegioni['Persone Vaccinate']/self.tblFullRegioni['Totale Generale'] *100,2)
-        self.tblFullRegioni['% Totale'] = round(self.tblFullRegioni['Totale']/self.tblFullRegioni['Totale Generale'] *100,2)
-        self.tblFullRegioni['% Dosi Consegnate/Abitanti'] = round(self.tblFullRegioni['Numero Dosi Consegnate']/self.tblFullRegioni['Totale Generale']*100,2)
+        self.tblFullRegioni['% Prima Dose'] = round(self.tblFullRegioni['Prima Dose']/(self.tblFullRegioni['Totale Generale']) *100,2)
+        self.tblFullRegioni['% Persone Vaccinate'] = round(self.tblFullRegioni['Persone Vaccinate']/(self.tblFullRegioni['Totale Generale']) *100,2)
+        self.tblFullRegioni['% Totale'] = round(self.tblFullRegioni['Totale']/(self.tblFullRegioni['Totale Generale']) *100,2)
+        self.tblFullRegioni['% Dosi Consegnate/Abitanti'] = round(self.tblFullRegioni['Numero Dosi Consegnate']/(self.tblFullRegioni['Totale Generale'])*100,2)
 
         self.tblAree = self.tblAree.join(self.tblFullRegioni)
 
@@ -159,7 +174,7 @@ class Analysis:
         self.totPrime = self.tblSomministrazioni['Prima Dose'].sum()
         self.totSeconde = self.tblSomministrazioni['Persone Vaccinate'].sum()
         self.monodosi = int(self.tblSomministrazioni.where(self.tblSomministrazioni['Fornitore']=='Janssen')['Persone Vaccinate'].dropna().sum())
-        self.platea = self.tblInfoAnagrafica['Totale Generale'].sum()
+        #self.platea = self.tblInfoAnagrafica['Totale Generale'].sum()
         self.percPrime = round(self.totPrime/self.platea,4)
         self.percSeconde = round(self.totSeconde/self.platea,4)
 
@@ -219,7 +234,7 @@ class Analysis:
 
         st.subheader('Indicatori')
         st.plotly_chart(makePlot_Indicatori(self.KPI, self.auxiliaryMeas))
-        st.write(f'La percentuale di prime dosi somministrate e persone vaccinate è da intendersi sulla platea 16+, pari a {self.platea:,.0f} abitanti su {59641488:,.0f}.')
+        #st.write(f'La percentuale di prime dosi somministrate e persone vaccinate è da intendersi sulla platea 12+, pari a {self.platea:,.0f} abitanti su {59641488:,.0f}.')
 
         st.markdown('***')
 
@@ -298,10 +313,13 @@ class Analysis:
                 'Questi grafici mostrano l\'andamento per giorno delle somministrazioni e delle consegne di ciascun fornitore. '
             )
 
-            st.subheader('Analisi sul tipo di vaccino somministrato')
-            st.markdown(
-                "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
-            )
+
+            ###### COMMENT BECAUSE OF DATA SOURCE CHANGED. NO MORE CATEGORIES ##########
+
+            #st.subheader('Analisi sul tipo di vaccino somministrato')
+            #st.markdown(
+            #    "L'analisi successiva mostra, in funzione dell'azienda fornitrice, quali e quanti vaccini vengano somministrati a quale categoria sociale e viceversa a chi sono somministrati i diversi vaccini."
+            #)
             # Plot somministrazioni per categoria
             #st.markdown('#### Le dosi di vaccino per categoria.')
             #plt_somministrazioniCategoria = makePlot_SomministrazioniCategoria(self.VwSomministrazioniCategoria)

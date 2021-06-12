@@ -839,7 +839,7 @@ def Bonus():
             areaReg.loc[0,'datasetIni'] = datetime(2020, 11, 6).date()
         
         areaReg['permanenza'] =  [
-                (areaReg['datasetIni'].iloc[i+1]-areaReg['datasetIni'].iloc[i]).days if i!=len(areaReg)-1 else 14
+                (areaReg['datasetIni'].iloc[i+1]-areaReg['datasetIni'].iloc[i]).days if i!=len(areaReg)-1 else (datetime.today().date() - areaReg['datasetIni'].iloc[i]).days
                 for i in range(len(areaReg))
             ] 
 
