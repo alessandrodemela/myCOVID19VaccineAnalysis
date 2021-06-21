@@ -796,7 +796,7 @@ def makePlot_ConsegneSomministrazioniRegione(df):
 
     return fig
 
-
+from dateutil.relativedelta import relativedelta
 def Bonus():
     st.header('Sezione Bonus')
     st.subheader('I colori delle regioni dal 6/11/2020, secondo il D.P.C.M. 4/11/2020.')
@@ -806,7 +806,7 @@ def Bonus():
     aree['datasetIni'] = pd.to_datetime(aree['datasetIni'], format='%d/%m/%Y').dt.date
 
     aree = aree.fillna(datetime.today().date())
-
+    
     aree['legSpecRif'] = aree['legSpecRif'].map(
         {
             'art.1'              : 'GIALLO',
@@ -832,17 +832,25 @@ def Bonus():
     fig=go.Figure()
 
     for reg in regioni:
-
         areaReg = aree[(aree['nomeTesto']==reg) | (aree['nomeTesto']=='Intero territorio nazionale')].sort_values('datasetIni').reset_index().drop(columns=['index'])
         
         if areaReg.loc[0,'datasetIni'] != datetime(2020, 11, 6):
             areaReg.loc[0,'datasetIni'] = datetime(2020, 11, 6).date()
+
+      #  st.write([('2121' in areaReg['datasetIni'][i].strftime(format='%Y'), areaReg['datasetIni'][i].strftime(format='%Y%m%d')) for i in range(len(areaReg['datasetIni']))])
+        for i in range(len(areaReg['datasetIni'])):
+            if areaReg['datasetIni'][i].strftime(format='%Y')=='2121':
+                areaReg['datasetIni'][i] = areaReg['datasetIni'][i] - relativedelta(years=100)
+      #  st.write([('2121' in areaReg['datasetIni'][i].strftime(format='%Y'), areaReg['datasetIni'][i].strftime(format='%Y%m%d')) for i in range(len(areaReg['datasetIni']))])
         
+
         areaReg['permanenza'] =  [
                 (areaReg['datasetIni'].iloc[i+1]-areaReg['datasetIni'].iloc[i]).days if i!=len(areaReg)-1 else (datetime.today().date() - areaReg['datasetIni'].iloc[i]).days
                 for i in range(len(areaReg))
             ] 
 
+        
+       # st.write(areaReg)
         global areaRegPlot 
         areaRegPlot = areaReg[['datasetIni','permanenza','colorCode']]
         

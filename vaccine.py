@@ -14,7 +14,7 @@ st.markdown('***')
 def GetReport(an):
     '''Manage report'''
 
-    # Introduzione
+    Introduzione
     an.Header()
 
     # Somministrazioni
@@ -35,6 +35,6 @@ def GetReport(an):
 def Run():
     analysis = Analysis()
     GetReport(analysis)
-
+    
 Run()
 
